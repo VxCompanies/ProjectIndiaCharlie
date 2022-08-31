@@ -11,10 +11,11 @@ namespace ProjectIndiaCharlie.Core.Models
         }
 
         public int ClassroomId { get; set; }
-        public string Code { get; set; } = null!;
+        public int Code { get; set; }
         public int BuildingId { get; set; }
         public bool IsLab { get; set; }
-        public decimal Capacity { get; set; }
+        public int Capacity { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
         public virtual Building Building { get; set; } = null!;

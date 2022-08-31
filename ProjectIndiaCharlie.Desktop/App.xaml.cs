@@ -21,8 +21,8 @@ public partial class App : Application
             {
                 services.AddSingleton<MainWindow>();
 
-                services.AddSingleton<HomeViewModel>();
                 services.AddSingleton<IndexViewModel>();
+                services.AddSingleton<HomeViewModel>();
             })
             .Build();
     }

@@ -14,10 +14,11 @@ namespace ProjectIndiaCharlie.Core.Models
         public int CoordinatorId { get; set; }
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;
-        public decimal Subjects { get; set; }
-        public decimal Credits { get; set; }
-        public string Year { get; set; } = null!;
+        public int Subjects { get; set; }
+        public int Credits { get; set; }
+        public int Year { get; set; }
         public bool IsActive { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
         public virtual Coordinator Coordinator { get; set; } = null!;

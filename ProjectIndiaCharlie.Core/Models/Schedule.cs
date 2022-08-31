@@ -6,12 +6,14 @@ namespace ProjectIndiaCharlie.Core.Models
     public partial class Schedule
     {
         public int ScheduleId { get; set; }
-        public int SubjectId { get; set; }
-        public string Weekday { get; set; } = null!;
-        public string StartTime { get; set; } = null!;
-        public string EndTime { get; set; } = null!;
+        public int SubjectDetailId { get; set; }
+        public int WeekdayId { get; set; }
+        public int StartTime { get; set; }
+        public int EndTime { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual SubjectDetail Subject { get; set; } = null!;
+        public virtual Section SubjectDetail { get; set; } = null!;
+        public virtual Weekday Weekday { get; set; } = null!;
     }
 }

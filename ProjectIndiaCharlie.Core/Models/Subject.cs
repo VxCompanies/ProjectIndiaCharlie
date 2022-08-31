@@ -7,17 +7,18 @@ namespace ProjectIndiaCharlie.Core.Models
     {
         public Subject()
         {
-            SubjectClassrooms = new HashSet<SubjectClassroom>();
-            SubjectDetails = new HashSet<SubjectDetail>();
+            Sections = new HashSet<Section>();
         }
 
         public int SubjectId { get; set; }
-        public string Code { get; set; } = null!;
+        public int AreaId { get; set; }
+        public string SubjectCode { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public decimal Credits { get; set; }
+        public byte Credits { get; set; }
+        public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual ICollection<SubjectClassroom> SubjectClassrooms { get; set; }
-        public virtual ICollection<SubjectDetail> SubjectDetails { get; set; }
+        public virtual Area Area { get; set; } = null!;
+        public virtual ICollection<Section> Sections { get; set; }
     }
 }

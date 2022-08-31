@@ -3,19 +3,18 @@ using System.Collections.Generic;
 
 namespace ProjectIndiaCharlie.Core.Models
 {
-    public partial class Building
+    public partial class Weekday
     {
-        public Building()
+        public Weekday()
         {
-            Classrooms = new HashSet<Classroom>();
+            Schedules = new HashSet<Schedule>();
         }
 
-        public int BuildingId { get; set; }
+        public int WeekdayId { get; set; }
         public string Name { get; set; } = null!;
-        public string Code { get; set; } = null!;
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual ICollection<Classroom> Classrooms { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

@@ -14,10 +14,9 @@ namespace ProjectIndiaCharlie.Desktop.ViewModel.Service
     {
         private const string baseUrl = "https://localhost:7073/api/People";
         private const string getPeopleUrl = $"{baseUrl}/GetPeople";
+        private const string loginStudentUrl = $"https://localhost:7073/api/Student/LoginStudent";
 
-        private static readonly JsonSerializerOptions _options;
-
-        static PersonService() => _options = new() { PropertyNameCaseInsensitive = true };
+        private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
         public static async Task<IEnumerable<Person>> GetPeopleAsync()
         {
@@ -48,7 +47,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModel.Service
                 var request = new HttpRequestMessage
                 {
                     Method = HttpMethod.Get,
-                    RequestUri = new Uri(getPeopleUrl),
+                    RequestUri = new Uri(loginStudentUrl),
                     Content = new StringContent(JsonSerializer.Serialize(student, _options), Encoding.UTF8, MediaTypeNames.Application.Json)
                 };
 
@@ -66,15 +65,5 @@ namespace ProjectIndiaCharlie.Desktop.ViewModel.Service
                 return null;
             }
         }
-
-        //public static async Task<Person> Login(Professor professor)
-        //{
-
-        //}
-
-        //public static async Task<Person> Login(Coordinator coordinator)
-        //{
-
-        //}
     }
 }

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ProjectIndiaCharlie.Core.Data;
 using ProjectIndiaCharlie.Core.Models;
@@ -20,34 +20,8 @@ public class PeopleController : ControllerBase
         NotFound() :
         Ok(await _context.People.ToListAsync());
 
-    [HttpGet("GetPerson")]
-    public async Task<ActionResult<Person>> GetPerson(string search, SearchCriteria searchCriteria)
-    {
-        if (_context.People == null)
-            return NotFound();
-
-        return searchCriteria switch
-        {
-            SearchCriteria.id => (!int.TryParse(search, out int id)) ?
-                                BadRequest() :
-                                (await _context.People.FindAsync(id) == null) ?
-                                NotFound() :
-                                Ok(await _context.People.FindAsync(id)),
-            SearchCriteria.docNo => (await _context.People.FirstOrDefaultAsync(p => p.DocNo == search) == null) ?
-                                NotFound() :
-                                Ok(await _context.People.FirstOrDefaultAsync(p => p.DocNo == search)),
-            SearchCriteria.firstName => (await _context.People.FirstOrDefaultAsync(p => p.FirstName == search) == null) ?
-                                NotFound() :
-                                Ok(await _context.People.FirstOrDefaultAsync(p => p.FirstName == search)),
-            SearchCriteria.middleName => (await _context.People.FirstOrDefaultAsync(p => p.MiddleName == search) == null) ?
-                                NotFound() :
-                                Ok(await _context.People.FirstOrDefaultAsync(p => p.MiddleName == search)),
-            SearchCriteria.lastName => (await _context.People.FirstOrDefaultAsync(p => p.LastName == search) == null) ?
-                                NotFound() :
-                                Ok(await _context.People.FirstOrDefaultAsync(p => p.LastName == search)),
-            _ => (ActionResult<Person>)BadRequest(),
-        };
-    }
+    [HttpGet("GetPerson/{id}")]
+    public async Task<ActionResult<Person?>> GetPerson(int id) => await _context.People.FirstOrDefaultAsync(p => p.PersonId == id);
 
     [HttpPost("RegisterPerson")]
     public async Task<ActionResult<Person>> RegisterPerson(Person person)
@@ -61,27 +35,107 @@ public class PeopleController : ControllerBase
         return CreatedAtAction("RegisterPerson", person);
     }
 
+    [HttpGet("Login")]
+    public async Task<ActionResult<Person>> Login(int personId, string password)
+    {
+        var user = await _context.People.Include(s => s.Student)
+            .Include(p => p.Professor)
+            .Include(c => c.Coordinator)
+            .Include(p => p.PersonPassword)
+            .FirstOrDefaultAsync(p => p.PersonId == personId);
+
+        if (user is null)
+            return NotFound();
+
+        var passwordHash = new PasswordHelpersController().GetPasswordHash($"{password}{user.PersonPassword!.PasswordSalt}");
+
+        if (user.PersonPassword.PasswordHash != passwordHash.Value)
+            return NotFound();
+
+        return Ok(user);
+    }
+
+    [HttpGet("GetStudents")]
+    public async Task<ActionResult<IEnumerable<Student>>> GetStudents() =>
+        (_context.Students is null) ?
+        NotFound() :
+        await _context.Students.Include(p => p.Person)
+        .ToListAsync();
+
+    [HttpGet("GetStudent")]
+    public async Task<ActionResult<Student>> GetStudent(int personId)
+    {
+        var student = await _context.Students.Include(s => s.Career)
+            .FirstOrDefaultAsync(s => s.PersonId == personId);
+
+        return (student is null) ?
+            NotFound() :
+            Ok(student);
+    }
+
+    //[HttpPut]
+    //public async Task<IActionResult> PutStudent(int id, Student student)
+    //{
+    //    if (id != student.PersonId)
+    //    {
+    //        return BadRequest();
+    //    }
+
+    //    _context.Entry(student).State = EntityState.Modified;
+
+    //    try
+    //    {
+    //        await _context.SaveChangesAsync();
+    //    }
+    //    catch (DbUpdateConcurrencyException)
+    //    {
+    //        if (!StudentExists(id))
+    //        {
+    //            return NotFound();
+    //        }
+    //        else
+    //        {
+    //            throw;
+    //        }
+    //    }
+
+    //    return NoContent();
+    //}
+
     [HttpPost("RegisterStudent")]
     public async Task<ActionResult<Student>> RegisterStudent(Student student)
     {
-        if (student == null)
-            return BadRequest("Student cannot be null.");
+        if (await _context.Students.FindAsync(student.PersonId) != null)
+            return Conflict();
 
-        var p = await _context.People.FirstOrDefaultAsync(s => s.DocNo != student.Person.DocNo);
+        if (await _context.People.AnyAsync(p => p.DocNo == student.Person.DocNo))
+            student.Person = new();
 
-        if (p != null)
-            student.Person = p;
+        var spParams = new List<SqlParameter>
+        {
+            new("@DocNo", student.Person.DocNo),
+            new("@FirstName", student.Person.FirstName),
+            new("@MiddleName", student.Person.MiddleName),
+            new("@FirstSurname", student.Person.FirstSurname),
+            new("@SecondSurname", student.Person.SecondSurname),
+            new("@Gender", student.Person.Gender),
+            new("@BirthDate", student.Person.BirthDate),
+            new("@Email", student.Person.Email),
+            new("@RolId", 1),
+            new("@CareerId", student.Career.CareerId),
+            new("@PasswordHash", student.Person.PersonPassword!.PasswordHash),
+            new("@PasswordSalt", student.Person.PersonPassword!.PasswordSalt),
+        };
 
         try
         {
-            _context.Add(student);
-            await _context.SaveChangesAsync();
+            await _context.Database.ExecuteSqlRawAsync("Person.SP_CreateUser", spParams);
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
             return Problem(detail: e.Message);
         }
 
-        return Ok(student);
+        return CreatedAtAction("RegisterStudent", student);
     }
 }
