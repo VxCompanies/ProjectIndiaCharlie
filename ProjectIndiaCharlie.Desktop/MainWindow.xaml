@@ -4,8 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectIndiaCharlie.Desktop"
-        xmlns:view="clr-namespace:ProjectIndiaCharlie.Desktop.View"
-        xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModel"
+        xmlns:view="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
+        xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="App name" Height="450" Width="800">

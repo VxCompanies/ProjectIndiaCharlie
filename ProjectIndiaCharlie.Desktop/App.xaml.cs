@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProjectIndiaCharlie.Desktop.ViewModel;
-using ProjectIndiaCharlie.Desktop.ViewModel.Service;
-using ProjectIndiaCharlie.Desktop.ViewModel.Store;
+using ProjectIndiaCharlie.Desktop.ViewModels.Store;
+using ProjectIndiaCharlie.Desktop.ViewModels;
+using ProjectIndiaCharlie.Desktop.ViewModels.Service;
 using System.Windows;
 
 namespace ProjectIndiaCharlie.Desktop;
