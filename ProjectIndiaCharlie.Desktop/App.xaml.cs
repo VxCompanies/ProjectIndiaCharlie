@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProjectIndiaCharlie.Desktop.ViewModels.Store;
 using ProjectIndiaCharlie.Desktop.ViewModels;
 using ProjectIndiaCharlie.Desktop.ViewModels.Service;
 using System.Windows;
@@ -21,8 +20,11 @@ public partial class App : Application
             {
                 services.AddSingleton<MainWindow>();
 
+                services.AddSingleton<MainViewModel>();
                 services.AddSingleton<IndexViewModel>();
                 services.AddSingleton<HomeViewModel>();
+                services.AddSingleton<LoginViewModel>();
+                services.AddSingleton<RegisterStudentViewModel>();
             })
             .Build();
     }
@@ -31,8 +33,7 @@ public partial class App : Application
     {
         await AppHost!.StartAsync();
 
-        NavigationService.MainNavigate(new IndexViewModel());
-        NavigationService.IndexNavigate(new HomeViewModel());
+        NavigationService.MainNavigate(new LoginViewModel());
 
         var startupWindow = AppHost.Services.GetRequiredService<MainWindow>();
         startupWindow.DataContext = new MainViewModel();

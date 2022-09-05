@@ -15,6 +15,9 @@
     <Grid DataContext="{StaticResource vm}">
         <ContentControl Content="{Binding CurrentMainViewModel}">
             <ContentControl.Resources>
+                <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+                    <view:LoginView/>
+                </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:IndexViewModel}">
                     <view:IndexView/>
                 </DataTemplate>

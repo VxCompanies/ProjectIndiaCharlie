@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Mime;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -12,9 +10,9 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Service
 {
     public static class PersonService
     {
-        private const string baseUrl = "https://localhost:7073/api/People";
+        private const string baseUrl = "https://localhost:7073/api/Person";
         private const string getPeopleUrl = $"{baseUrl}/GetPeople";
-        private const string loginStudentUrl = $"https://localhost:7073/api/Student/LoginStudent";
+        private const string loginStudentUrl = $"{baseUrl}/Login";
 
         private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -38,20 +36,12 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Service
             }
         }
 
-        public static async Task<Student?> Login(Student student)
+        public static async Task<Student?> Login(string personId, string password)
         {
             try
             {
                 using var httpClient = new HttpClient();
-
-                var request = new HttpRequestMessage
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(loginStudentUrl),
-                    Content = new StringContent(JsonSerializer.Serialize(student, _options), Encoding.UTF8, MediaTypeNames.Application.Json)
-                };
-
-                var response = await httpClient.SendAsync(request);
+                var response = await httpClient.GetAsync($"{loginStudentUrl}?personId={personId}&password={password}");
 
                 if (!response.IsSuccessStatusCode)
                     return null;

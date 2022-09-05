@@ -19,17 +19,12 @@
             <RadioButton Content="Home"
                          IsChecked="True"
                          Command="{Binding NavigateHomeCommand}"/>
-            <RadioButton Content="Another View"
-                         Command="{Binding NavigateAnotherViewCommand}"/>
         </StackPanel>
         <ContentControl Grid.Column="1"
                         Content="{Binding CurrentIndexViewModel}">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                     <local:HomeView/>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:AnotherViewModel}">
-                    <local:AnotherView/>
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
