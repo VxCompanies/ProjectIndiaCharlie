@@ -21,9 +21,13 @@ namespace ProjectIndiaCharlie.Desktop.Views
         //    ((LoginViewModel)DataContext).Password = ((PasswordBox)sender).Password;
         //}
 
-        private void UserIdChanged(object sender, RoutedEventArgs e) => btLogin.IsEnabled = !string.IsNullOrWhiteSpace(pbPassword.Password) && !string.IsNullOrWhiteSpace(tbUserId.Text);
+        private void UserIdChanged(object sender, RoutedEventArgs e) => btLogin.IsEnabled =
+            !string.IsNullOrWhiteSpace(pbPassword.Password) &&
+            !string.IsNullOrWhiteSpace(tbUserId.Text);
 
-        private void PasswordChanged(object sender, RoutedEventArgs e) => btLogin.IsEnabled = !string.IsNullOrWhiteSpace(pbPassword.Password) && !string.IsNullOrWhiteSpace(tbUserId.Text);
+        private void PasswordChanged(object sender, RoutedEventArgs e) => btLogin.IsEnabled =
+            !string.IsNullOrWhiteSpace(pbPassword.Password) &&
+            !string.IsNullOrWhiteSpace(tbUserId.Text);
 
         private async void Login(object sender, RoutedEventArgs e)
         {

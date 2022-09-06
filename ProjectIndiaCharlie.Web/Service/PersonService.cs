@@ -1,14 +1,8 @@
-﻿using ProjectIndiaCharlie.Desktop.Models;
-using ProjectIndiaCharlie.Desktop.ViewModels.Store;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using ProjectIndiaCharlie.Web.Models;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Service;
+namespace ProjectIndiaCharlie.Web.Service;
 
 public static class PersonService
 {
@@ -53,7 +47,6 @@ public static class PersonService
             var content = await response.Content.ReadAsStringAsync();
 
             var logedUser = JsonSerializer.Deserialize<Person>(content, _options);
-            LogedPerson.Person = logedUser!;
             return logedUser;
         }
         catch (Exception)

@@ -15,29 +15,19 @@ public class PersonController : ControllerBase
 
     public PersonController(ProjectIndiaCharlieContext context) => _context = context;
 
-    #region People
-    [HttpGet("GetPeople")]
-    public async Task<ActionResult<IEnumerable<Person>>> GetPeople() =>
-        _context.People == null ?
-        NotFound() :
-        Ok(await _context.People
-            .Include(p => p.Professor)
-            .Include(c => c.Coordinator)
-            .Include(p => p.PersonPassword)
-            .ToListAsync());
-
-    [HttpGet("GetPerson")]
-    public async Task<ActionResult<Person?>> GetPerson(int personId) => await _context.People.FirstOrDefaultAsync(p => p.PersonId == personId);
-
-    #endregion
-
     [HttpGet("Login")]
     public async Task<ActionResult<Person>> Login(int personId, string password)
     {
-        var user = await _context.People.Include(s => s.Student)
-            .Include(p => p.Professor)
+        var user = await _context.People.Include(c => c.Student.Career.Coordinator.Person)
+            .Include(s => s.Student.SubjectStudents)
+            //.Include(s => s.Student.SubjectStudents.FirstOrDefault().SubjectDetail.Professor)
+            //.Include(s => s.Student.SubjectStudents.FirstOrDefault().SubjectDetail.Schedules)
+            .Include(p => p.Professor.Sections)
             .Include(c => c.Coordinator)
             .Include(p => p.PersonPassword)
+            .Include(r => r.PersonRoles)
+            .Include(s => s.Professor.Sections)
+            //.Include(s => s.)
             .FirstOrDefaultAsync(p => p.PersonId == personId);
 
         if (user is null)
@@ -52,6 +42,21 @@ public class PersonController : ControllerBase
             Ok(user) :
             NotFound();
     }
+
+    #region People
+    [HttpGet("List")]
+    public async Task<ActionResult<IEnumerable<Person>>> GetPeople() =>
+        _context.People == null ?
+        NotFound() :
+        Ok(await _context.People
+            .Include(p => p.Professor)
+            .Include(c => c.Coordinator)
+            .Include(p => p.PersonPassword)
+            .ToListAsync());
+
+    [HttpGet("Search")]
+    public async Task<ActionResult<Person?>> GetPerson(int personId) => await _context.People.FirstOrDefaultAsync(p => p.PersonId == personId);
+    #endregion
 
     #region Student
     [HttpPost("Student/Registration")]
@@ -95,14 +100,14 @@ public class PersonController : ControllerBase
         return CreatedAtAction("RegisterStudent", student);
     }
 
-    [HttpGet("Students")]
+    [HttpGet("Student/List")]
     public async Task<ActionResult<IEnumerable<Student>>> GetStudents() =>
         (_context.Students is null) ?
         NotFound() :
         Ok(await _context.Students.Include(p => p.Person)
         .ToListAsync());
 
-    [HttpGet("GetStudent/{personId}")]
+    [HttpGet("Student/Search")]
     public async Task<ActionResult<Student>> GetStudent(int personId)
     {
         var student = await _context.Students.Include(s => s.Career)
@@ -157,6 +162,7 @@ public class PersonController : ControllerBase
     }
     #endregion
 
+    #region Coordinator
     [HttpPost("Coordinator/Registration")]
     public async Task<ActionResult<Student>> RegisterCoordinator(Coordinator coordinator)
     {
@@ -196,4 +202,5 @@ public class PersonController : ControllerBase
 
         return CreatedAtAction("RegisterCoordinator", coordinator);
     }
+    #endregion
 }

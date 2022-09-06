@@ -8,10 +8,10 @@ namespace ProjectIndiaCharlie.Core.Controllers
     [Route("api/[controller]")]
     public class PasswordHelpersController : ControllerBase
     {
-        [HttpGet("GetPasswordHash/{password}")]
+        [HttpGet("GetHash")]
         public ActionResult<string> GetPasswordHash(string password, string? salt = null) => Ok(PasswordHelpers.GetPasswordHash(password, salt));
 
-        [HttpGet("GetRandomPassword")]
-        public ActionResult<string> GetRandomPassword() => Ok(PasswordHelpers.GetRandomPassword());
+        [HttpGet("GenRandom")]
+        public ActionResult<string> GenRandomPassword() => Ok(PasswordHelpers.GetRandomPassword());
     }
 }
