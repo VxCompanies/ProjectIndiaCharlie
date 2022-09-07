@@ -22,10 +22,10 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual Coordinator? Coordinator { get; set; }
-        public virtual PersonPassword? PersonPassword { get; set; }
-        public virtual Professor? Professor { get; set; }
-        public virtual Student? Student { get; set; }
+        public virtual Coordinator Coordinator { get; set; } = null!;
+        public virtual PersonPassword PersonPassword { get; set; } = null!;
+        public virtual Professor Professor { get; set; } = null!;
+        public virtual Student Student { get; set; } = null!;
         public virtual ICollection<PersonRole> PersonRoles { get; set; }
     }
 }

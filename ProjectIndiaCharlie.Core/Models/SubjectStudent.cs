@@ -7,7 +7,7 @@ namespace ProjectIndiaCharlie.Core.Models
     {
         public int SubjectDetailId { get; set; }
         public int StudentId { get; set; }
-        public int GradeId { get; set; }
+        public int? GradeId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 

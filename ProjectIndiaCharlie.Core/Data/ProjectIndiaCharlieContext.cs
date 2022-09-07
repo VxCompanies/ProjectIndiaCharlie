@@ -17,8 +17,6 @@ namespace ProjectIndiaCharlie.Core.Data
         {
         }
 
-        public virtual DbSet<Area> Areas { get; set; } = null!;
-        public virtual DbSet<Building> Buildings { get; set; } = null!;
         public virtual DbSet<Career> Careers { get; set; } = null!;
         public virtual DbSet<Classroom> Classrooms { get; set; } = null!;
         public virtual DbSet<Coordinator> Coordinators { get; set; } = null!;
@@ -48,53 +46,6 @@ namespace ProjectIndiaCharlie.Core.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Area>(entity =>
-            {
-                entity.ToTable("Area", "Academic");
-
-                entity.Property(e => e.AreaId).HasColumnName("AreaID");
-
-                entity.Property(e => e.AreaCode).HasMaxLength(3);
-
-                entity.Property(e => e.CoordinatorId).HasColumnName("CoordinatorID");
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Coordinator)
-                    .WithMany(p => p.Areas)
-                    .HasForeignKey(d => d.CoordinatorId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Area__Coordinato__5629CD9C");
-            });
-
-            modelBuilder.Entity<Building>(entity =>
-            {
-                entity.ToTable("Building", "Academic");
-
-                entity.HasIndex(e => e.Code, "UQ__Building__A25C5AA72746ECF9")
-                    .IsUnique();
-
-                entity.Property(e => e.BuildingId).HasColumnName("BuildingID");
-
-                entity.Property(e => e.Code).HasMaxLength(2);
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Name).HasMaxLength(50);
-            });
-
             modelBuilder.Entity<Career>(entity =>
             {
                 entity.ToTable("Career", "Academic");
@@ -105,13 +56,9 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.CoordinatorId).HasColumnName("CoordinatorID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
@@ -128,27 +75,17 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.ClassroomId).HasColumnName("ClassroomID");
 
-                entity.Property(e => e.BuildingId).HasColumnName("BuildingID");
+                entity.Property(e => e.Code).HasMaxLength(5);
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.HasOne(d => d.Building)
-                    .WithMany(p => p.Classrooms)
-                    .HasForeignKey(d => d.BuildingId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Classroom__Build__6FE99F9F");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Coordinator>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Coordina__AA2FFB85F077508D");
+                    .HasName("PK__Coordina__AA2FFB85C89921D2");
 
                 entity.ToTable("Coordinator", "Academic");
 
@@ -156,13 +93,9 @@ namespace ProjectIndiaCharlie.Core.Data
                     .ValueGeneratedNever()
                     .HasColumnName("PersonID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Person)
                     .WithOne(p => p.Coordinator)
@@ -177,36 +110,30 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.GradeId).HasColumnName("GradeID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Grade1)
                     .HasMaxLength(2)
                     .HasColumnName("Grade");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Person>(entity =>
             {
                 entity.ToTable("Person", "Person");
 
-                entity.HasIndex(e => e.DocNo, "UQ__Person__3EF1E057F1610B0A")
+                entity.HasIndex(e => e.DocNo, "UQ__Person__3EF1E05762DC3E3E")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__Person__A9D10534EE13667A")
+                entity.HasIndex(e => e.Email, "UQ__Person__A9D10534323B41CD")
                     .IsUnique();
 
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
 
                 entity.Property(e => e.BirthDate).HasColumnType("date");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.DocNo).HasMaxLength(13);
 
@@ -220,9 +147,7 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.MiddleName).HasMaxLength(50);
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.SecondSurname).HasMaxLength(50);
             });
@@ -230,7 +155,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<PersonPassword>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__PersonPa__AA2FFB85EAE9E40A");
+                    .HasName("PK__PersonPa__AA2FFB85A68D50A5");
 
                 entity.ToTable("PersonPassword", "Person");
 
@@ -238,13 +163,9 @@ namespace ProjectIndiaCharlie.Core.Data
                     .ValueGeneratedNever()
                     .HasColumnName("PersonID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.PasswordHash).HasMaxLength(64);
 
@@ -260,7 +181,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<PersonRole>(entity =>
             {
                 entity.HasKey(e => new { e.PersonId, e.RoleId })
-                    .HasName("PK__PersonRo__12805766BC123609");
+                    .HasName("PK__PersonRo__128057663AC2935E");
 
                 entity.ToTable("PersonRole", "Person");
 
@@ -268,13 +189,9 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Person)
                     .WithMany(p => p.PersonRoles)
@@ -292,7 +209,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<Professor>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Professo__AA2FFB8501286872");
+                    .HasName("PK__Professo__AA2FFB85DD171814");
 
                 entity.ToTable("Professor", "Academic");
 
@@ -300,13 +217,9 @@ namespace ProjectIndiaCharlie.Core.Data
                     .ValueGeneratedNever()
                     .HasColumnName("PersonID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Person)
                     .WithOne(p => p.Professor)
@@ -321,13 +234,9 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.RoleName).HasMaxLength(64);
             });
@@ -338,13 +247,9 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.ScheduleId).HasColumnName("ScheduleID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
 
@@ -354,31 +259,27 @@ namespace ProjectIndiaCharlie.Core.Data
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.SubjectDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Schedule__Subjec__7E37BEF6");
+                    .HasConstraintName("FK__Schedule__Subjec__72C60C4A");
 
                 entity.HasOne(d => d.Weekday)
                     .WithMany(p => p.Schedules)
                     .HasForeignKey(d => d.WeekdayId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Schedule__Weekda__7F2BE32F");
+                    .HasConstraintName("FK__Schedule__Weekda__73BA3083");
             });
 
             modelBuilder.Entity<Section>(entity =>
             {
                 entity.HasKey(e => e.SubjectDetailId)
-                    .HasName("PK__Section__09EA6B5541B11618");
+                    .HasName("PK__Section__09EA6B55C5AB7F20");
 
                 entity.ToTable("Section", "Academic");
 
                 entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.ProfessorId).HasColumnName("ProfessorID");
 
@@ -390,19 +291,19 @@ namespace ProjectIndiaCharlie.Core.Data
                     .WithMany(p => p.Sections)
                     .HasForeignKey(d => d.ProfessorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Section__Profess__5FB337D6");
+                    .HasConstraintName("FK__Section__Profess__59FA5E80");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.Sections)
                     .HasForeignKey(d => d.SubjectId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Section__Subject__60A75C0F");
+                    .HasConstraintName("FK__Section__Subject__5AEE82B9");
             });
 
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Student__AA2FFB852E138119");
+                    .HasName("PK__Student__AA2FFB8540F45CC5");
 
                 entity.ToTable("Student", "Academic");
 
@@ -412,21 +313,13 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.CareerId).HasColumnName("CareerID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.EnrolementDate)
-                    .HasColumnType("date")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.EnrolementDate).HasColumnType("date");
 
                 entity.Property(e => e.GeneralIndex).HasColumnType("decimal(3, 2)");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Trimester).HasDefaultValueSql("((1))");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.TrimestralIndex).HasColumnType("decimal(3, 2)");
 
@@ -449,31 +342,19 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
 
-                entity.Property(e => e.AreaId).HasColumnName("AreaID");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
                 entity.Property(e => e.SubjectCode).HasMaxLength(4);
-
-                entity.HasOne(d => d.Area)
-                    .WithMany(p => p.Subjects)
-                    .HasForeignKey(d => d.AreaId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Subject__AreaID__5AEE82B9");
             });
 
             modelBuilder.Entity<SubjectClassroom>(entity =>
             {
                 entity.HasKey(e => new { e.SubjectDetailId, e.ClassroomId })
-                    .HasName("PK__SubjectC__B8FC73BDE50C749F");
+                    .HasName("PK__SubjectC__B8FC73BD9B46C289");
 
                 entity.ToTable("SubjectClassroom", "Academic");
 
@@ -481,31 +362,27 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.ClassroomId).HasColumnName("ClassroomID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Classroom)
                     .WithMany(p => p.SubjectClassrooms)
                     .HasForeignKey(d => d.ClassroomId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SubjectCl__Class__75A278F5");
+                    .HasConstraintName("FK__SubjectCl__Class__6A30C649");
 
                 entity.HasOne(d => d.SubjectDetail)
                     .WithMany(p => p.SubjectClassrooms)
                     .HasForeignKey(d => d.SubjectDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SubjectCl__Subje__74AE54BC");
+                    .HasConstraintName("FK__SubjectCl__Subje__693CA210");
             });
 
             modelBuilder.Entity<SubjectStudent>(entity =>
             {
                 entity.HasKey(e => new { e.SubjectDetailId, e.StudentId })
-                    .HasName("PK__SubjectS__8AC639F2F977D4D3");
+                    .HasName("PK__SubjectS__8AC639F284F283EC");
 
                 entity.ToTable("SubjectStudent", "Academic");
 
@@ -513,27 +390,23 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.StudentId).HasColumnName("StudentID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.GradeId).HasColumnName("GradeID");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.HasOne(d => d.Student)
                     .WithMany(p => p.SubjectStudents)
                     .HasForeignKey(d => d.StudentId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SubjectSt__Stude__656C112C");
+                    .HasConstraintName("FK__SubjectSt__Stude__5FB337D6");
 
                 entity.HasOne(d => d.SubjectDetail)
                     .WithMany(p => p.SubjectStudents)
                     .HasForeignKey(d => d.SubjectDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__SubjectSt__Subje__66603565");
+                    .HasConstraintName("FK__SubjectSt__Subje__60A75C0F");
             });
 
             modelBuilder.Entity<VRole>(entity =>
@@ -588,13 +461,9 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.WeekdayId).HasColumnName("WeekdayID");
 
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasColumnType("datetime");
 
-                entity.Property(e => e.ModifiedDate)
-                    .HasColumnType("datetime")
-                    .HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.ModifiedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.Name).HasMaxLength(9);
             });
