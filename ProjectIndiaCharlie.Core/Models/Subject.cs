@@ -11,14 +11,12 @@ namespace ProjectIndiaCharlie.Core.Models
         }
 
         public int SubjectId { get; set; }
-        public int AreaId { get; set; }
         public string SubjectCode { get; set; } = null!;
         public string Name { get; set; } = null!;
         public byte Credits { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual Area Area { get; set; } = null!;
         public virtual ICollection<Section> Sections { get; set; }
     }
 }

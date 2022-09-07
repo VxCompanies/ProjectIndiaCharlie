@@ -7,7 +7,6 @@ namespace ProjectIndiaCharlie.Core.Models
     {
         public Coordinator()
         {
-            Areas = new HashSet<Area>();
             Careers = new HashSet<Career>();
         }
 
@@ -16,7 +15,6 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime ModifiedDate { get; set; }
 
         public virtual Person Person { get; set; } = null!;
-        public virtual ICollection<Area> Areas { get; set; }
         public virtual ICollection<Career> Careers { get; set; }
     }
 }
