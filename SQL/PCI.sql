@@ -1,17 +1,65 @@
-USE master;
+USE master
 GO
-DROP DATABASE IF EXISTS ProjectIndiaCharlie;
+ALTER DATABASE ProjectIndiaCharlie
+	SET SINGLE_USER
+	WITH ROLLBACK IMMEDIATE
+GO
+DROP DATABASE IF EXISTS ProjectIndiaCharlie
 GO
 CREATE DATABASE ProjectIndiaCharlie
-COLLATE SQL_Latin1_General_CP1_CI_AS ;
 GO
-USE ProjectIndiaCharlie;
+---- Login
+--DROP LOGIN ProjectIndiaCharlieAPI
+--GO
+--CREATE LOGIN ProjectIndiaCharlieAPI
+--WITH Password = 'picAPI',
+--DEFAULT_DATABASE = ProjectIndiaCharlie
+--GO
+
+USE ProjectIndiaCharlie
 GO
 
-CREATE SCHEMA Person;
+CREATE SCHEMA Academic
 GO
-CREATE SCHEMA Academic;
+CREATE SCHEMA Person
 GO
+
+-- API Role
+CREATE ROLE API
+GO
+ALTER AUTHORIZATION ON SCHEMA::db_datareader
+	TO API
+GO
+ALTER AUTHORIZATION ON SCHEMA::db_datawriter
+	TO API
+GO
+
+-- Application User
+CREATE USER projectIndiaCharlie
+FOR LOGIN projectIndiaCharlieAPI
+WITH DEFAULT_SCHEMA = Academic
+GO
+ALTER ROLE API
+ADD MEMBER projectIndiaCharlie
+GO
+
+-- Application Role
+CREATE APPLICATION ROLE Academics
+	WITH PASSWORD='p1c4P1',
+	DEFAULT_SCHEMA = Academic
+GO
+--ALTER AUTHORIZATION ON SCHEMA::Academic
+--TO Academics
+--GO
+--ALTER AUTHORIZATION ON SCHEMA::Person
+--TO Academics
+--GO
+
+DECLARE @Path NVARCHAR(MAX);
+DECLARE @FileLoc NVARCHAR(MAX);
+DECLARE @SQL_BULK VARCHAR(MAX);
+SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+
 
 CREATE TABLE Person.Person(
   PersonID int identity(1110201, 1),
@@ -540,30 +588,20 @@ EXEC [Person].[SP_RegisterPerson]
 GO
 
 
---DECLARE @Path NVARCHAR(MAX);
---DECLARE @FileLoc NVARCHAR(MAX);
---DECLARE @SQL_BULK VARCHAR(MAX);
---SET @Path = 'C:\Users\Nikita\Desktop\Projects\';
 
---SET @FileLoc = @Path + 'Asignaturas1.csv';
 
---SET @SQL_BULK = 'BULK INSERT  Academic.Subject
---FROM  ''' + @FileLoc + '''
---WITH (
---  FIELDTERMINATOR = '';'',
---  ROWTERMINATOR = ''\n'',
---  FIRSTROW = 2,
---  CODEPAGE = ''ACP''
---);' --  
---EXEC (@SQL_BULK);
-BULK INSERT  Academic.Subject
-FROM  'C:\Users\Nikita\Desktop\Projects\Asignaturas.csv'
+
+SET @FileLoc = @Path + 'Asignaturas.csv';
+
+SET @SQL_BULK = 'BULK INSERT  Academic.Subject
+FROM  ''' + @FileLoc + '''
 WITH (
-  FIELDTERMINATOR = ';',
-  ROWTERMINATOR = '\n',
+  FIELDTERMINATOR = '';'',
+  ROWTERMINATOR = ''\n'',
   FIRSTROW = 2,
-  CODEPAGE = 'ACP'
-);
+  CODEPAGE = ''ACP''
+);' --  
+
 --CREATE TABLE Academic.Section(
 --  SubjectDetailID int identity,
 --  ProfessorID int NOT NULL,
