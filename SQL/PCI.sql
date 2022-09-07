@@ -190,8 +190,8 @@ GO
 
 CREATE TABLE Academic.Section(
   SubjectDetailID int identity,
+    SubjectID int NOT NULL,
   ProfessorID int NOT NULL,
-  SubjectID int NOT NULL,
   Section int NOT NULL,
   Trimester int NOT NULL,
   Year int NOT NULL,
@@ -496,155 +496,13 @@ FROM Person.Person pp
 GO
 
 -- Testing
-INSERT INTO Person.Role(RoleName)
-VALUES	('Student'),
-		('Profesor'),
-		('Cordinator');
-		
-INSERT INTO Academic.Classroom(Code, IsLab, Capacity)
-VALUES ('FD402', 0, 20)
-
-INSERT INTO Academic.Grade(Grade, Points)
-VALUES ('A', 4),
-	('B+', 3.5),
-	('B', 3),
-	('C+', 2.5),
-	('C', 2),
-	('D', 1),
-	('F', 0);
-	
-INSERT INTO Academic.Weekday(Name)
-VALUES	('Monday'),
-	('Tuesday'),
-	('Wednesday'),
-	('Thursday'),
-	('Friday'),
-	('Saturday')
-
---EXEC Person.SP_RegisterPerson 
---	@DocNo			= '40231024361', 
---	@FirstName		= 'Nikita', 
---	@MiddleName		= 'Alekseevich', 
---	@FirstSurname	= 'Kravchenko', 
---	@Gender			= 'M', 
---	@BirthDate		= '1998-10-12', 
---	@Email			= 'android.oct7@gmail.com';
---GO
-
---EXEC Person.SP_RegisterPerson 
---	@DocNo			= '98765432109', 
---	@FirstName		= 'Ramón', 
---	@FirstSurname	= 'Ramírez', 
---	@Gender			= 'M', 
---	@BirthDate		= '2000-01-02', 
---	@Email			= 'ran.32@gmail.com';
---GO
-
-EXEC [Person].[SP_RegisterPerson]
-	@DocNo = N'12345678901',
-	@FirstName = N'Roger',
-	@FirstSurname = N'Ramiro',
-	@Gender = N'm',
-	@BirthDate = '1988-02-10',
-	@Email = N'ramiro@mail.com',
-	@RolId = 3,
-	@PasswordHash = N'fdbfd43cca1aed1691d4bd7821d700449d53fd84f419462de98c6504da136687',
-	@PasswordSalt = N'8ui37'
-GO
-
-EXEC Academic.SP_AddCareer
-	@CoordinatorID	= 1110201,
-	@Name			= 'Ingeniería de Software',
-	@Code			= 'IDS',
-	@Subjects		= 111,
-	@Credits		= 279,
-	@Year			= 2020,
-	@IsActive		= 1;  
-GO
-
-EXEC [Person].[SP_RegisterPerson]
-	@DocNo = N'38565826658',
-	@FirstName = N'Raquel',
-	@FirstSurname = N'Rijo',
-	@Gender = N'f',
-	@BirthDate = '2000-01-01',
-	@Email = N'raquelita@mail.net',
-	@RolId = 1,
-	@CareerId = 1,
-	@PasswordHash = N'e14ceeffc3107c5956645fe09232515ed7d2af3048eea37e2571bd340c7ef05a',
-	@PasswordSalt = N'jj331'
-GO
-
-EXEC [Person].[SP_RegisterPerson]
-	@DocNo = N'38565826658',
-	@FirstName = N'Raquel',
-	@FirstSurname = N'Rijo',
-	@Gender = N'f',
-	@BirthDate = '2000-01-01',
-	@Email = N'raquelita@mail.net',
-	@RolId = 2,
-	@PasswordHash = N'e14ceeffc3107c5956645fe09232515ed7d2af3048eea37e2571bd340c7ef05a',
-	@PasswordSalt = N'jj331'
-GO
 
 
-
-
-
-SET @FileLoc = @Path + 'Asignaturas.csv';
-
-SET @SQL_BULK = 'BULK INSERT  Academic.Subject
-FROM  ''' + @FileLoc + '''
-WITH (
-  FIELDTERMINATOR = '';'',
-  ROWTERMINATOR = ''\n'',
-  FIRSTROW = 2,
-  CODEPAGE = ''ACP''
-);' --  
-
---CREATE TABLE Academic.Section(
---  SubjectDetailID int identity,
---  ProfessorID int NOT NULL,
---  SubjectID int NOT NULL,
---  Section int NOT NULL,
---  Trimester int NOT NULL,
---  Year int NOT NULL,
---  CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
---  ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
---);
 
 SELECT * FROM Person.F_Login('1110202', 'e14ceeffc3107c5956645fe09232515ed7d2af3048eea37e2571bd340c7ef05a')
 GO
 
---UPDATE Person.Person 
---SET 
---    --DocNo = '40243310243',
---	Email = 'androidd@mail.com'
---WHERE
---    PersonID = 1;
 
---EXEC Person.SP_AssignRole
---	@PersonID	= 1110202,
---	@RoleId		= 2;
-
---EXEC Person.SP_AssignRole
---	@PersonID	= 1110202,
---	@RoleId		= 3;
-
---EXEC Person.SP_AssignRole
---	@PersonID	= 1110201,
---	@RoleId		= 1,
---	@CareerID = 1;
-
---EXEC Person.SP_UpsertPassword 
---@PersonID	= 1110201,
---@PasswordHash = '7aa29861c7da79138967fcdf217112320bb79afbab5cb5d470a040a1f473f96d',
---@PasswordSalt = 'jbchk';
-
---EXEC Person.SP_UpsertPassword 
---@PersonID	= 1110202,
---@PasswordHash = 'd87c4581fc345b94449702d0ed8e954adaaa07ee86417decdf0a07fad4b9d4dd',
---@PasswordSalt = '12345';
 
 SELECT * FROM Person.Person;
 SELECT * FROM Person.PersonPassword;
