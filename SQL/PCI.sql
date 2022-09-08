@@ -314,6 +314,8 @@ CREATE OR ALTER PROCEDURE Person.SP_RegisterPerson
 	@PasswordHash nvarchar(64),
 	@PasswordSalt nvarchar(5)
 AS
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+	BEGIN TRAN
 	DECLARE @personId int
 
 	IF NOT EXISTS(
@@ -330,6 +332,23 @@ AS
 		SET @personId = (SELECT pp.PersonID FROM Person.Person pp WHERE pp.DocNo = FORMAT(CAST(@DocNo as bigint), '000-0000000-0'))
 		EXEC Person.SP_UpsertPassword @personId, @PasswordHash, @PasswordSalt
 	END
+	
+	IF (@RolId = 1)
+	BEGIN
+		INSERT INTO Academic.Student(PersonID)
+		VALUES(@personId)
+		COMMIT
+		RETURN 1
+	END
+	ELSE IF (@RolId	 = 2)
+	BEGIN
+		INSERT INTO Academic.Professor(PersonID)
+		VALUES(@personId)
+		COMMIT
+		RETURN 1
+	END
+
+	RETURN 0
 GO
 
 -- Functions
@@ -387,17 +406,6 @@ BEGIN
     UPDATE Person.Person
     SET ModifiedDate = GETDATE()
     WHERE PersonID =(Select PersonID from Inserted)
-END 
-GO
-
-CREATE TRIGGER RoleModifiedPersonPerson
-    ON Person.PersonRole
-    AFTER UPDATE
-AS
-BEGIN
-    UPDATE Person.PersonRole 
-    SET ModifiedDate = GETDATE()
-    WHERE PersonID =(Select PersonID from Inserted) AND RoleID =(Select RoleID from Inserted)
 END 
 GO
 

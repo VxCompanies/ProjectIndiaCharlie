@@ -141,7 +141,6 @@ SELECT * FROM Person.PersonPassword;
 
 SELECT * FROM Academic.Career;
 SELECT * FROM Academic.Classroom;
-SELECT * FROM Academic.Coordinator;
 SELECT * FROM Academic.Grade;
 SELECT * FROM Academic.Professor;
 SELECT * FROM Academic.Schedule;
