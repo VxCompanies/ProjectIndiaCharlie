@@ -18,9 +18,6 @@ builder.Services.AddDbContext<ProjectIndiaCharlieContext>(
         builder.Configuration.GetConnectionString("DefaultConnection")
          ));
 
-var context = new ProjectIndiaCharlieContext()
-    .Database.ExecuteSqlRaw("sp_setapprole", "Academics", "p1c4P1");
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

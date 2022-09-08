@@ -1,10 +1,8 @@
-
-
 DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
-SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-
+--SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -18,12 +16,6 @@ WITH (
 );' --  
 EXEC(@SQL_BULK);
 
-
-INSERT INTO Person.Role(RoleName)
-VALUES	('Student'),
-		('Profesor'),
-		('Cordinator');
-		
 INSERT INTO Academic.Classroom(Code, IsLab, Capacity)
 VALUES ('FD402', 0, 20)
 
@@ -44,7 +36,6 @@ VALUES	('Monday'),
 	('Friday'),
 	('Saturday');
 
-
 ----Register cordinadores y  careras
 --Medicina
 EXEC [Person].[SP_RegisterPerson]
@@ -53,10 +44,10 @@ EXEC [Person].[SP_RegisterPerson]
 	@MiddleName = N'Nicole',
 	@FirstSurname = N'Tejada',
 	@SecondSurname = N'Diaz',
-	@Gender = N'm',
+	@Gender = N'f',
 	@BirthDate = '1978-04-02',
 	@Email = N'Miguelrodrig@mail.net',
-	@RolId = 3,
+	@RolId = 2,
 	@PasswordHash = N'e14ceeffc3107c5956645fe09232515ed7d2af3048eea37e2571bd340c7ef05a',
 	@PasswordSalt = N'jj331'
 GO
@@ -78,7 +69,7 @@ EXEC [Person].[SP_RegisterPerson]
 	@Gender = N'm',
 	@BirthDate = '1988-02-10',
 	@Email = N'ramiro@mail.com',
-	@RolId = 3,
+	@RolId = 2,
 	@PasswordHash = N'fdbfd43cca1aed1691d4bd7821d700449d53fd84f419462de98c6504da136687',
 	@PasswordSalt = N'8ui37'
 GO
@@ -101,7 +92,7 @@ EXEC [Person].[SP_RegisterPerson]
 	@Gender = N'm',
 	@BirthDate = '1979-11-9',
 	@Email = N'OliverLedesma@mail.com',
-	@RolId = 3,
+	@RolId = 2,
 	@PasswordHash = N'fdbfd43cca1aed1691d4bd7821d700449d53fd84f419462de98c6504da136687',
 	@PasswordSalt = N'8ui37'
 GO
@@ -116,7 +107,6 @@ EXEC Academic.SP_AddCareer
 	@IsActive		= 1;  
 GO
 
---
 ----Registrar estudiantes
 
 EXEC [Person].[SP_RegisterPerson]
@@ -148,8 +138,6 @@ GO
 
 SELECT * FROM Person.Person;
 SELECT * FROM Person.PersonPassword;
-SELECT * FROM Person.PersonRole;
-SELECT * FROM Person.Role;
 
 SELECT * FROM Academic.Career;
 SELECT * FROM Academic.Classroom;
@@ -194,7 +182,6 @@ SELECT * FROM Academic.Weekday;
 --@PasswordHash = 'd87c4581fc345b94449702d0ed8e954adaaa07ee86417decdf0a07fad4b9d4dd',
 --@PasswordSalt = '12345';
 
-
 --EXEC Person.SP_RegisterPerson 
 --	@DocNo			= '40231024361', 
 --	@FirstName		= 'Nikita', 
@@ -213,5 +200,3 @@ SELECT * FROM Academic.Weekday;
 --	@BirthDate		= '2000-01-02', 
 --	@Email			= 'ran.32@gmail.com';
 --GO
-
-
