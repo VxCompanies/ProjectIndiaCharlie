@@ -145,11 +145,11 @@ CREATE TABLE Academic.Subject(
 	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
 	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
 
-	PRIMARY KEY(SubjectID),
+	PRIMARY KEY(SubjectID)
 )
 GO
 
-CREATE TABLE Academic.Section(
+CREATE TABLE Academic.SubjectDetail(
 	SubjectDetailID int identity,
 	SubjectID int NOT NULL,
 	ProfessorID int NOT NULL,
@@ -161,11 +161,11 @@ CREATE TABLE Academic.Section(
 
 	PRIMARY KEY(SubjectDetailID),
 	FOREIGN KEY(ProfessorID) REFERENCES Academic.Professor(PersonID),  
-	FOREIGN KEY(SubjectID) REFERENCES Academic.Subject(SubjectID),
+	FOREIGN KEY(SubjectID) REFERENCES Academic.Subject(SubjectID)
 )
 GO
 
-CREATE TABLE Academic.SubjectStudent(
+CREATE TABLE Academic.StudentSubject(
 	SubjectDetailID int,
 	StudentID int,
 	GradeID int NULL,
@@ -174,7 +174,7 @@ CREATE TABLE Academic.SubjectStudent(
 
 	PRIMARY KEY(SubjectDetailID, StudentID),
 	FOREIGN KEY(StudentID) REFERENCES Academic.Student(PersonID),  
-	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.Section(SubjectDetailID)
+	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID)
 )
 GO
 
@@ -196,7 +196,7 @@ CREATE TABLE Academic.SubjectClassroom(
 	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
 	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
 
-	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.Section(SubjectDetailID),
+	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
 	FOREIGN KEY(ClassroomID) REFERENCES Academic.Classroom(ClassroomID),
 	PRIMARY KEY(SubjectDetailID, ClassroomID)
 )
@@ -222,13 +222,13 @@ CREATE TABLE Academic.Schedule(
 	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
 
 	PRIMARY KEY(ScheduleID),
-	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.Section(SubjectDetailID),
+	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
 	FOREIGN KEY(WeekdayID) REFERENCES Academic.Weekday(WeekdayID)
 )
 GO
 
 -- Views
-CREATE OR ALTER VIEW Academic.vStudents
+CREATE OR ALTER VIEW Academic.vStudentDetails
 AS
 SELECT pp.PersonID,
 	pp.DocNo,
@@ -251,7 +251,22 @@ FROM Person.Person pp
 	INNER JOIN Academic.Career ac ON ast.CareerID = ac.CareerID
 GO
 
-CREATE OR ALTER VIEW Academic.vProfessors
+CREATE OR ALTER VIEW Academic.vProfessorDetails
+AS
+SELECT pp.PersonID,
+	pp.DocNo,
+	pp.FirstName,
+	pp.MiddleName,
+	pp.FirstSurname,
+	pp.SecondSurname,
+	pp.Gender,
+	pp.BirthDate,
+	pp.Email
+FROM Person.Person pp
+	INNER JOIN Academic.Professor ap ON pp.PersonID = ap.PersonID
+GO
+
+CREATE OR ALTER VIEW Academic.vPeopleDetails
 AS
 SELECT pp.PersonID,
 	pp.DocNo,
@@ -267,7 +282,7 @@ FROM Person.Person pp
 GO
 
 -- Procedures
-CREATE OR ALTER PROCEDURE Person.SP_UpsertPassword
+CREATE OR ALTER PROCEDURE Person.SP_PasswordUpsert
 	@PersonID		int,
 	@PasswordHash	nvarchar(64),
 	@PasswordSalt	nvarchar(5)
@@ -275,20 +290,21 @@ AS
 	IF EXISTS(
 		SELECT 1
 		FROM Person.PersonPassword pp
-		WHERE pp.PersonID = @personID)
+		WHERE pp.PersonID = @personID
+	)
     BEGIN
         UPDATE Person.PersonPassword
         SET PasswordHash = @passwordHash
         WHERE PersonID = @personID
+		RETURN 0
     END
-	ELSE
-		BEGIN
-		INSERT INTO Person.PersonPassword(PersonID, PasswordHash, PasswordSalt)
-		VALUES(@PersonID, @PasswordHash, @PasswordSalt);
-		END
+
+	INSERT INTO Person.PersonPassword(PersonID, PasswordHash, PasswordSalt)
+	VALUES(@PersonID, @PasswordHash, @PasswordSalt)
+	RETURN 1
 GO  
 
-CREATE OR ALTER PROCEDURE Academic.SP_AddCareer
+CREATE OR ALTER PROCEDURE Academic.SP_CareerRegistration
 	@Name			nvarchar(50),
 	@Code			nvarchar(3),
 	@Subjects		int,
@@ -297,10 +313,11 @@ CREATE OR ALTER PROCEDURE Academic.SP_AddCareer
 	@IsActive		bit 
 AS   
 	INSERT INTO Academic.Career(Name, Code, Subjects, Credits, Year, IsActive)
-	VALUES(@Name, @Code, @Subjects, @Credits, @Year, @IsActive);
-GO  
+	VALUES(@Name, @Code, @Subjects, @Credits, @Year, @IsActive)
+	RETURN 1
+GO
 
-CREATE OR ALTER PROCEDURE Person.SP_RegisterPerson
+CREATE OR ALTER PROCEDURE Person.SP_PersonRegistration
 	@DocNo nvarchar(11),
 	@FirstName nvarchar(50),
 	@MiddleName nvarchar(50) = null,
@@ -308,51 +325,112 @@ CREATE OR ALTER PROCEDURE Person.SP_RegisterPerson
 	@SecondSurname nvarchar(50) = null,
 	@Gender nvarchar(1),
 	@BirthDate date,
-	@Email nvarchar(255),
-	@RolId int,
-	@CareerId int = 0,
-	@PasswordHash nvarchar(64),
-	@PasswordSalt nvarchar(5)
+	@Email nvarchar(255)
 AS
-	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
-	BEGIN TRAN
-	DECLARE @personId int
-
-	IF NOT EXISTS(
-		SELECT 1
-		FROM Person.Person pp
-		WHERE pp.DocNo = FORMAT(CAST(@DocNo as bigint), '000-0000000-0')
-	)
-	BEGIN
-		INSERT INTO Person.Person(DocNo, FirstName, MiddleName, FirstSurname, SecondSurname,
-					Gender, BirthDate, Email)
-		VALUES(FORMAT(CAST(@DocNo as bigint), '000-0000000-0'), @FirstName, @MiddleName, @FirstSurname, @SecondSurname,
-				UPPER(@Gender), @BirthDate, LOWER(@Email))
-
-		SET @personId = (SELECT pp.PersonID FROM Person.Person pp WHERE pp.DocNo = FORMAT(CAST(@DocNo as bigint), '000-0000000-0'))
-		EXEC Person.SP_UpsertPassword @personId, @PasswordHash, @PasswordSalt
-	END
-	
-	IF (@RolId = 1)
-	BEGIN
-		INSERT INTO Academic.Student(PersonID)
-		VALUES(@personId)
-		COMMIT
-		RETURN 1
-	END
-	ELSE IF (@RolId	 = 2)
-	BEGIN
-		INSERT INTO Academic.Professor(PersonID)
-		VALUES(@personId)
-		COMMIT
-		RETURN 1
-	END
-
-	RETURN 0
+	INSERT INTO Person.Person(DocNo, FirstName, MiddleName, FirstSurname, SecondSurname,
+				Gender, BirthDate, Email)
+	VALUES(FORMAT(CAST(@DocNo as bigint), '000-0000000-0'), @FirstName, @MiddleName, @FirstSurname, @SecondSurname,
+			UPPER(@Gender), @BirthDate, LOWER(@Email))
+	RETURN 1
 GO
 
+CREATE OR ALTER PROCEDURE Academic.SP_StudentRegistration
+	@PersonID int,
+	@CareerID int
+AS
+	INSERT INTO Academic.Student(PersonID, CareerID)
+	VALUES(@personId, @CareerId)
+	RETURN 1
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_ProfessorRegistration
+	@PersonID int
+AS
+	INSERT INTO Academic.Professor(PersonID)
+	VALUES(@personId)
+	RETURN 1
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_SubjectSelection
+	@SubjectDetailID int,
+	@StudentID int
+AS
+	INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
+	VALUES(@SubjectDetailID, @StudentID)
+	RETURN 1
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_SubjectClassroomAssignment
+	@SubjectDetailID int,
+	@ClassroomID int
+AS
+	INSERT INTO Academic.SubjectClassroom(SubjectDetailID, ClassroomID)
+	VALUES(@SubjectDetailID, @ClassroomID)
+	RETURN 1
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_ScheduleAssignment
+	@SubjectDetailID int,
+	@WeekdayID int,
+	@StartTime int,
+	@EndTime int
+AS
+	INSERT INTO Academic.Schedule(SubjectDetailID, WeekdayID, StartTime, EndTime)
+	VALUES(@SubjectDetailID, @WeekdayID, @StartTime, @EndTime)
+	RETURN 1
+GO
+DECLARE @gg bit
+SELECT Person.F_ScheduleValidation(1, 3, 5)
 -- Functions
-CREATE FUNCTION Person.F_PasswordValidation(
+CREATE OR ALTER FUNCTION Person.F_DocNoValidation(
+	@DocNo nvarchar(11)
+)
+RETURNS BIT
+AS
+	BEGIN
+		IF NOT EXISTS(
+			SELECT 1
+			FROM Person.Person pp
+			WHERE pp.DocNo = FORMAT(CAST(@DocNo as bigint), '000-0000000-0')
+		)
+			RETURN 0
+		RETURN 1
+	END
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_StudentValidation(
+	@PersonID int
+)
+RETURNS BIT
+AS
+	BEGIN
+		IF NOT EXISTS(
+			SELECT 1
+			FROM Academic.Student Ast
+			WHERE Ast.PersonID = @PersonID
+		)
+			RETURN 0
+		RETURN 1
+	END
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_ProfessorValidation(
+	@PersonID int
+)
+RETURNS BIT
+AS
+	BEGIN
+		IF NOT EXISTS(
+			SELECT 1
+			FROM Academic.Professor Apr
+			WHERE Apr.PersonID = @PersonID
+		)
+			RETURN 0
+		RETURN 1
+	END
+GO
+
+CREATE OR ALTER FUNCTION Person.F_PasswordValidation(
 	@PersonID int,
 	@PasswordHash nvarchar(64)
 )
@@ -370,6 +448,27 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER FUNCTION Academic.F_ScheduleValidation(
+	@WeekdayID int,
+	@StartTime int,
+	@EndTime int
+)
+RETURNS BIT
+AS
+BEGIN
+    IF EXISTS(
+		SELECT * 
+		FROM Academic.Schedule Asch
+		WHERE Asch.WeekdayID = @WeekdayID AND (
+			(Asch.StartTime BETWEEN @StartTime AND @EndTime) OR
+			(Asch.EndTime BETWEEN @StartTime AND @EndTime)
+		)
+	)
+		RETURN 1
+	RETURN 0
+END
+GO
+
 -- Login
 CREATE OR ALTER FUNCTION Person.F_StudentLogin(
 	@PersonID int,
@@ -378,9 +477,9 @@ CREATE OR ALTER FUNCTION Person.F_StudentLogin(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT *
-		FROM Academic.vStudents Avs
-		WHERE Avs.PersonID = @PersonID AND
+		SELECT Ast.*
+		FROM Academic.Student Ast
+		WHERE Ast.PersonID = @PersonID AND
 			1 = (SELECT Person.F_PasswordValidation(@PersonID, @PasswordHash))
 
 GO
@@ -392,9 +491,9 @@ CREATE OR ALTER FUNCTION Person.F_ProfessorLogin(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT Avp.*
-		FROM Academic.vStudents Avp
-		WHERE Avp.PersonID = @PersonID
+		SELECT Ap.*
+		FROM Academic.Professor Ap
+		WHERE Ap.PersonID = @PersonID
 GO
 
 -- Triggers

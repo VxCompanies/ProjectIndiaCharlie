@@ -38,7 +38,7 @@ VALUES	('Monday'),
 
 ----Register cordinadores y  careras
 --Medicina
-EXEC [Person].[SP_RegisterPerson]
+EXEC [Person].[SP_PersonRegistration]
 	@DocNo = N'38564444658',
 	@FirstName = N'María',
 	@MiddleName = N'Nicole',
@@ -51,18 +51,9 @@ EXEC [Person].[SP_RegisterPerson]
 	@PasswordHash = N'e14ceeffc3107c5956645fe09232515ed7d2af3048eea37e2571bd340c7ef05a',
 	@PasswordSalt = N'jj331'
 GO
-EXEC Academic.SP_AddCareer
-	@CoordinatorID	= 1110201,
-	@Name			= 'Medicina',
-	@Code			= 'MED',
-	@Subjects		= 204,
-	@Credits		= 425,
-	@Year			= 2020,
-	@IsActive		= 1;  
-GO
 
 --Software
-EXEC [Person].[SP_RegisterPerson]
+EXEC [Person].[SP_PersonRegistration]
 	@DocNo = N'12345678901',
 	@FirstName = N'Roger',
 	@FirstSurname = N'Ramiro',
@@ -74,19 +65,9 @@ EXEC [Person].[SP_RegisterPerson]
 	@PasswordSalt = N'8ui37'
 GO
 
-EXEC Academic.SP_AddCareer
-	@CoordinatorID	= 1110202,
-	@Name			= 'Ingeniería de Software',
-	@Code			= 'IDS',
-	@Subjects		= 111,
-	@Credits		= 279,
-	@Year			= 2020,
-	@IsActive		= 1;  
-GO
-
 --Ing mecanica
-EXEC [Person].[SP_RegisterPerson]
-	@DocNo = N'12987308901',
+EXEC [Person].[SP_PersonRegistration]
+	@DocNo = N'09876543210',
 	@FirstName = N'Oliver ',
 	@FirstSurname = N'Ledesma',
 	@Gender = N'm',
@@ -97,20 +78,9 @@ EXEC [Person].[SP_RegisterPerson]
 	@PasswordSalt = N'8ui37'
 GO
 
-EXEC Academic.SP_AddCareer
-	@CoordinatorID	= 1110203,
-	@Name			= 'Ingeniería Mecánica',
-	@Code			= 'MEC',
-	@Subjects		= 112,
-	@Credits		= 280,
-	@Year			= 2020,
-	@IsActive		= 1;  
-GO
-
 ----Registrar estudiantes
-
-EXEC [Person].[SP_RegisterPerson]
-	@DocNo = N'38565826658',
+EXEC [Person].[SP_PersonRegistration]
+	@DocNo = N'29387404672',
 	@FirstName = N'Raquel',
 	@FirstSurname = N'Rijo',
 	@Gender = N'f',
@@ -122,8 +92,8 @@ EXEC [Person].[SP_RegisterPerson]
 	@PasswordSalt = N'jj331'
 GO
 --Agregar rol de profe
-EXEC [Person].[SP_RegisterPerson]
-	@DocNo = N'38565826658',
+EXEC [Person].[SP_PersonRegistration]
+	@DocNo = N'5468765884',
 	@FirstName = N'Raquel',
 	@FirstSurname = N'Rijo',
 	@Gender = N'f',
@@ -181,7 +151,7 @@ SELECT * FROM Academic.Weekday;
 --@PasswordHash = 'd87c4581fc345b94449702d0ed8e954adaaa07ee86417decdf0a07fad4b9d4dd',
 --@PasswordSalt = '12345';
 
---EXEC Person.SP_RegisterPerson 
+--EXEC Person.SP_PersonRegistration 
 --	@DocNo			= '40231024361', 
 --	@FirstName		= 'Nikita', 
 --	@MiddleName		= 'Alekseevich', 
@@ -191,7 +161,7 @@ SELECT * FROM Academic.Weekday;
 --	@Email			= 'android.oct7@gmail.com';
 --GO
 
---EXEC Person.SP_RegisterPerson 
+--EXEC Person.SP_PersonRegistration 
 --	@DocNo			= '98765432109', 
 --	@FirstName		= 'Ramón', 
 --	@FirstSurname	= 'Ramírez', 

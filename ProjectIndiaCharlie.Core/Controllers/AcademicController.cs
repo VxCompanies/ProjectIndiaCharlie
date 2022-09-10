@@ -13,16 +13,16 @@ namespace ProjectIndiaCharlie.Core.Controllers
 
         public AcademicController(ProjectIndiaCharlieContext context) => _context = context;
 
-        [HttpGet("Student/Subjects")]
-        public async Task<ActionResult<IEnumerable<SubjectStudent>>> GetStudentSubjects(int studentId)
-        {
-            var subjects = await _context.SubjectStudents.Include(s => s.SubjectDetail.Subject)
-                .Where(s => s.StudentId == studentId)
-                .ToListAsync();
+        //[HttpGet("Student/Subjects")]
+        //public async Task<ActionResult<IEnumerable<SubjectStudent>>> GetStudentSubjects(int studentId)
+        //{
+        //    var subjects = await _context.Student.Include(s => s.SubjectDetail.Subject)
+        //        .Where(s => s.StudentId == studentId)
+        //        .ToListAsync();
 
-            return subjects is null ?
-                NotFound() :
-                Ok(subjects);
-        }
+        //    return subjects is null ?
+        //        NotFound() :
+        //        Ok(subjects);
+        //}
     }
 }

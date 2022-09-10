@@ -11,7 +11,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual Student Student { get; set; } = null!;
-        public virtual Section SubjectDetail { get; set; } = null!;
+        public virtual Student? Student { get; set; }
+        public virtual Section? SubjectDetail { get; set; }
     }
 }

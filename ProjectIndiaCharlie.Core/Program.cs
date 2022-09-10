@@ -15,7 +15,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ProjectIndiaCharlieContext>(
     options => options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
+        builder.Configuration.GetConnectionString("ScaffoldingConnection")
+        //builder.Configuration.GetConnectionString("DefaultConnection")
          ));
 
 var app = builder.Build();

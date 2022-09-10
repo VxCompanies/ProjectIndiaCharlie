@@ -7,8 +7,8 @@ namespace ProjectIndiaCharlie.Web.Service;
 public static class PersonService
 {
     private const string mediaType = "application/json";
-    private const string baseUrl = "https://localhost:7073/api/Person";
-    private const string getPeopleUrl = $"{baseUrl}/People/List";
+    private const string baseUrl = "https://50ab-148-103-213-102.ngrok.io/api/Person";
+    private const string getPeopleUrl = $"{baseUrl}/List";
     private const string loginUrl = $"{baseUrl}/Login";
     private const string registerStudentUrl = $"{baseUrl}/Student/Registration";
 
@@ -62,28 +62,6 @@ public static class PersonService
             using var httpClient = new HttpClient();
 
             var json = JsonSerializer.Serialize(student);
-            var content = new StringContent(json, Encoding.UTF8, mediaType);
-
-            var response = await httpClient.PostAsync(registerStudentUrl, content);
-
-            if (!response.IsSuccessStatusCode)
-                return false;
-
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    public static async Task<bool> RegisterPerson(Professor professor)
-    {
-        try
-        {
-            using var httpClient = new HttpClient();
-
-            var json = JsonSerializer.Serialize(professor);
             var content = new StringContent(json, Encoding.UTF8, mediaType);
 
             var response = await httpClient.PostAsync(registerStudentUrl, content);

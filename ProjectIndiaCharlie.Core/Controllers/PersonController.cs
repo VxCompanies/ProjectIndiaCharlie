@@ -15,33 +15,33 @@ public class PersonController : ControllerBase
 
     public PersonController(ProjectIndiaCharlieContext context) => _context = context;
 
-    [HttpGet("Login")]
-    public async Task<ActionResult<Person>> Login(int personId, string password)
-    {
-        var user = await _context.People.Include(c => c.Student.Career.Coordinator.Person)
-            .Include(s => s.Student.SubjectStudents)
-            //.Include(s => s.Student.SubjectStudents.FirstOrDefault().SubjectDetail.Professor)
-            //.Include(s => s.Student.SubjectStudents.FirstOrDefault().SubjectDetail.Schedules)
-            .Include(p => p.Professor.Sections)
-            .Include(c => c.Coordinator)
-            .Include(p => p.PersonPassword)
-            .Include(r => r.PersonRoles)
-            .Include(s => s.Professor.Sections)
-            //.Include(s => s.)
-            .FirstOrDefaultAsync(p => p.PersonId == personId);
+    //[HttpGet("Login")]
+    //public async Task<ActionResult<Person>> Login(int personId, string password)
+    //{
+    //    var user = await _context.People.Include(c => c.Student.Career.Coordinators.Person)
+    //        .Include(s => s.Student.SubjectStudents)
+    //        //.Include(s => s.Student.SubjectStudents.FirstOrDefault().SubjectDetail.Professor)
+    //        //.Include(s => s.Student.SubjectStudents.FirstOrDefault().SubjectDetail.Schedules)
+    //        .Include(p => p.Professor.Sections)
+    //        .Include(c => c.Coordinator)
+    //        .Include(p => p.PersonPassword)
+    //        .Include(r => r.PersonRoles)
+    //        .Include(s => s.Professor.Sections)
+    //        //.Include(s => s.)
+    //        .FirstOrDefaultAsync(p => p.PersonId == personId);
 
-        if (user is null)
-            return NotFound();
+    //    if (user is null)
+    //        return NotFound();
 
-        var passwordHash = PasswordHelpers.GetPasswordHash(password, user.PersonPassword!.PasswordSalt);
+    //    var passwordHash = PasswordHelpers.GetPasswordHash(password, user.PersonPassword!.PasswordSalt);
 
-        //if (_context.People.FromSqlRaw("Person.F_Login", personId, passwordHash) is null)
-        //    return NotFound();
+    //    //if (_context.People.FromSqlRaw("Person.F_Login", personId, passwordHash) is null)
+    //    //    return NotFound();
 
-        return (user.PersonPassword.PasswordHash == passwordHash) ?
-            Ok(user) :
-            NotFound();
-    }
+    //    return (user.PersonPassword.PasswordHash == passwordHash) ?
+    //        Ok(user) :
+    //        NotFound();
+    //}
 
     #region People
     [HttpGet("List")]
@@ -50,12 +50,19 @@ public class PersonController : ControllerBase
         NotFound() :
         Ok(await _context.People
             .Include(p => p.Professor)
-            .Include(c => c.Coordinator)
             .Include(p => p.PersonPassword)
             .ToListAsync());
 
     [HttpGet("Search")]
-    public async Task<ActionResult<Person?>> GetPerson(int personId) => await _context.People.FirstOrDefaultAsync(p => p.PersonId == personId);
+    public async Task<ActionResult<Person?>> GetPerson(int personId)
+    {
+        var personSearchParameter = new SqlParameter("", personId);
+        var person = await _context.People.FromSqlRaw("Person.F_PersonSearch", personSearchParameter)
+                    .FirstOrDefaultAsync();
+        return person is null ?
+            NotFound() :
+            Ok(person);
+    }
     #endregion
 
     #region Student
@@ -67,7 +74,7 @@ public class PersonController : ControllerBase
         if (await _context.Students.FindAsync(student.PersonId) != null)
             return Conflict();
 
-        if (await _context.People.AnyAsync(p => p.DocNo == student.Person.DocNo))
+        if (await _context.People.AnyAsync(p => p.DocNo == student.Person!.DocNo))
             student.Person = new();
 
         var spParams = new List<SqlParameter>
@@ -94,6 +101,7 @@ public class PersonController : ControllerBase
         }
         catch (DbUpdateException e)
         {
+            await _context.Database.RollbackTransactionAsync();
             return Problem(detail: e.Message);
         }
 
@@ -159,48 +167,6 @@ public class PersonController : ControllerBase
         }
 
         return CreatedAtAction("RegisterProfessor", professor);
-    }
-    #endregion
-
-    #region Coordinator
-    [HttpPost("Coordinator/Registration")]
-    public async Task<ActionResult<Student>> RegisterCoordinator(Coordinator coordinator)
-    {
-        var tran = _context.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
-
-        if (await _context.Coordinators.FindAsync(coordinator.PersonId) != null)
-            return Conflict();
-
-        if (await _context.People.AnyAsync(p => p.DocNo == coordinator.Person.DocNo))
-            coordinator.Person = new();
-
-        var spParams = new List<SqlParameter>
-        {
-            new("@DocNo", coordinator.Person.DocNo),
-            new("@FirstName", coordinator.Person.FirstName),
-            new("@MiddleName", coordinator.Person.MiddleName),
-            new("@FirstSurname", coordinator.Person.FirstSurname),
-            new("@SecondSurname", coordinator.Person.SecondSurname),
-            new("@Gender", coordinator.Person.Gender),
-            new("@BirthDate", coordinator.Person.BirthDate),
-            new("@Email", coordinator.Person.Email),
-            new("@RolId", 3),
-            new("@PasswordHash", coordinator.Person.PersonPassword!.PasswordHash),
-            new("@PasswordSalt", coordinator.Person.PersonPassword!.PasswordSalt),
-        };
-
-        try
-        {
-            await tran;
-            await _context.Database.ExecuteSqlRawAsync("Person.SP_RegisterPerson", spParams);
-            await _context.Database.CommitTransactionAsync();
-        }
-        catch (DbUpdateException e)
-        {
-            return Problem(detail: e.Message);
-        }
-
-        return CreatedAtAction("RegisterCoordinator", coordinator);
     }
     #endregion
 }

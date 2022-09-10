@@ -14,7 +14,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual Person Person { get; set; } = null!;
+        public virtual Person? Person { get; set; }
         public virtual ICollection<Section> Sections { get; set; }
     }
 }
