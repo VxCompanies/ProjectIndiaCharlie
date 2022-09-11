@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjectIndiaCharlie.Core.Models
 {
-    public partial class VProfessor
+    public partial class VProfessorDetail
     {
         public int PersonId { get; set; }
         public string DocNo { get; set; } = null!;
@@ -14,5 +14,6 @@ namespace ProjectIndiaCharlie.Core.Models
         public string Gender { get; set; } = null!;
         public DateTime BirthDate { get; set; }
         public string Email { get; set; } = null!;
+        public string PasswordSalt { get; set; } = null!;
     }
 }

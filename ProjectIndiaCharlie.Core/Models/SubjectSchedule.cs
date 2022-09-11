@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace ProjectIndiaCharlie.Core.Models
 {
-    public partial class Schedule
+    public partial class SubjectSchedule
     {
-        public int ScheduleId { get; set; }
+        public int SubjectScheduleId { get; set; }
         public int SubjectDetailId { get; set; }
         public int WeekdayId { get; set; }
         public int StartTime { get; set; }
@@ -13,7 +13,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual Section SubjectDetail { get; set; } = null!;
+        public virtual SubjectDetail SubjectDetail { get; set; } = null!;
         public virtual Weekday Weekday { get; set; } = null!;
     }
 }

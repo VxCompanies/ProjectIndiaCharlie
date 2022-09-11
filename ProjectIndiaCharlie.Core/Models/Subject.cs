@@ -7,7 +7,7 @@ namespace ProjectIndiaCharlie.Core.Models
     {
         public Subject()
         {
-            Sections = new HashSet<Section>();
+            SubjectDetails = new HashSet<SubjectDetail>();
         }
 
         public int SubjectId { get; set; }
@@ -17,6 +17,6 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual ICollection<Section> Sections { get; set; }
+        public virtual ICollection<SubjectDetail> SubjectDetails { get; set; }
     }
 }

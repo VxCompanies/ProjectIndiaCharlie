@@ -7,7 +7,7 @@ namespace ProjectIndiaCharlie.Core.Models
     {
         public Weekday()
         {
-            Schedules = new HashSet<Schedule>();
+            SubjectSchedules = new HashSet<SubjectSchedule>();
         }
 
         public int WeekdayId { get; set; }
@@ -15,6 +15,6 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual ICollection<Schedule> Schedules { get; set; }
+        public virtual ICollection<SubjectSchedule> SubjectSchedules { get; set; }
     }
 }

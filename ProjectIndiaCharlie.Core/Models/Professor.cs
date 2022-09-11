@@ -7,14 +7,14 @@ namespace ProjectIndiaCharlie.Core.Models
     {
         public Professor()
         {
-            Sections = new HashSet<Section>();
+            SubjectDetails = new HashSet<SubjectDetail>();
         }
 
         public int PersonId { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual Person? Person { get; set; }
-        public virtual ICollection<Section> Sections { get; set; }
+        public virtual Person Person { get; set; } = null!;
+        public virtual ICollection<SubjectDetail> SubjectDetails { get; set; }
     }
 }

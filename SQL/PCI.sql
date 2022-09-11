@@ -180,7 +180,7 @@ GO
 
 CREATE TABLE Academic.Classroom(
 	ClassroomID int identity,
-	Code nvarchar(5) NOT NULL,
+	Code nvarchar(7) NOT NULL,
 	IsLab bit NOT NULL,
 	Capacity int NOT NULL,
 	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
@@ -212,8 +212,8 @@ CREATE TABLE Academic.Weekday(
 )
 GO
 
-CREATE TABLE Academic.Schedule(
-	ScheduleID int identity,
+CREATE TABLE Academic.SubjectSchedule(
+	SubjectScheduleID int identity,
 	SubjectDetailID int NOT NULL,
 	WeekdayID int NOT NULL,
 	StartTime int NOT NULL,
@@ -221,14 +221,14 @@ CREATE TABLE Academic.Schedule(
 	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
 	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
 
-	PRIMARY KEY(ScheduleID),
+	PRIMARY KEY(SubjectScheduleID),
 	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
 	FOREIGN KEY(WeekdayID) REFERENCES Academic.Weekday(WeekdayID)
 )
 GO
 
 -- Views
-CREATE OR ALTER VIEW Academic.vStudentDetails
+CREATE OR ALTER VIEW Person.vPeopleDetails
 AS
 SELECT pp.PersonID,
 	pp.DocNo,
@@ -238,7 +238,15 @@ SELECT pp.PersonID,
 	pp.SecondSurname,
 	pp.Gender,
 	pp.BirthDate,
-	pp.Email, 
+	pp.Email,
+	Ppp.PasswordSalt
+FROM Person.Person Pp
+	INNER JOIN Person.PersonPassword Ppp ON Ppp.PersonID = Pp.PersonID
+GO
+
+CREATE OR ALTER VIEW Academic.vStudentDetails
+AS
+SELECT Pvpd.*,
     ast.GeneralIndex,
 	ast.TrimestralIndex,
 	ast.Trimester,
@@ -246,46 +254,68 @@ SELECT pp.PersonID,
 	ac.Name Career,
 	ac.Code,
 	ac.Year Pensum
-FROM Person.Person pp
-	INNER JOIN Academic.Student ast ON pp.PersonID = ast.PersonID
+FROM Person.vPeopleDetails Pvpd
+	INNER JOIN Academic.Student ast ON Pvpd.PersonID = ast.PersonID
 	INNER JOIN Academic.Career ac ON ast.CareerID = ac.CareerID
 GO
 
 CREATE OR ALTER VIEW Academic.vProfessorDetails
 AS
-SELECT pp.PersonID,
-	pp.DocNo,
-	pp.FirstName,
-	pp.MiddleName,
-	pp.FirstSurname,
-	pp.SecondSurname,
-	pp.Gender,
-	pp.BirthDate,
-	pp.Email
-FROM Person.Person pp
-	INNER JOIN Academic.Professor ap ON pp.PersonID = ap.PersonID
+SELECT Pvpd.*
+FROM Person.vPeopleDetails Pvpd
+	INNER JOIN Academic.Professor ap ON Pvpd.PersonID = ap.PersonID
 GO
 
-CREATE OR ALTER VIEW Academic.vPeopleDetails
+CREATE OR ALTER VIEW Academic.vStudentSubjects
 AS
-SELECT pp.PersonID,
-	pp.DocNo,
-	pp.FirstName,
-	pp.MiddleName,
-	pp.FirstSurname,
-	pp.SecondSurname,
-	pp.Gender,
-	pp.BirthDate,
-	pp.Email
-FROM Person.Person pp
-	INNER JOIN Academic.Professor ap ON pp.PersonID = ap.PersonID
+SELECT Ass.StudentID,
+	Asu.SubjectCode,
+	Asd.Section,
+	Asu.Name Subject,
+	CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname) Professor,
+	Asu.Credits,
+	Ac.Code Classroom,
+	Asd.Trimester,
+	Asd.Year,
+	IIF(Aw.WeekdayID = 1, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Monday,
+	IIF(Aw.WeekdayID = 2, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Tuesday,
+	IIF(Aw.WeekdayID = 3, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Wednesday,
+	IIF(Aw.WeekdayID = 4, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Thursday,
+	IIF(Aw.WeekdayID = 5, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Friday,
+	IIF(Aw.WeekdayID = 6, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Saturday,
+	Ag.Grade,
+	(Ag.Points * Asu.Credits) Points
+FROM Academic.StudentSubject Ass
+	INNER JOIN Academic.SubjectDetail Asd ON Asd.SubjectDetailID = Ass.SubjectDetailID
+	INNER JOIN Academic.Subject Asu ON Asu.SubjectID = Asd.SubjectID
+	INNER JOIN Academic.SubjectSchedule Asch ON Asch.SubjectDetailID = Asd.SubjectDetailID
+	INNER JOIN Academic.Weekday Aw ON Aw.WeekdayID = Asch.WeekdayID
+	INNER JOIN Academic.Professor Ap ON Ap.PersonID = Asd.ProfessorID
+	INNER JOIN Person.Person Pprof ON Pprof.PersonID = Ap.PersonID
+	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asd.SubjectDetailID
+	INNER JOIN Academic.Classroom Ac ON Ac.ClassroomID = Ascl.ClassroomID
+	LEFT JOIN Academic.Grade Ag ON Ag.GradeID = Ass.GradeID
+	--GROUP BY Ass.StudentID, Asu.SubjectCode, Asd.Section,
+	--Asu.Name,CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname),
+	--Asu.Credits,
+	--Ac.Code,
+	--Asd.Trimester,
+	--Asd.Year,
+	--IIF(Aw.WeekdayID = 1, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
+	--IIF(Aw.WeekdayID = 2, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
+	--IIF(Aw.WeekdayID = 3, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
+	--IIF(Aw.WeekdayID = 4, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
+	--IIF(Aw.WeekdayID = 5, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
+	--IIF(Aw.WeekdayID = 6, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
+	--Ag.Grade,
+	--(Ag.Points * Asu.Credits)
 GO
 
 -- Procedures
 CREATE OR ALTER PROCEDURE Person.SP_PasswordUpsert
-	@PersonID		int,
-	@PasswordHash	nvarchar(64),
-	@PasswordSalt	nvarchar(5)
+	@PersonID int,
+	@PasswordHash nvarchar(64),
+	@PasswordSalt nvarchar(5)
 AS  
 	IF EXISTS(
 		SELECT 1
@@ -305,12 +335,12 @@ AS
 GO  
 
 CREATE OR ALTER PROCEDURE Academic.SP_CareerRegistration
-	@Name			nvarchar(50),
-	@Code			nvarchar(3),
-	@Subjects		int,
-	@Credits		int,
-	@Year			int,
-	@IsActive		bit 
+	@Name nvarchar(50),
+	@Code nvarchar(3),
+	@Subjects int,
+	@Credits int,
+	@Year int,
+	@IsActive bit 
 AS   
 	INSERT INTO Academic.Career(Name, Code, Subjects, Credits, Year, IsActive)
 	VALUES(@Name, @Code, @Subjects, @Credits, @Year, @IsActive)
@@ -369,18 +399,17 @@ AS
 	RETURN 1
 GO
 
-CREATE OR ALTER PROCEDURE Academic.SP_ScheduleAssignment
+CREATE OR ALTER PROCEDURE Academic.SP_SubjectScheduleAssignment
 	@SubjectDetailID int,
 	@WeekdayID int,
 	@StartTime int,
 	@EndTime int
 AS
-	INSERT INTO Academic.Schedule(SubjectDetailID, WeekdayID, StartTime, EndTime)
+	INSERT INTO Academic.SubjectSchedule(SubjectDetailID, WeekdayID, StartTime, EndTime)
 	VALUES(@SubjectDetailID, @WeekdayID, @StartTime, @EndTime)
 	RETURN 1
 GO
-DECLARE @gg bit
-SELECT Person.F_ScheduleValidation(1, 3, 5)
+
 -- Functions
 CREATE OR ALTER FUNCTION Person.F_DocNoValidation(
 	@DocNo nvarchar(11)
@@ -438,7 +467,7 @@ RETURNS BIT
 AS
 BEGIN
     IF EXISTS(
-		SELECT * 
+		SELECT 1
 		FROM Person.PersonPassword ppp
 		WHERE ppp.PersonID = @PersonID AND
 			ppp.PasswordHash = @PasswordHash
@@ -448,7 +477,7 @@ BEGIN
 END
 GO
 
-CREATE OR ALTER FUNCTION Academic.F_ScheduleValidation(
+CREATE OR ALTER FUNCTION Academic.F_SubjectScheduleValidation(
 	@WeekdayID int,
 	@StartTime int,
 	@EndTime int
@@ -457,13 +486,11 @@ RETURNS BIT
 AS
 BEGIN
     IF EXISTS(
-		SELECT * 
-		FROM Academic.Schedule Asch
-		WHERE Asch.WeekdayID = @WeekdayID AND (
-			(Asch.StartTime BETWEEN @StartTime AND @EndTime) OR
-			(Asch.EndTime BETWEEN @StartTime AND @EndTime)
+		SELECT 1
+		FROM Academic.SubjectSchedule Asch
+		WHERE Asch.WeekdayID = @WeekdayID AND
+			(Asch.EndTime > @StartTime AND Asch.StartTime < @EndTime)
 		)
-	)
 		RETURN 1
 	RETURN 0
 END
@@ -477,11 +504,10 @@ CREATE OR ALTER FUNCTION Person.F_StudentLogin(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT Ast.*
-		FROM Academic.Student Ast
+		SELECT *
+		FROM Academic.vStudentDetails Ast
 		WHERE Ast.PersonID = @PersonID AND
 			1 = (SELECT Person.F_PasswordValidation(@PersonID, @PasswordHash))
-
 GO
 
 CREATE OR ALTER FUNCTION Person.F_ProfessorLogin(
@@ -491,9 +517,23 @@ CREATE OR ALTER FUNCTION Person.F_ProfessorLogin(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT Ap.*
+		SELECT *
 		FROM Academic.Professor Ap
 		WHERE Ap.PersonID = @PersonID
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_GetPasswordSalt(
+	@PersonID int
+)
+RETURNS nvarchar(5)
+AS
+BEGIN
+	DECLARE @passwordSalt nvarchar(5)
+	SELECT @passwordSalt = Ppp.PasswordSalt
+	FROM Person.PersonPassword Ppp
+	WHERE Ppp.PersonID = @PersonID
+	RETURN @passwordSalt
+END
 GO
 
 -- Triggers
