@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using ProjectIndiaCharlie.Core.Data;
 using ProjectIndiaCharlie.Core.Models;
 
@@ -14,35 +12,21 @@ namespace ProjectIndiaCharlie.Core.Controllers
 
         public AcademicController(ProjectIndiaCharlieContext context) => _context = context;
 
-        [HttpGet("Login")]
-        public async Task<ActionResult<Person>> Login(int personId, string password)
+        [HttpGet("Student/Login")]
+        public async Task<ActionResult<Person>> StudentLogin(int personId, string password)
         {
-            await _context.Database.BeginTransactionAsync();
-            try
-            {
-                var getPasswordSaltParameter = new SqlParameter("@personID", personId);
-                if (await _context.Database.ExecuteSqlRawAsync("Academic.F_GetPasswordSalt", getPasswordSaltParameter) < 1)
-                    return NotFound(); // User doesn't exists
+            var passwordSalt = await _context.GetPasswordSalt(personId);
 
-                //var passwordHash = PasswordHelpers.GetPasswordHash(password, user.PersonPassword!.PasswordSalt);
-                //var user = _context.VStudents.FromSqlRaw("", "");
-            }
-            catch (Exception e)
-            {
-                return Problem(detail: e.Message); // DB problem
-            }
+            if (string.IsNullOrWhiteSpace(passwordSalt))
+                return NotFound();
 
+            var passwordHash = PasswordHelpers.GetPasswordHash(password, passwordSalt);
 
-            //if (user is null)
-            //    return NotFound();
+            var student = await _context.StudentLogin(personId, passwordHash);
 
-
-            //if (_context.People.FromSqlRaw("Person.F_Login", personId, passwordHash) is null)
-            //    return NotFound();
-
-            return /*(user.PersonPassword.PasswordHash == passwordHash) ?
-                Ok(user) :*/
-                NotFound();
+            return (student is null) ?
+                NotFound() :
+                Ok(student);
         }
 
         //[HttpGet("Student/Subjects")]

@@ -404,8 +404,6 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.MiddleName).HasMaxLength(50);
 
-                entity.Property(e => e.PasswordSalt).HasMaxLength(5);
-
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
 
                 entity.Property(e => e.SecondSurname).HasMaxLength(50);
@@ -430,8 +428,6 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.Gender).HasMaxLength(1);
 
                 entity.Property(e => e.MiddleName).HasMaxLength(50);
-
-                entity.Property(e => e.PasswordSalt).HasMaxLength(5);
 
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
 
@@ -465,8 +461,6 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.GeneralIndex).HasColumnType("decimal(3, 2)");
 
                 entity.Property(e => e.MiddleName).HasMaxLength(50);
-
-                entity.Property(e => e.PasswordSalt).HasMaxLength(5);
 
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
 

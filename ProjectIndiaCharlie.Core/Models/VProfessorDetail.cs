@@ -14,6 +14,5 @@ namespace ProjectIndiaCharlie.Core.Models
         public string Gender { get; set; } = null!;
         public DateTime BirthDate { get; set; }
         public string Email { get; set; } = null!;
-        public string PasswordSalt { get; set; } = null!;
     }
 }
