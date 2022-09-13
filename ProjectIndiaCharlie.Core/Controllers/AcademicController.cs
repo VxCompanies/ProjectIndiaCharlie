@@ -51,11 +51,12 @@ namespace ProjectIndiaCharlie.Core.Controllers
         public async Task<ActionResult<IEnumerable<StudentSubject>>> GetStudentSubjects(int studentId)
         {
             var subjects = _context.VStudentSubjects
-                .Where(s => s.StudentId == studentId);
+                .Where(s => s.StudentId == studentId)
+                .FirstOrDefaultAsync();
 
-            return subjects is null ?
+            return await subjects is null ?
                 NotFound() :
-                Ok(await subjects.ToListAsync());
+                Ok(await subjects);
         }
     }
 }
