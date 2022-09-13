@@ -557,17 +557,17 @@ BEGIN
 END 
 GO
 
-INSERT INTO Person.Person(DocNo, FirstName, FirstSurname, Gender, BirthDate, Email)
-VALUES('123', 'Juan', 'Cito', 'M', '2002-02-01', 'juancito@mail.com')
+--INSERT INTO Person.Person(DocNo, FirstName, FirstSurname, Gender, BirthDate, Email)
+--VALUES('123', 'Juan', 'Cito', 'M', '2002-02-01', 'juancito@mail.com')
 
-INSERT INTO Academic.Student(PersonID, CareerID)
-VALUES(1110201, 1)
+--INSERT INTO Academic.Student(PersonID, CareerID)
+--VALUES(1110201, 1)
 
-INSERT INTO Academic.Career(Name, Code, Subjects, Credits, IsActive, Year)
-VALUES('Software', 'IDS', 40, 240, 1, 2020)
+--INSERT INTO Academic.Career(Name, Code, Subjects, Credits, IsActive, Year)
+--VALUES('Software', 'IDS', 40, 240, 1, 2020)
 
-INSERT INTO Person.PersonPassword(PersonID, PasswordHash, PasswordSalt)
-VALUES(1110201, '123', '123')
+--INSERT INTO Person.PersonPassword(PersonID, PasswordHash, PasswordSalt)
+--VALUES(1110201, '123', '123')
 
-SELECT * FROM Person.PersonPassword
-SELECT * FROM Person.F_StudentLogin('1110201', '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e')
+--SELECT * FROM Person.PersonPassword
+--SELECT * FROM Person.F_StudentLogin('1110201', '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e')

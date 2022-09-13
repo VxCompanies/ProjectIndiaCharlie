@@ -79,6 +79,18 @@ WITH (
 );' --  
 EXEC(@SQL_BULK);
 
+SET @FileLoc = @Path + 'SubjectSchedule.csv';
+
+SET @SQL_BULK = 'BULK INSERT  Academic.SubjectSchedule
+FROM  ''' + @FileLoc + '''
+WITH (
+  FIELDTERMINATOR = '';'',
+  ROWTERMINATOR = ''\n'',
+  FIRSTROW = 2,
+  CODEPAGE = ''ACP''
+);' --  
+EXEC(@SQL_BULK);
+
 INSERT INTO Academic.Grade(Grade, Points)
 VALUES ('A', 4),
 	('B+', 3.5),
@@ -114,11 +126,14 @@ SELECT * FROM Academic.Professor;
 SELECT * FROM Academic.Student;
 SELECT * FROM Academic.StudentSubject;
 
+
 SELECT * FROM Academic.Subject;
 SELECT * FROM Academic.SubjectClassroom;
 SELECT * FROM Academic.SubjectDetail;
 SELECT * FROM Academic.SubjectSchedule;
 SELECT * FROM Academic.Weekday;
+
+
 
 SELECT S.SubjectCode, S.Name, SD.Section, P.FirstName, P.FirstSurname
 FROM Academic.SubjectDetail SD
