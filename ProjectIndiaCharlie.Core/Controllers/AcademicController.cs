@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ProjectIndiaCharlie.Core.Data;
 using ProjectIndiaCharlie.Core.Models;
 
@@ -24,21 +25,37 @@ namespace ProjectIndiaCharlie.Core.Controllers
 
             var student = await _context.StudentLogin(personId, passwordHash);
 
-            return (student is null) ?
+            return (await student.FirstOrDefaultAsync() is null) ?
                 NotFound() :
                 Ok(student);
         }
+        
+        [HttpGet("Professor/Login")]
+        public async Task<ActionResult<Person>> ProfessorLogin(int professorId, string password)
+        {
+            var passwordSalt = await _context.GetPasswordSalt(professorId);
 
-        //[HttpGet("Student/Subjects")]
-        //public async Task<ActionResult<IEnumerable<SubjectStudent>>> GetStudentSubjects(int studentId)
-        //{
-        //    var subjects = await _context.Student.Include(s => s.SubjectDetail.Subject)
-        //        .Where(s => s.StudentId == studentId)
-        //        .ToListAsync();
+            if (string.IsNullOrWhiteSpace(passwordSalt))
+                return NotFound();
 
-        //    return subjects is null ?
-        //        NotFound() :
-        //        Ok(subjects);
-        //}
+            var passwordHash = PasswordHelpers.GetPasswordHash(password, passwordSalt);
+
+            var professor = await _context.ProfessorLogin(professorId, passwordHash);
+
+            return (await professor.FirstOrDefaultAsync() is null) ?
+                NotFound() :
+                Ok(professor);
+        }
+
+        [HttpGet("Student/Subjects")]
+        public async Task<ActionResult<IEnumerable<StudentSubject>>> GetStudentSubjects(int studentId)
+        {
+            var subjects = _context.VStudentSubjects
+                .Where(s => s.StudentId == studentId);
+
+            return subjects is null ?
+                NotFound() :
+                Ok(await subjects.ToListAsync());
+        }
     }
 }

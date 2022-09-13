@@ -39,7 +39,7 @@ namespace ProjectIndiaCharlie.Core.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
+                optionsBuilder.UseSqlServer("Name=ConnectionStrings:ScaffoldingConnection");
             }
         }
 
@@ -404,7 +404,9 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.MiddleName).HasMaxLength(50);
 
-                entity.Property(e => e.PersonId).HasColumnName("PersonID");
+                entity.Property(e => e.PersonId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("PersonID");
 
                 entity.Property(e => e.SecondSurname).HasMaxLength(50);
             });
@@ -444,7 +446,7 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.Career).HasMaxLength(50);
 
-                entity.Property(e => e.Code).HasMaxLength(3);
+                entity.Property(e => e.CareerCode).HasMaxLength(3);
 
                 entity.Property(e => e.DocNo).HasMaxLength(13);
 

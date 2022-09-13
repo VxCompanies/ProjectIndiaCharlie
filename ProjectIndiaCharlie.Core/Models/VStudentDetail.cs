@@ -19,7 +19,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public int Trimester { get; set; }
         public DateTime EnrollementDate { get; set; }
         public string Career { get; set; } = null!;
-        public string Code { get; set; } = null!;
+        public string CareerCode { get; set; } = null!;
         public int Pensum { get; set; }
     }
 }

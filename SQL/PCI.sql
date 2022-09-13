@@ -250,7 +250,7 @@ SELECT Pvpd.*,
 	ast.Trimester,
 	ast.EnrollementDate,
 	ac.Name Career,
-	ac.Code,
+	ac.Code CareerCode,
 	ac.Year Pensum
 FROM Person.vPeopleDetails Pvpd
 	INNER JOIN Academic.Student ast ON Pvpd.PersonID = ast.PersonID

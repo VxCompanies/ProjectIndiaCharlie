@@ -24,8 +24,10 @@ namespace ProjectIndiaCharlie.Core.Data
                 string.Empty;
         }
 
-        public Task<VStudentDetail?> StudentLogin(int personId, string passwordHash) => Task.FromResult(VStudentDetails.FromSqlInterpolated($"SELECT * FROM Academic.F_StudentLogin({personId}, {passwordHash})")
-               .AsEnumerable()
-               .FirstOrDefault());
+        public Task<IQueryable<VStudentDetail>> StudentLogin(int personId, string passwordHash) => Task.FromResult(VStudentDetails
+            .FromSqlInterpolated($"SELECT * FROM Academic.F_StudentLogin({personId}, {passwordHash})"));
+
+        public Task<IQueryable<VProfessorDetail>> ProfessorLogin(int personId, string passwordHash) => Task.FromResult(VProfessorDetails
+            .FromSqlInterpolated($"SELECT * FROM Academic.F_ProfessorLogin({personId}, {passwordHash})"));
     }
 }
