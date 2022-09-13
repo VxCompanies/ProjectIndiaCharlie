@@ -135,8 +135,9 @@ SELECT * FROM Academic.Weekday;
 
 
 
-SELECT S.SubjectCode, S.Name, SD.Section, P.FirstName, P.FirstSurname
-FROM Academic.SubjectDetail SD
+SELECT *
+FROM Academic.SubjectSchedule SS
+JOIN Academic.SubjectDetail SD on SD.SubjectID = SS.SubjectDetailID
 JOIN ACADEMIC.Subject S ON SD.SubjectId = S.SubjectId
 JOIN Person.Person P ON SD.ProfessorID = P.PersonID
 WHERE S.Name LIKE '%vector%';
