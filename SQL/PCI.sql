@@ -264,6 +264,44 @@ FROM Person.vPeopleDetails Pvpd
 	INNER JOIN Academic.Professor ap ON Pvpd.PersonID = ap.PersonID
 GO
 
+CREATE OR ALTER VIEW Academic.vSubjectSectionDetails
+AS
+SELECT Asub.SubjectCode,
+	Asub.Name,
+	Asub.Credits,
+	Asdet.Section,
+	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname) Professor,
+	CONCAT(COUNT(AstuSub.StudentID), '/', Acl.Capacity) Capacity,
+	Acl.Code ClassroomCode,
+	IIF(Aw.WeekdayID = 1, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Monday,
+	IIF(Aw.WeekdayID = 2, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Tuesday,
+	IIF(Aw.WeekdayID = 3, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Wednesday,
+	IIF(Aw.WeekdayID = 4, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Thursday,
+	IIF(Aw.WeekdayID = 5, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Friday,
+	IIF(Aw.WeekdayID = 6, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Saturday
+FROM Academic.Subject Asub
+	INNER JOIN Academic.SubjectDetail Asdet ON Asdet.SubjectID = Asub.SubjectID
+	INNER JOIN Academic.vProfessorDetails Avprof ON Avprof.PersonID = Asdet.ProfessorID
+	INNER JOIN Academic.SubjectSchedule AsubSch ON AsubSch.SubjectDetailID = Asdet.SubjectDetailID
+	INNER JOIN Academic.Weekday Aw ON Aw.WeekdayID = AsubSch.WeekdayID
+	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asdet.SubjectDetailID
+	INNER JOIN Academic.Classroom Acl ON Acl.ClassroomID = Ascl.ClassroomID
+	INNER JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
+	GROUP BY Asub.SubjectCode,
+	Asub.Name,
+	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname),
+	Asub.Credits,
+	Asdet.Section,
+	IIF(Aw.WeekdayID = 1, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
+	IIF(Aw.WeekdayID = 2, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
+	IIF(Aw.WeekdayID = 3, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
+	IIF(Aw.WeekdayID = 4, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
+	IIF(Aw.WeekdayID = 5, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
+	IIF(Aw.WeekdayID = 6, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
+	Acl.Capacity,
+	Acl.Code
+GO
+
 CREATE OR ALTER VIEW Academic.vStudentSubjects
 AS
 SELECT Ass.StudentID,

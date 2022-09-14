@@ -33,6 +33,7 @@ namespace ProjectIndiaCharlie.Core.Data
         public virtual DbSet<VProfessorDetail> VProfessorDetails { get; set; } = null!;
         public virtual DbSet<VStudentDetail> VStudentDetails { get; set; } = null!;
         public virtual DbSet<VStudentSubject> VStudentSubjects { get; set; } = null!;
+        public virtual DbSet<VSubjectSectionDetail> VSubjectSectionDetails { get; set; } = null!;
         public virtual DbSet<Weekday> Weekdays { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -104,10 +105,10 @@ namespace ProjectIndiaCharlie.Core.Data
             {
                 entity.ToTable("Person", "Person");
 
-                entity.HasIndex(e => e.DocNo, "UQ__Person__3EF1E057199BD494")
+                entity.HasIndex(e => e.DocNo, "UQ__Person__3EF1E057096F0C83")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__Person__A9D10534E7988C31")
+                entity.HasIndex(e => e.Email, "UQ__Person__A9D10534249329DD")
                     .IsUnique();
 
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
@@ -140,7 +141,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<PersonPassword>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__PersonPa__AA2FFB857B7F15E5");
+                    .HasName("PK__PersonPa__AA2FFB8530149A73");
 
                 entity.ToTable("PersonPassword", "Person");
 
@@ -170,7 +171,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<Professor>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Professo__AA2FFB8584C1EACD");
+                    .HasName("PK__Professo__AA2FFB85B4C63821");
 
                 entity.ToTable("Professor", "Academic");
 
@@ -196,7 +197,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Student__AA2FFB8576156E4F");
+                    .HasName("PK__Student__AA2FFB8592E42AC2");
 
                 entity.ToTable("Student", "Academic");
 
@@ -240,7 +241,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<StudentSubject>(entity =>
             {
                 entity.HasKey(e => new { e.SubjectDetailId, e.StudentId })
-                    .HasName("PK__StudentS__8AC639F29493073F");
+                    .HasName("PK__StudentS__8AC639F2FD7A8548");
 
                 entity.ToTable("StudentSubject", "Academic");
 
@@ -293,7 +294,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<SubjectClassroom>(entity =>
             {
                 entity.HasKey(e => new { e.SubjectDetailId, e.ClassroomId })
-                    .HasName("PK__SubjectC__B8FC73BD94AB7A86");
+                    .HasName("PK__SubjectC__B8FC73BDA8459D32");
 
                 entity.ToTable("SubjectClassroom", "Academic");
 
@@ -498,6 +499,49 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.StudentId).HasColumnName("StudentID");
 
                 entity.Property(e => e.Subject).HasMaxLength(100);
+
+                entity.Property(e => e.SubjectCode).HasMaxLength(7);
+
+                entity.Property(e => e.Thursday)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Tuesday)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Wednesday)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<VSubjectSectionDetail>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vSubjectSectionDetails", "Academic");
+
+                entity.Property(e => e.Capacity)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Code).HasMaxLength(7);
+
+                entity.Property(e => e.Friday)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Monday)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Name).HasMaxLength(100);
+
+                entity.Property(e => e.Professor).HasMaxLength(203);
+
+                entity.Property(e => e.Saturday)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.SubjectCode).HasMaxLength(7);
 

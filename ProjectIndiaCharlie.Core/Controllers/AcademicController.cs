@@ -58,5 +58,27 @@ namespace ProjectIndiaCharlie.Core.Controllers
                 NotFound() :
                 Ok(await subjects);
         }
+
+        [HttpGet("Academics/SubjectSections")]
+        public async Task<ActionResult<IEnumerable<SubjectSchedule>>> GetSubjectSections()
+        {
+            var subjects = _context.VSubjectSectionDetails;
+
+            return subjects is null ?
+                NotFound() :
+                Ok(await subjects.ToListAsync());
+        }
+
+        [HttpGet("Academics/StudentSubject")]
+        public async Task<ActionResult<IEnumerable<SubjectSchedule>>> GetStudentSubject(int studentId)
+        {
+            var subjects = _context.VStudentSubjects
+                .Where(s => s.StudentId == studentId)
+                .ToListAsync();
+
+            return (await subjects).Count < 1 ?
+                NotFound() :
+                Ok(await subjects);
+        }
     }
 }
