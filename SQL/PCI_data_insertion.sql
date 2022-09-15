@@ -3,8 +3,8 @@ USE ProjectIndiaCharlie;
 DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
---SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -79,6 +79,8 @@ WITH (
 );' --  
 EXEC(@SQL_BULK);
 
+
+
 SET @FileLoc = @Path + 'SubjectSchedule.csv';
 
 SET @SQL_BULK = 'BULK INSERT  Academic.SubjectSchedule
@@ -86,10 +88,20 @@ FROM  ''' + @FileLoc + '''
 WITH (
   FIELDTERMINATOR = '';'',
   ROWTERMINATOR = ''\n'',
-  FIRSTROW = 2,
+  FIRSTROW = 1,
   CODEPAGE = ''ACP''
 );' --  
 EXEC(@SQL_BULK);
+
+INSERT INTO Academic.Weekday(Name)
+VALUES	('Monday'),
+	('Tuesday'),
+	('Wednesday'),
+	('Thursday'),
+	('Friday'),
+	('Saturday');
+GO
+
 
 INSERT INTO Academic.Grade(Grade, Points)
 VALUES ('A', 4),
@@ -100,14 +112,7 @@ VALUES ('A', 4),
 	('D', 1),
 	('F', 0);
 	
-INSERT INTO Academic.Weekday(Name)
-VALUES	('Monday'),
-	('Tuesday'),
-	('Wednesday'),
-	('Thursday'),
-	('Friday'),
-	('Saturday');
-GO
+
 
 INSERT INTO Academic.Career(Name, Code, Subjects, Credits, Year, IsActive)
 VALUES ('Medicina', 'MED', 204, 425, 2020, 1),
@@ -115,6 +120,17 @@ VALUES ('Medicina', 'MED', 204, 425, 2020, 1),
 ('Ingeniería Mecánica', 'MEC', 112, 280, 2020, 1);
 GO
 
+
+
+SELECT *-- SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
+	--S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
+FROM Academic.SubjectSchedule SS
+JOIN Academic.SubjectDetail SD on SS.SubjectDetailID = SD.SubjectID
+JOIN ACADEMIC.Subject S ON SD.SubjectId = S.SubjectId
+--JOIN Person.Person P ON SD.ProfessorID = P.PersonID
+JOIN Academic.Weekday W ON SS.WeekdayID = W.WeekdayID
+ORDER BY SS.SubjectScheduleID
+--WHERE S.Name LIKE '%vector%';
 
 SELECT * FROM Person.Person;
 SELECT * FROM Person.PersonPassword;
@@ -126,21 +142,32 @@ SELECT * FROM Academic.Professor;
 SELECT * FROM Academic.Student;
 SELECT * FROM Academic.StudentSubject;
 
+SELECT * FROM Academic.SubjectDetail;
+SELECT * FROM Academic.SubjectSchedule;
 
 SELECT * FROM Academic.Subject;
 SELECT * FROM Academic.SubjectClassroom;
-SELECT * FROM Academic.SubjectDetail;
-SELECT * FROM Academic.SubjectSchedule;
+SELECT * 
+FROM Academic.SubjectDetail
+WHERE SubjectID = 29;
+
+SELECT * 
+FROM Academic.SubjectSchedule SS
+JOIN Academic.SubjectDetail SD ON SS.SubjectDetailID = SD.SubjectDetailID
+--WHERE SubjectID = 29
+ORDER BY SS.SubjectDetailID;
 SELECT * FROM Academic.Weekday;
 
 
-
-SELECT *
+SELECT  SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
+	S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
 FROM Academic.SubjectSchedule SS
-JOIN Academic.SubjectDetail SD on SD.SubjectID = SS.SubjectDetailID
+JOIN Academic.SubjectDetail SD on SS.SubjectDetailID = SD.SubjectDetailID
 JOIN ACADEMIC.Subject S ON SD.SubjectId = S.SubjectId
 JOIN Person.Person P ON SD.ProfessorID = P.PersonID
-WHERE S.Name LIKE '%vector%';
+JOIN Academic.Weekday W ON SS.WeekdayID = W.WeekdayID
+WHERE S.Name LIKE '%software%'
+ORDER BY SS.SubjectScheduleID;
 
 --WHERE P.PersonID = 1110201
 	--UPDATE Person.Person 
