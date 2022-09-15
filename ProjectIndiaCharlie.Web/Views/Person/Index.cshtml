@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Person>
+﻿@model IEnumerable<VSubjectSectionDetail>
 @{
     ViewData["Title"] = "Person Index";
 }
@@ -7,20 +7,38 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Person Id</th>
-            <th>Doc. No</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>SubjectCode</th>
+            <th>Name</th>
+            <th>Credits</th>
+            <th>Section</th>
+            <th>Professor</th>
+            <th>Capacity</th>
+            <th>ClassroomCode</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var person in Model)
+        @foreach (var subject in Model)
         {
             <tr>
-                <td>@person.PersonId</td>
-                <td>@person.DocNo</td>
-                <td>@person.FirstName</td>
-                <td>@person.FirstSurname</td>
+                <td>@subject.SubjectCode</td>
+                <td>@subject.Name</td>
+                <td>@subject.Credits</td>
+                <td>@subject.Section</td>
+                <td>@subject.Professor</td>
+                <td>@subject.Capacity</td>
+                <td>@subject.ClassroomCode</td>
+                <td>@subject.Monday</td>
+                <td>@subject.Tuesday</td>
+                <td>@subject.Wednesday</td>
+                <td>@subject.Thursday</td>
+                <td>@subject.Friday</td>
+                <td>@subject.Saturday</td>
             </tr>
         }
     </tbody>

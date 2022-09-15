@@ -100,17 +100,17 @@ namespace ProjectIndiaCharlie.Core.Controllers
 
             var spParams = new List<SqlParameter>
             {
-            new("@DocNo", professor.Person.DocNo),
-            new("@FirstName", professor.Person.FirstName),
-            new("@MiddleName", professor.Person.MiddleName),
-            new("@FirstSurname", professor.Person.FirstSurname),
-            new("@SecondSurname", professor.Person.SecondSurname),
-            new("@Gender", professor.Person.Gender),
-            new("@BirthDate", professor.Person.BirthDate),
-            new("@Email", professor.Person.Email),
-            new("@RolId", 2),
-            new("@PasswordHash", professor.Person.PersonPassword!.PasswordHash),
-            new("@PasswordSalt", professor.Person.PersonPassword!.PasswordSalt),
+                new("@DocNo", professor.Person.DocNo),
+                new("@FirstName", professor.Person.FirstName),
+                new("@MiddleName", professor.Person.MiddleName),
+                new("@FirstSurname", professor.Person.FirstSurname),
+                new("@SecondSurname", professor.Person.SecondSurname),
+                new("@Gender", professor.Person.Gender),
+                new("@BirthDate", professor.Person.BirthDate),
+                new("@Email", professor.Person.Email),
+                new("@RolId", 2),
+                new("@PasswordHash", professor.Person.PersonPassword!.PasswordHash),
+                new("@PasswordSalt", professor.Person.PersonPassword!.PasswordSalt),
             };
 
             try

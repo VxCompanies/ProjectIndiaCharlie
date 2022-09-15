@@ -13,7 +13,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public DateTime CreatedDate { get; set; }
         public DateTime ModifiedDate { get; set; }
 
-        public virtual SubjectDetail? SubjectDetail { get; set; }
-        public virtual Weekday? Weekday { get; set; }
+        public virtual SubjectDetail SubjectDetail { get; set; } = null!;
+        public virtual Weekday Weekday { get; set; } = null!;
     }
 }

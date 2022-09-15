@@ -327,20 +327,6 @@ FROM Academic.StudentSubject Ass
 	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asd.SubjectDetailID
 	INNER JOIN Academic.Classroom Ac ON Ac.ClassroomID = Ascl.ClassroomID
 	LEFT JOIN Academic.Grade Ag ON Ag.GradeID = Ass.GradeID
-	--GROUP BY Ass.StudentID, Asu.SubjectCode, Asd.Section,
-	--Asu.Name,CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname),
-	--Asu.Credits,
-	--Ac.Code,
-	--Asd.Trimester,
-	--Asd.Year,
-	--IIF(Aw.WeekdayID = 1, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
-	--IIF(Aw.WeekdayID = 2, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
-	--IIF(Aw.WeekdayID = 3, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
-	--IIF(Aw.WeekdayID = 4, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
-	--IIF(Aw.WeekdayID = 5, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
-	--IIF(Aw.WeekdayID = 6, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL),
-	--Ag.Grade,
-	--(Ag.Points * Asu.Credits)
 GO
 
 -- Procedures
@@ -533,6 +519,7 @@ BEGIN
 	RETURN @subject
 END
 GO
+
 -- Login
 CREATE OR ALTER FUNCTION Academic.F_StudentLogin(
 	@PersonID int,
@@ -555,7 +542,7 @@ RETURNS TABLE
 AS
 	RETURN
 		SELECT *
-		FROM Academic.Professor Ap
+		FROM Academic.vProfessorDetails Ap
 		WHERE Ap.PersonID = @PersonID
 GO
 

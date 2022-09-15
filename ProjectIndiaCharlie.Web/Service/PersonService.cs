@@ -7,14 +7,14 @@ namespace ProjectIndiaCharlie.Web.Service;
 public static class PersonService
 {
     private const string mediaType = "application/json";
-    private const string baseUrl = "https://50ab-148-103-213-102.ngrok.io/api/Person";
-    private const string getPeopleUrl = $"{baseUrl}/List";
+    private const string baseUrl = "https://5159-190-122-96-77.ngrok.io/api";
+    private const string getPeopleUrl = $"{baseUrl}/Academic/SubjectSections";
     private const string loginUrl = $"{baseUrl}/Login";
     private const string registerStudentUrl = $"{baseUrl}/Student/Registration";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
-    public static async Task<IEnumerable<Person>> GetPeopleAsync()
+    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSubjectSectionDetailsAsync()
     {
         try
         {
@@ -22,15 +22,15 @@ public static class PersonService
             var response = await httpClient.GetAsync(getPeopleUrl);
 
             if (!response.IsSuccessStatusCode)
-                return Enumerable.Empty<Person>();
+                return Enumerable.Empty<VSubjectSectionDetail>();
 
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<IEnumerable<Person>>(content, _options)!;
+            return JsonSerializer.Deserialize<IEnumerable<VSubjectSectionDetail>>(content, _options)!;
         }
         catch (Exception)
         {
-            return Enumerable.Empty<Person>();
+            return Enumerable.Empty<VSubjectSectionDetail>();
         }
     }
 

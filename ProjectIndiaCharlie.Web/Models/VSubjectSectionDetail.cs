@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectIndiaCharlie.Core.Models
+namespace ProjectIndiaCharlie.Web.Models
 {
     public partial class VSubjectSectionDetail
     {

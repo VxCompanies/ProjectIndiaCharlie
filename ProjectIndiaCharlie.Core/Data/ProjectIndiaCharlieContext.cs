@@ -105,10 +105,10 @@ namespace ProjectIndiaCharlie.Core.Data
             {
                 entity.ToTable("Person", "Person");
 
-                entity.HasIndex(e => e.DocNo, "UQ__Person__3EF1E057096F0C83")
+                entity.HasIndex(e => e.DocNo, "UQ__Person__3EF1E057348F0640")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__Person__A9D10534249329DD")
+                entity.HasIndex(e => e.Email, "UQ__Person__A9D10534F011D79B")
                     .IsUnique();
 
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
@@ -141,7 +141,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<PersonPassword>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__PersonPa__AA2FFB8530149A73");
+                    .HasName("PK__PersonPa__AA2FFB85F91EF133");
 
                 entity.ToTable("PersonPassword", "Person");
 
@@ -171,7 +171,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<Professor>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Professo__AA2FFB85B4C63821");
+                    .HasName("PK__Professo__AA2FFB85729E8A4E");
 
                 entity.ToTable("Professor", "Academic");
 
@@ -197,7 +197,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.HasKey(e => e.PersonId)
-                    .HasName("PK__Student__AA2FFB8592E42AC2");
+                    .HasName("PK__Student__AA2FFB855CA5DD67");
 
                 entity.ToTable("Student", "Academic");
 
@@ -241,7 +241,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<StudentSubject>(entity =>
             {
                 entity.HasKey(e => new { e.SubjectDetailId, e.StudentId })
-                    .HasName("PK__StudentS__8AC639F2FD7A8548");
+                    .HasName("PK__StudentS__8AC639F2F052BD88");
 
                 entity.ToTable("StudentSubject", "Academic");
 
@@ -294,7 +294,7 @@ namespace ProjectIndiaCharlie.Core.Data
             modelBuilder.Entity<SubjectClassroom>(entity =>
             {
                 entity.HasKey(e => new { e.SubjectDetailId, e.ClassroomId })
-                    .HasName("PK__SubjectC__B8FC73BDA8459D32");
+                    .HasName("PK__SubjectC__B8FC73BD8EFE88BC");
 
                 entity.ToTable("SubjectClassroom", "Academic");
 
@@ -544,6 +544,8 @@ namespace ProjectIndiaCharlie.Core.Data
                     .IsUnicode(false);
 
                 entity.Property(e => e.SubjectCode).HasMaxLength(7);
+
+                entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
 
                 entity.Property(e => e.Thursday)
                     .HasMaxLength(25)

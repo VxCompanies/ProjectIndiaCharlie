@@ -7,10 +7,10 @@ namespace ProjectIndiaCharlie.Web.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            var peopleList = await PersonService.GetPeopleAsync();
-            return peopleList is null ?
+            var subjectSectionDetailsList = PersonService.GetSubjectSectionDetailsAsync();
+            return await subjectSectionDetailsList is null ?
                 NotFound() :
-                View(peopleList);
+                View(await subjectSectionDetailsList);
         }
     }
 }
