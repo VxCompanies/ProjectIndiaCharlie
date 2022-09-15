@@ -93,6 +93,18 @@ WITH (
 );' --  
 EXEC(@SQL_BULK);
 
+SET @FileLoc = @Path + 'Student.csv';
+
+SET @SQL_BULK = 'BULK INSERT  Academic.Student
+FROM  ''' + @FileLoc + '''
+WITH (
+  FIELDTERMINATOR = '';'',
+  ROWTERMINATOR = ''\n'',
+  FIRSTROW = 2,
+  CODEPAGE = ''ACP''
+);' --  
+EXEC(@SQL_BULK);
+
 INSERT INTO Academic.Weekday(Name)
 VALUES	('Monday'),
 	('Tuesday'),
@@ -166,7 +178,7 @@ JOIN Academic.SubjectDetail SD on SS.SubjectDetailID = SD.SubjectDetailID
 JOIN ACADEMIC.Subject S ON SD.SubjectId = S.SubjectId
 JOIN Person.Person P ON SD.ProfessorID = P.PersonID
 JOIN Academic.Weekday W ON SS.WeekdayID = W.WeekdayID
-WHERE S.Name LIKE '%software%'
+WHERE S.Name LIKE '%base%'
 ORDER BY SS.SubjectScheduleID;
 
 --WHERE P.PersonID = 1110201
