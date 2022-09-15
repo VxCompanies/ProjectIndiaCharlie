@@ -105,6 +105,18 @@ WITH (
 );' --  
 EXEC(@SQL_BULK);
 
+SET @FileLoc = @Path + 'PersonPassword.csv';
+
+SET @SQL_BULK = 'BULK INSERT  Person.PersonPassword
+FROM  ''' + @FileLoc + '''
+WITH (
+  FIELDTERMINATOR = '';'',
+  ROWTERMINATOR = ''\n'',
+  FIRSTROW = 2,
+  CODEPAGE = ''ACP''
+);' --  
+EXEC(@SQL_BULK);
+
 INSERT INTO Academic.Weekday(Name)
 VALUES	('Monday'),
 	('Tuesday'),
