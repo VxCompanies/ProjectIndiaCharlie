@@ -57,7 +57,7 @@ namespace ProjectIndiaCharlie.Core.Controllers
         }
 
         [HttpPost("SubjectSelection")]
-        public async Task<ActionResult<bool>> SubjectSelection(SubjectSchedule subject, int studentId)
+        public async Task<ActionResult<bool>> SubjectSelection(dynamic subject, int studentId)
         {
             var tran = _context.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
             var flag = new SqlParameter
@@ -88,15 +88,15 @@ namespace ProjectIndiaCharlie.Core.Controllers
         }
 
         [HttpPost("Professor/Registration")]
-        public async Task<ActionResult<Professor>> RegisterProfessor(Professor professor)
+        public async Task<ActionResult<bool>> RegisterProfessor(dynamic professor)
         {
             var tran = _context.Database.BeginTransactionAsync(IsolationLevel.ReadUncommitted);
 
-            if (await _context.Professors.FindAsync(professor.PersonId) != null)
-                return Conflict();
+            //if (await _context.Professors.FindAsync(professor.PersonId) != null)
+            //    return Conflict();
 
-            if (await _context.People.AnyAsync(p => p.DocNo == professor.Person.DocNo))
-                professor.Person = new();
+            //if (await _context.People.AnyAsync(p => p.DocNo == professor.Person.DocNo))
+            //    professor.Person = new();
 
             var spParams = new List<SqlParameter>
             {
@@ -128,23 +128,23 @@ namespace ProjectIndiaCharlie.Core.Controllers
             return CreatedAtAction("RegisterProfessor", professor);
         }
 
-        // For professors
-        [HttpGet("Student/List")]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents() =>
-            (_context.Students is null) ?
-            NotFound() :
-            Ok(await _context.Students.Include(p => p.Person)
-            .ToListAsync());
+        //// For professors
+        //[HttpGet("Student/List")]
+        //public async Task<ActionResult<IEnumerable<Student>>> GetStudents() =>
+        //    (_context.Students is null) ?
+        //    NotFound() :
+        //    Ok(await _context.Students.Include(p => p.Person)
+        //    .ToListAsync());
 
-        [HttpGet("Search")]
-        public async Task<ActionResult<Person?>> GetPerson(string docNo)
-        {
-            var person = await _context.People
-                .FirstOrDefaultAsync(p => p.DocNo == docNo);
+        //[HttpGet("Search")]
+        //public async Task<ActionResult<Person?>> GetPerson(string docNo)
+        //{
+        //    var person = await _context.People
+        //        .FirstOrDefaultAsync(p => p.DocNo == docNo);
 
-            return person is null ?
-                NotFound() :
-                Ok(person);
-        }
+        //    return person is null ?
+        //        NotFound() :
+        //        Ok(person);
+        //}
     }
 }

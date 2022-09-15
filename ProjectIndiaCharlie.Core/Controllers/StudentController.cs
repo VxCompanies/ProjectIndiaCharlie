@@ -16,31 +16,31 @@ public class StudentController : ControllerBase
     public StudentController(ProjectIndiaCharlieContext context) => _context = context;
 
     [HttpGet("Login")]
-    public async Task<ActionResult<Person>> StudentLogin(int personId, string password)
-    {
-        try
-        {
-            var passwordSalt = await _context.GetPasswordSalt(personId);
+    //public async Task<ActionResult<Person>> StudentLogin(int personId, string password)
+    //{
+    //    try
+    //    {
+    //        var passwordSalt = await _context.GetPasswordSalt(personId);
 
-            if (string.IsNullOrWhiteSpace(passwordSalt))
-            {
-                await _context.Database.RollbackTransactionAsync();
-                return NotFound();
-            }
+    //        if (string.IsNullOrWhiteSpace(passwordSalt))
+    //        {
+    //            await _context.Database.RollbackTransactionAsync();
+    //            return NotFound();
+    //        }
 
-            var passwordHash = PasswordHelpers.GetPasswordHash(password, passwordSalt);
+    //        var passwordHash = PasswordHelpers.GetPasswordHash(password, passwordSalt);
 
-            var student = await _context.StudentLogin(personId, passwordHash);
+    //        var student = await _context.StudentLogin(personId, passwordHash);
 
-            return await student.FirstOrDefaultAsync() is null ?
-                NotFound() :
-                Ok(student);
-        }
-        catch (Exception e)
-        {
-            return Problem(detail: e.Message);
-        }
-    }
+    //        return await student.FirstOrDefaultAsync() is null ?
+    //            NotFound() :
+    //            Ok(student);
+    //    }
+    //    catch (Exception e)
+    //    {
+    //        return Problem(detail: e.Message);
+    //    }
+    //}
 
     [HttpGet("SelectedSubjects")]
     public async Task<ActionResult<IEnumerable<VStudentSubject>>> GetStudentSubject(int studentId)
@@ -62,7 +62,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("Registration")]
-    public async Task<ActionResult<Student>> RegisterStudent(Student student)
+    public async Task<ActionResult<string>> RegisterStudent(NewPerson newStudent)
     {
         var flag = new SqlParameter
         {
@@ -71,36 +71,39 @@ public class StudentController : ControllerBase
             Size = 6,
             Direction = ParameterDirection.Output
         };
-        await _context.Database.ExecuteSqlInterpolatedAsync($"SELECT {flag} = Academic.F_StudentValidation({student.PersonId})");
+        try
+        {
+            await _context.Database.ExecuteSqlInterpolatedAsync($"SELECT {flag} = Academic.F_StudentValidation({newStudent})");
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
 
         if (flag.Value is 1)
-            return Conflict("Student alredy registered.");
+            return Conflict("Student already registered.");
 
-        var spParams = new List<SqlParameter>
+        var studentRegistrationParams = new List<SqlParameter>
         {
-            new("@DocNo", student.Person.DocNo),
-            new("@FirstName", student.Person.FirstName),
-            new("@MiddleName", student.Person.MiddleName),
-            new("@FirstSurname", student.Person.FirstSurname),
-            new("@SecondSurname", student.Person.SecondSurname),
-            new("@Gender", student.Person.Gender),
-            new("@BirthDate", student.Person.BirthDate),
-            new("@Email", student.Person.Email),
-            new("@RolId", 1),
-            new("@CareerId", student.Career.CareerId),
-            new("@PasswordHash", student.Person.PersonPassword!.PasswordHash),
-            new("@PasswordSalt", student.Person.PersonPassword!.PasswordSalt),
+            new("@DocNo", newStudent.DocNo),
+            new("@FirstName", newStudent.FirstName),
+            new("@MiddleName", newStudent.MiddleName),
+            new("@FirstSurname", newStudent.FirstSurname),
+            new("@SecondSurname", newStudent.SecondSurname),
+            new("@Gender", newStudent.Gender),
+            new("@BirthDate", newStudent.BirthDate),
+            new("@Email", newStudent.Email)
         };
         try
         {
-            await _context.Database.ExecuteSqlRawAsync("Person.SP_RegisterPerson", spParams);
+            await _context.Database.ExecuteSqlRawAsync("Person.SP_PersonRegistration", studentRegistrationParams);
         }
         catch (DbUpdateException e)
         {
             return Problem(detail: e.Message);
         }
 
-        return CreatedAtAction("RegisterStudent", student);
+        return CreatedAtAction("RegisterStudent", newStudent);
     }
 
     [HttpGet("Search")]
