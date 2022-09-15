@@ -525,7 +525,7 @@ namespace ProjectIndiaCharlie.Core.Data
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Code).HasMaxLength(7);
+                entity.Property(e => e.ClassroomCode).HasMaxLength(7);
 
                 entity.Property(e => e.Friday)
                     .HasMaxLength(25)

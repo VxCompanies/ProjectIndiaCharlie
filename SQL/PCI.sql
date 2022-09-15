@@ -266,19 +266,20 @@ GO
 
 CREATE OR ALTER VIEW Academic.vSubjectSectionDetails
 AS
-SELECT Asub.SubjectCode,
+SELECT Asdet.SubjectDetailID,
+	Asub.SubjectCode,
 	Asub.Name,
 	Asub.Credits,
 	Asdet.Section,
 	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname) Professor,
 	CONCAT(COUNT(AstuSub.StudentID), '/', Acl.Capacity) Capacity,
 	Acl.Code ClassroomCode,
-	IIF(Aw.WeekdayID = 1, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Monday,
-	IIF(Aw.WeekdayID = 2, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Tuesday,
-	IIF(Aw.WeekdayID = 3, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Wednesday,
-	IIF(Aw.WeekdayID = 4, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Thursday,
-	IIF(Aw.WeekdayID = 5, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Friday,
-	IIF(Aw.WeekdayID = 6, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL) Saturday
+	MAX(CASE WHEN AW.WeekdayID = 1 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Monday,
+	MAX(CASE WHEN AW.WeekdayID = 2 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Tuesday,
+	MAX(CASE WHEN AW.WeekdayID = 3 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Wednesday,
+	MAX(CASE WHEN AW.WeekdayID = 4 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Thursday,
+	MAX(CASE WHEN AW.WeekdayID = 5 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Friday,
+	MAX(CASE WHEN AW.WeekdayID = 6 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Saturday
 FROM Academic.Subject Asub
 	INNER JOIN Academic.SubjectDetail Asdet ON Asdet.SubjectID = Asub.SubjectID
 	INNER JOIN Academic.vProfessorDetails Avprof ON Avprof.PersonID = Asdet.ProfessorID
@@ -286,18 +287,13 @@ FROM Academic.Subject Asub
 	INNER JOIN Academic.Weekday Aw ON Aw.WeekdayID = AsubSch.WeekdayID
 	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asdet.SubjectDetailID
 	INNER JOIN Academic.Classroom Acl ON Acl.ClassroomID = Ascl.ClassroomID
-	INNER JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
-	GROUP BY Asub.SubjectCode,
+	LEFT JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
+	GROUP BY Asdet.SubjectDetailID,
+	Asub.SubjectCode,
 	Asub.Name,
 	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname),
 	Asub.Credits,
 	Asdet.Section,
-	IIF(Aw.WeekdayID = 1, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
-	IIF(Aw.WeekdayID = 2, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
-	IIF(Aw.WeekdayID = 3, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
-	IIF(Aw.WeekdayID = 4, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
-	IIF(Aw.WeekdayID = 5, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
-	IIF(Aw.WeekdayID = 6, CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime), NULL),
 	Acl.Capacity,
 	Acl.Code
 GO
@@ -514,24 +510,29 @@ END
 GO
 
 CREATE OR ALTER FUNCTION Academic.F_SubjectScheduleValidation(
+	@StudentID int,
 	@WeekdayID int,
 	@StartTime int,
 	@EndTime int
 )
-RETURNS BIT
+RETURNS NVARCHAR(6)
 AS
 BEGIN
-    IF EXISTS(
-		SELECT 1
+	DECLARE @subject nvarchar(9) = (
+		SELECT CONCAT(Asub.SubjectCode, '-', Asdet.Section)
 		FROM Academic.SubjectSchedule Asch
+			INNER JOIN Academic.SubjectDetail Asdet ON Asdet.SubjectDetailID = Asch.SubjectDetailID
+			INNER JOIN Academic.Subject Asub ON Asub.SubjectID = Asdet.SubjectID
+			INNER JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
 		WHERE Asch.WeekdayID = @WeekdayID AND
-			(Asch.EndTime > @StartTime AND Asch.StartTime < @EndTime)
-		)
-		RETURN 1
-	RETURN 0
+			(Asch.EndTime > @StartTime AND Asch.StartTime < @EndTime) AND
+			AstuSub.StudentID = @StudentID
+	)
+    IF @subject IS NULL
+		RETURN NULL
+	RETURN @subject
 END
 GO
-
 -- Login
 CREATE OR ALTER FUNCTION Academic.F_StudentLogin(
 	@PersonID int,

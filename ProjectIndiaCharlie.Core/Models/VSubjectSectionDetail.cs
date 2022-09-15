@@ -11,7 +11,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public int Section { get; set; }
         public string Professor { get; set; } = null!;
         public string Capacity { get; set; } = null!;
-        public string Code { get; set; } = null!;
+        public string ClassroomCode { get; set; } = null!;
         public string? Monday { get; set; }
         public string? Tuesday { get; set; }
         public string? Wednesday { get; set; }
