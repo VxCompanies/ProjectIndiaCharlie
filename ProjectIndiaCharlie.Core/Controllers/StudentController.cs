@@ -77,7 +77,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("SubjectSelection")]
-    public async Task<ActionResult<VStudentSubject>> SubjectSelection(int subjectId, int studentId)
+    public async Task<ActionResult<string>> SubjectSelection(int subjectId, int studentId)
     {
         try
         {
@@ -94,8 +94,8 @@ public class StudentController : ControllerBase
             await _context.Database.CommitTransactionAsync();
 
             var subject = await _context.VStudentSubjects
-                            .FirstOrDefaultAsync(s => s.SubjectDetailId == subjectId);
-            return base.CreatedAtAction("SubjectSelection", subject);
+                            .FirstAsync(s => s.SubjectDetailId == subjectId);
+            return base.CreatedAtAction("SubjectSelection", $"Successfully selected {subject.SubjectCode}-{subject.Section}.");
         }
         catch (Exception e)
         {

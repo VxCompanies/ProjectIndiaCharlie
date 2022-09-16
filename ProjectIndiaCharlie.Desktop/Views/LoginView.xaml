@@ -11,22 +11,50 @@
         <vm:LoginViewModel x:Key="vm"/>
     </UserControl.Resources>
     <Grid DataContext="{StaticResource vm}">
-        <StackPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Path Data="M371.45304,633.32941 C532.45304,448.32941 345,-9.3543286 2.6343542E-08,0.1456714 L1.4415723,756.74441"
+                  StrokeThickness="4"
+                  Fill="#2D5A7F"
+                  Margin="-134,-179,0,-128" RenderTransformOrigin="0.5,0.5" Stretch="Fill">
+            </Path>
+            <Path Data="M376.08418,628.27533 C537.08418,443.27533 123.5,386.58882 -8.5265128E-14,-4.2632564E-14 L-14.028533,823.10186"
+                  StrokeThickness="4"
+                  Fill="#1A344B"
+                  Margin="-54,-203,28,-199" RenderTransformOrigin="0.5,0.5" Stretch="Fill">
+            </Path>
+        </Grid>
+        <StackPanel Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Margin="50,104,50,0" Grid.RowSpan="2">
             <!--<TextBlock Text="{Binding UserId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox Text="{Binding UserId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <PasswordBox PasswordChanged="PasswordChanged"/>
             <Button Content="Login"
                     Command="{Binding LoginAsyncCommand}"
                     CommandParameter="{Binding}"/>-->
-            
+            <TextBlock Text="Login"
+                       HorizontalAlignment="Center"
+                       FontWeight="Bold"
+                       FontSize="50"/>
+            <TextBlock Text="Username"
+                       Margin="0 20 0 0"/>
             <TextBox x:Name="tbUserId"
-                     TextChanged="UserIdChanged"/>
+                     TextChanged="UserIdChanged"
+                     BorderThickness="0 0 0 1"/>
+            <TextBlock Text="Password"
+                       Margin="0 20 0 0"/>
             <PasswordBox x:Name="pbPassword"
-                         PasswordChanged="PasswordChanged"/>
+                         PasswordChanged="PasswordChanged"
+                         BorderThickness="0 0 0 1"/>
             <Button x:Name="btLogin"
                     Content="Login"
                     Click="Login"
-                    IsEnabled="False"/>
+                    IsEnabled="False"
+                    Margin="0 50 0 0"/>
         </StackPanel>
     </Grid>
 </UserControl>
