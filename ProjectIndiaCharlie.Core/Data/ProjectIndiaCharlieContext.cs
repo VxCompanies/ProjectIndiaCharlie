@@ -21,6 +21,7 @@ namespace ProjectIndiaCharlie.Core.Data
         public virtual DbSet<VProfessorDetail> VProfessorDetails { get; set; } = null!;
         public virtual DbSet<VStudentDetail> VStudentDetails { get; set; } = null!;
         public virtual DbSet<VStudentSubject> VStudentSubjects { get; set; } = null!;
+        public virtual DbSet<VSubjectSchedule> VSubjectSchedules { get; set; } = null!;
         public virtual DbSet<VSubjectSectionDetail> VSubjectSectionDetails { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -152,6 +153,8 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.SubjectCode).HasMaxLength(7);
 
+                entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
+
                 entity.Property(e => e.Thursday)
                     .HasMaxLength(25)
                     .IsUnicode(false);
@@ -163,6 +166,17 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.Wednesday)
                     .HasMaxLength(25)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<VSubjectSchedule>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vSubjectSchedule");
+
+                entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
+
+                entity.Property(e => e.WeekdayId).HasColumnName("WeekdayID");
             });
 
             modelBuilder.Entity<VSubjectSectionDetail>(entity =>

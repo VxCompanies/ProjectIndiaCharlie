@@ -29,7 +29,7 @@ namespace ProjectIndiaCharlie.Core.Controllers
 
                 var professor = await _context.ProfessorLogin(professorId, passwordHash);
 
-                return (await professor.FirstOrDefaultAsync() is null) ?
+                return (professor is null) ?
                     NotFound() :
                     Ok(professor);
             }

@@ -6,6 +6,7 @@ namespace ProjectIndiaCharlie.Core.Models
     public partial class VStudentSubject
     {
         public int StudentId { get; set; }
+        public int SubjectDetailId { get; set; }
         public string SubjectCode { get; set; } = null!;
         public int Section { get; set; }
         public string Subject { get; set; } = null!;

@@ -10,6 +10,6 @@ namespace ProjectIndiaCharlie.Core.Controllers
         public ActionResult<string> GetPasswordHash(string password, string? salt = null) => Ok(PasswordHelpers.GetPasswordHash(password, salt));
 
         [HttpGet("GenRandom")]
-        public ActionResult<string> GenRandomPassword() => Ok(PasswordHelpers.GetRandomPassword());
+        public ActionResult<string> GenRandomPassword() => Ok(PasswordHelpers.GenRandomPassword());
     }
 }

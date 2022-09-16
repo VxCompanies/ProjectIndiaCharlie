@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using ProjectIndiaCharlie.Core.Models;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace ProjectIndiaCharlie.Core.Controllers
@@ -19,7 +20,7 @@ namespace ProjectIndiaCharlie.Core.Controllers
             return hash;
         }
 
-        public static string GetRandomPassword()
+        public static PersonPassword GenRandomPassword()
         {
             var ran = new Random();
             var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -28,7 +29,20 @@ namespace ProjectIndiaCharlie.Core.Controllers
             for (int i = 0; i < 12; i++)
                 pass += chars[ran.Next(chars.Length)];
 
-            return pass;
+            var salt = GetRandomSalt();
+            return new(pass, GetPasswordHash(pass, salt), salt);
+        }
+
+        public static string GetRandomSalt()
+        {
+            var ran = new Random();
+            var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            var salt = string.Empty;
+
+            for (int i = 0; i < 5; i++)
+                salt += chars[ran.Next(chars.Length)];
+
+            return salt;
         }
     }
 }

@@ -42,6 +42,75 @@ GO
 ALTER ROLE API
 ADD MEMBER projectIndiaCharlie
 GO
+GRANT VIEW DEFINITION ON Academic.vStudentSubjects
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vStudentDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vSubjectSchedule
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vProfessorDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vSubjectSectionDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_SubjectScheduleValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_PasswordValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_GetPasswordSalt
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_PasswordUpsert
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_ProfessorValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_DocNoValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_ProfessorLogin
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_GetSubjectSchedule
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_StudentRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_ProfessorRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vPeopleDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_SubjectSelection
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_PersonRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_CareerRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_StudentLogin
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_SubjectClassroomAssignment
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_SubjectScheduleAssignment
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_StudentValidation
+	TO projectIndiaCharlie
+GO
 
 ---- Application Role
 --CREATE APPLICATION ROLE Academics
@@ -298,9 +367,19 @@ FROM Academic.Subject Asub
 	Acl.Code
 GO
 
+CREATE OR ALTER VIEW Academic.vSubjectSchedule
+AS
+	SELECT AsubSche.SubjectDetailID,
+		AsubSche.WeekdayID,
+		AsubSche.StartTime,
+		AsubSche.EndTime
+	FROM Academic.SubjectSchedule AsubSche
+GO
+
 CREATE OR ALTER VIEW Academic.vStudentSubjects
 AS
 SELECT Ass.StudentID,
+	Asd.SubjectDetailID,
 	Asu.SubjectCode,
 	Asd.Section,
 	Asu.Name Subject,
@@ -366,7 +445,7 @@ AS
 GO
 
 CREATE OR ALTER PROCEDURE Person.SP_PersonRegistration
-	@DocNo nvarchar(11),
+	@DocNo nvarchar(13),
 	@FirstName nvarchar(50),
 	@MiddleName nvarchar(50) = null,
 	@FirstSurname nvarchar(50),
@@ -377,7 +456,7 @@ CREATE OR ALTER PROCEDURE Person.SP_PersonRegistration
 AS
 	INSERT INTO Person.Person(DocNo, FirstName, MiddleName, FirstSurname, SecondSurname,
 				Gender, BirthDate, Email)
-	VALUES(FORMAT(CAST(@DocNo as bigint), '000-0000000-0'), @FirstName, @MiddleName, @FirstSurname, @SecondSurname,
+	VALUES(@DocNo, @FirstName, @MiddleName, @FirstSurname, @SecondSurname,
 			UPPER(@Gender), @BirthDate, LOWER(@Email))
 	RETURN 1
 GO
@@ -501,7 +580,7 @@ CREATE OR ALTER FUNCTION Academic.F_SubjectScheduleValidation(
 	@StartTime int,
 	@EndTime int
 )
-RETURNS NVARCHAR(6)
+RETURNS NVARCHAR(9)
 AS
 BEGIN
 	DECLARE @subject nvarchar(9) = (
@@ -518,6 +597,17 @@ BEGIN
 		RETURN NULL
 	RETURN @subject
 END
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_GetSubjectSchedule(
+	@SubjectID int
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT *
+		FROM Academic.vSubjectSchedule AvsubSche
+		WHERE AvsubSche.SubjectDetailID = @SubjectID
 GO
 
 -- Login
