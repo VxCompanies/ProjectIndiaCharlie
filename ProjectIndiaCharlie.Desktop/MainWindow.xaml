@@ -7,9 +7,8 @@
         xmlns:view="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
         xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
         mc:Ignorable="d"
-        WindowStyle="None"
         WindowStartupLocation="CenterScreen"
-        Height="450" Width="800">
+        Title="Academics" Height="450" Width="800">
     <Window.Resources>
         <vm:MainViewModel x:Key="vm"/>
     </Window.Resources>
