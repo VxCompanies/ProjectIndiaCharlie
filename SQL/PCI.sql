@@ -34,84 +34,6 @@ ALTER AUTHORIZATION ON SCHEMA::db_datawriter
 	TO API
 GO
 
--- Application User
-CREATE USER projectIndiaCharlie
-FOR LOGIN projectIndiaCharlieAPI
-WITH DEFAULT_SCHEMA = Academic
-GO
-ALTER ROLE API
-ADD MEMBER projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.vStudentSubjects
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.vStudentDetails
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.vSubjectSchedule
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.vProfessorDetails
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.vSubjectSectionDetails
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_SubjectScheduleValidation
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_PasswordValidation
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_GetPasswordSalt
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_PasswordUpsert
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_ProfessorValidation
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_DocNoValidation
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_ProfessorLogin
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_GetSubjectSchedule
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_StudentRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_ProfessorRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.vPeopleDetails
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_SubjectSelection
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_PersonRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_CareerRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_StudentLogin
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_SubjectClassroomAssignment
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_SubjectScheduleAssignment
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_StudentValidation
-	TO projectIndiaCharlie
-GO
-
 ---- Application Role
 --CREATE APPLICATION ROLE Academics
 --	WITH PASSWORD='p1c4P1',
@@ -296,6 +218,47 @@ CREATE TABLE Academic.SubjectSchedule(
 )
 GO
 
+CREATE TABLE Academic.Administrator(
+	PersonID int,
+	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
+	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
+
+	PRIMARY KEY(PersonID),
+	FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID)
+)
+GO
+
+CREATE TABLE Academic.Retires(
+	SubjectDetailID int NOT NULL,
+	PersonID int NOT NULL,
+	RetiredDate datetime NOT NULL DEFAULT GETDATE(), 
+	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
+
+	PRIMARY KEY(SubjectDetailID, PersonID),
+	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
+	FOREIGN KEY(PersonID) REFERENCES Academic.Student(PersonID)
+)
+GO
+
+CREATE TABLE Academic.GradeRevision(
+	SubjectDetailID int NOT NULL,
+	PersonID int NOT NULL,
+	DateRequested datetime NOT NULL DEFAULT GETDATE(), 
+	GradeID int NOT NULL,
+	ModifiedGradeID int,
+	PersonIDApproved int,
+	DateModified datetime,
+
+	PRIMARY KEY(SubjectDetailID, PersonID),
+	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
+	FOREIGN KEY(GradeID) REFERENCES Academic.Grade(GradeID),
+	FOREIGN KEY(ModifiedGradeID) REFERENCES Academic.Grade(GradeID),
+	FOREIGN KEY(PersonIDApproved) REFERENCES Academic.Administrator(PersonID),
+
+	FOREIGN KEY(PersonID) REFERENCES Academic.Student(PersonID)
+)
+GO
+
 -- Views
 CREATE OR ALTER VIEW Person.vPeopleDetails
 AS
@@ -375,6 +338,9 @@ AS
 		AsubSche.EndTime
 	FROM Academic.SubjectSchedule AsubSche
 GO
+
+
+
 
 CREATE OR ALTER VIEW Academic.vStudentSubjects
 AS
@@ -482,9 +448,29 @@ CREATE OR ALTER PROCEDURE Academic.SP_SubjectSelection
 	@SubjectDetailID int,
 	@StudentID int
 AS
+	BEGIN TRAN
+
 	INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
 	VALUES(@SubjectDetailID, @StudentID)
-	RETURN 1
+
+	IF (Person.F_ClassAvalibilityValidation(@SubjectDetailID) = 1)
+		BEGIN
+			COMMIT
+			RETURN 1
+		END
+	ELSE
+		BEGIN
+			ROLLBACK
+			RETURN 0
+		END
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_SubjectElimination
+	@SubjectDetailID int,
+	@StudentID int
+AS
+	DELETE FROM Academic.StudentSubject
+	WHERE SubjectDetailID = @SubjectDetailID AND  StudentID = @StudentID
 GO
 
 CREATE OR ALTER PROCEDURE Academic.SP_SubjectClassroomAssignment
@@ -507,7 +493,31 @@ AS
 	RETURN 1
 GO
 
+
+
 -- Functions
+
+
+CREATE OR ALTER FUNCTION Person.F_ClassAvalibilityValidation(
+@SubjectDetailID int
+)
+RETURNS BIT
+AS
+	BEGIN
+		IF (SELECT COUNT(StudentID) 
+			FROM Academic.StudentSubject
+			WHERE SubjectDetailID = @SubjectDetailID) 
+			<=
+			(SELECT Capacity 
+			FROM Academic.Classroom C
+			JOIN Academic.SubjectClassroom SC ON SC.ClassroomID = C.ClassroomID
+			WHERE SubjectDetailID = @SubjectDetailID)
+				RETURN 1
+		RETURN 0
+	END
+GO
+
+
 CREATE OR ALTER FUNCTION Person.F_DocNoValidation(
 	@DocNo nvarchar(11)
 )
@@ -610,6 +620,21 @@ AS
 		WHERE AvsubSche.SubjectDetailID = @SubjectID
 GO
 
+
+
+CREATE OR ALTER FUNCTION Academic.F_GetStudentsSchedule(
+	@StudentID int
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT	vSSD.SubjectCode, vSSD.Name, vSSD.Section, vSSD.Credits, vSSD.ClassroomCode,
+				vSSD.Monday, vSSD.Tuesday, vSSD.Wednesday, vSSD.Thursday, vSSD.Friday, vSSD.Saturday, SS.GradeID
+		FROM Academic.vSubjectSectionDetails vSSD
+		JOIN Academic.StudentSubject SS ON SS.SubjectDetailID = vSSD.SubjectDetailID
+		WHERE SS.StudentID = @StudentID
+GO
+
 -- Login
 CREATE OR ALTER FUNCTION Academic.F_StudentLogin(
 	@PersonID int,
@@ -672,6 +697,86 @@ BEGIN
     WHERE PersonID =(Select PersonID from Inserted)
 END 
 GO
+
+
+-- Application User
+CREATE USER projectIndiaCharlie
+FOR LOGIN projectIndiaCharlieAPI
+WITH DEFAULT_SCHEMA = Academic
+GO
+ALTER ROLE API
+ADD MEMBER projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vStudentSubjects
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vStudentDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vSubjectSchedule
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vProfessorDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vSubjectSectionDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_SubjectScheduleValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_PasswordValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_GetPasswordSalt
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_PasswordUpsert
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_ProfessorValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_DocNoValidation
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_ProfessorLogin
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_GetSubjectSchedule
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_StudentRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_ProfessorRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.vPeopleDetails
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_SubjectSelection
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_PersonRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_CareerRegistration
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_StudentLogin
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_SubjectClassroomAssignment
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.SP_SubjectScheduleAssignment
+	TO projectIndiaCharlie
+GO
+GRANT VIEW DEFINITION ON Academic.F_StudentValidation
+	TO projectIndiaCharlie
+GO
+
 
 --INSERT INTO Person.Person(DocNo, FirstName, FirstSurname, Gender, BirthDate, Email)
 --VALUES('123', 'Juan', 'Cito', 'M', '2002-02-01', 'juancito@mail.com')
