@@ -228,17 +228,6 @@ CREATE TABLE Academic.Administrator(
 )
 GO
 
-CREATE TABLE Academic.Retires(
-	SubjectDetailID int NOT NULL,
-	PersonID int NOT NULL,
-	RetiredDate datetime NOT NULL DEFAULT GETDATE(), 
-	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
-
-	PRIMARY KEY(SubjectDetailID, PersonID),
-	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
-	FOREIGN KEY(PersonID) REFERENCES Academic.Student(PersonID)
-)
-GO
 
 CREATE TABLE Academic.GradeRevision(
     PersonID int NOT NULL,
@@ -305,6 +294,8 @@ SELECT Asdet.SubjectDetailID,
 	Asub.Name,
 	Asub.Credits,
 	Asdet.Section,
+	Asdet.Year,
+	Asdet.Trimester,
 	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname) Professor,
 	CONCAT(COUNT(AstuSub.StudentID), '/', Acl.Capacity) Capacity,
 	Acl.Code ClassroomCode,
@@ -328,6 +319,8 @@ FROM Academic.Subject Asub
 	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname),
 	Asub.Credits,
 	Asdet.Section,
+	Asdet.Year,
+	Asdet.Trimester,
 	Acl.Capacity,
 	Acl.Code
 GO
@@ -466,10 +459,6 @@ AS
 	RETURN 1
 GO
 
-SELECT Person.F_ClassAvalibilityValidation(1)
-DECLARE @R INT
-EXEC @R = Academic.SP_SubjectSelection 1, 1112199
-SELECT @R
 
 CREATE OR ALTER PROCEDURE Academic.SP_SubjectElimination
 	@SubjectDetailID int,
@@ -498,6 +487,20 @@ AS
 	VALUES(@SubjectDetailID, @WeekdayID, @StartTime, @EndTime)
 	RETURN 1
 GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_GetLastTrimesterStudentsSchedule
+	@StudentID int
+AS
+		DECLARE @Year int,
+			@Trimester int
+
+		Set @Year = (SELECT  MAX(Year) FROM Academic.vSubjectSectionDetails) 
+		Set @Trimester = (SELECT MAX(Trimester) FROM Academic.vSubjectSectionDetails
+					WHERE Year = @Year)
+		--RETURN
+		SELECT * FROM Academic.F_GetStudentsSchedule(@StudentID, @Year, @Trimester);
+GO
+
 
 -- Functions
 CREATE OR ALTER FUNCTION Person.F_ClassAvalibilityValidation(
@@ -625,20 +628,60 @@ AS
 		WHERE AvsubSche.SubjectDetailID = @SubjectID
 GO
 
-
-
 CREATE OR ALTER FUNCTION Academic.F_GetStudentsSchedule(
-	@StudentID int
+	@StudentID int,
+	@Year int,
+	@Trimester int
 )
 RETURNS TABLE
 AS
 	RETURN
-		SELECT	vSSD.SubjectCode, vSSD.Name, vSSD.Section, vSSD.Credits, vSSD.ClassroomCode,
+		SELECT 	vSSD.SubjectCode, vSSD.Name, vSSD.Section, vSSD.Credits, vSSD.ClassroomCode,
 				vSSD.Monday, vSSD.Tuesday, vSSD.Wednesday, vSSD.Thursday, vSSD.Friday, vSSD.Saturday, SS.GradeID
 		FROM Academic.vSubjectSectionDetails vSSD
 		JOIN Academic.StudentSubject SS ON SS.SubjectDetailID = vSSD.SubjectDetailID
-		WHERE SS.StudentID = @StudentID
+		WHERE SS.StudentID = @StudentID		
+				AND vSSD.YEAR = @Year AND vSSD.Trimester = @Trimester
 GO
+
+--Grade publication
+CREATE OR ALTER FUNCTION Academic.F_GetSubjectsOfProfessor(
+	@ProfessorId int
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT SD.SubjectDetailID, S.SubjectCode, S.Name, SD.Section, SD.Year, SD.Trimester
+		FROM Academic.SubjectDetail SD
+		JOIN Academic.Subject S On SD.SubjectID = S.SubjectID
+		WHERE SD.ProfessorID = @ProfessorId
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_GetStudentsOfSubject(
+	@SubjectID int
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT  SS.StudentID, CONCAT(P.FirstName, ' ', MiddleName, ' ', FirstSurname, ' ', SecondSurname) [Nombres], SS.GradeID
+		FROM Academic.StudentSubject SS
+		JOIN Person.Person P ON SS.StudentID = P.PersonID
+
+		WHERE SS.SubjectDetailID = @SubjectID
+GO
+
+CREATE OR ALTER PROCEDURE Academic.F_PublishGrade
+	@StudentID int,
+	@SubjectDetailID int,
+	@GradeID int
+AS
+BEGIN
+	UPDATE Academic.StudentSubject
+	SET GradeID = @GradeID
+	WHERE SubjectDetailID = @SubjectDetailID AND @StudentID = StudentID
+END
+GO
+
 
 -- Login
 CREATE OR ALTER FUNCTION Academic.F_StudentLogin(
@@ -701,8 +744,19 @@ BEGIN
     SET ModifiedDate = GETDATE()
     WHERE PersonID =(Select PersonID from Inserted)
 END 
-GO
+GO 
 
+ CREATE TRIGGER ChangedGrade
+    ON Academic.StudentSubject
+    AFTER UPDATE
+AS
+BEGIN
+    UPDATE Academic.StudentSubject
+    SET ModifiedDate = GETDATE()
+    WHERE SubjectDetailID = (Select SubjectDetailID from Inserted) 
+		AND StudentID =  (Select StudentID from Inserted) 
+END
+GO
 
 -- Application User
 CREATE USER projectIndiaCharlie

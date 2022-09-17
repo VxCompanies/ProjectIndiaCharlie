@@ -4,7 +4,9 @@ DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
 --SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+
+--SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -192,7 +194,15 @@ EXEC Academic.SP_SubjectSelection
 SELECT * FROM Academic.vSubjectSectionDetails
 WHERE SubjectDetailID = 2;
 
-SELECT * FROM Academic.F_GetStudentsSchedule(1110408);
+--UPDATE Academic.SubjectDetail
+--SET Year = 2022
+--WHERE SubjectDetailID = 2;
+
+EXEC Academic.SP_GetLastTrimesterStudentsSchedule
+@StudentID = 1110408;
+
+
+SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
@@ -208,6 +218,27 @@ EXEC Academic.SP_SubjectElimination
 --EXEC Academic.SP_SubjectSelection
 --	@SubjectDetailId = 2,
 --	@StudentId	= 1110424;
+
+EXEC Academic.SP_GetLastTrimesterStudentsSchedule
+@StudentID = 1110408;
+
+SELECT * 
+FROM Academic.SubjectDetail SD
+JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID
+WHERE SubjectCode = 'MED348';
+
+
+EXEC Academic.F_PublishGrade
+@StudentID = 1110409,
+@SubjectDetailID = 2,
+@GradeID = 1;
+
+SELECT * FROM Academic.StudentSubject;
+SELECT * FROM Academic.F_GetSubjectsOfProfessor(1110201);
+SELECT * FROM Academic.F_GetStudentsOfSubject(2);
+GO
+
+
 SELECT *-- SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
 	--S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
 FROM Academic.SubjectSchedule SS
@@ -233,9 +264,8 @@ SELECT * FROM Academic.SubjectSchedule;
 
 SELECT * FROM Academic.Subject;
 SELECT * FROM Academic.SubjectClassroom;
-SELECT * 
-FROM Academic.SubjectDetail
-WHERE SubjectID = 29;
+SELECT * FROM Academic.SubjectDetail;
+SELECT * FROM Academic.GradeRevision;
 
 SELECT * 
 FROM Academic.SubjectSchedule SS
