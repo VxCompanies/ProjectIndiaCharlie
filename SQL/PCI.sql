@@ -241,21 +241,23 @@ CREATE TABLE Academic.Retires(
 GO
 
 CREATE TABLE Academic.GradeRevision(
-	SubjectDetailID int NOT NULL,
-	PersonID int NOT NULL,
-	DateRequested datetime NOT NULL DEFAULT GETDATE(), 
-	GradeID int NOT NULL,
-	ModifiedGradeID int,
-	PersonIDApproved int,
-	DateModified datetime,
+    PersonID int NOT NULL,
+    SubjectDetailID int NOT NULL,
+    DateRequested datetime NOT NULL DEFAULT GETDATE(), 
+    GradeID int NOT NULL,
+    ModifiedGradeID int,
+    AdminID int,
+    ProfessorID int,
+    DateModified datetime,
 
-	PRIMARY KEY(SubjectDetailID, PersonID),
-	FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
-	FOREIGN KEY(GradeID) REFERENCES Academic.Grade(GradeID),
-	FOREIGN KEY(ModifiedGradeID) REFERENCES Academic.Grade(GradeID),
-	FOREIGN KEY(PersonIDApproved) REFERENCES Academic.Administrator(PersonID),
+    PRIMARY KEY(SubjectDetailID, PersonID),
+    FOREIGN KEY(SubjectDetailID) REFERENCES Academic.SubjectDetail(SubjectDetailID),
+    FOREIGN KEY(GradeID) REFERENCES Academic.Grade(GradeID),
+    FOREIGN KEY(ModifiedGradeID) REFERENCES Academic.Grade(GradeID),
+    FOREIGN KEY(AdminID) REFERENCES Academic.Administrator(PersonID),
+    FOREIGN KEY(ProfessorID) REFERENCES Academic.Professor(PersonID),
 
-	FOREIGN KEY(PersonID) REFERENCES Academic.Student(PersonID)
+    FOREIGN KEY(PersonID) REFERENCES Academic.Student(PersonID)
 )
 GO
 
@@ -339,9 +341,6 @@ AS
 	FROM Academic.SubjectSchedule AsubSche
 GO
 
-
-
-
 CREATE OR ALTER VIEW Academic.vStudentSubjects
 AS
 SELECT Ass.StudentID,
@@ -354,24 +353,36 @@ SELECT Ass.StudentID,
 	Ac.Code Classroom,
 	Asd.Trimester,
 	Asd.Year,
-	IIF(Aw.WeekdayID = 1, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Monday,
-	IIF(Aw.WeekdayID = 2, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Tuesday,
-	IIF(Aw.WeekdayID = 3, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Wednesday,
-	IIF(Aw.WeekdayID = 4, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Thursday,
-	IIF(Aw.WeekdayID = 5, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Friday,
-	IIF(Aw.WeekdayID = 6, CONCAT(Asch.StartTime, '/', Asch.EndTime), NULL) Saturday,
+	MAX(CASE WHEN AW.WeekdayID = 1 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Monday,
+	MAX(CASE WHEN AW.WeekdayID = 2 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Tuesday,
+	MAX(CASE WHEN AW.WeekdayID = 3 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Wednesday,
+	MAX(CASE WHEN AW.WeekdayID = 4 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Thursday,
+	MAX(CASE WHEN AW.WeekdayID = 5 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Friday,
+	MAX(CASE WHEN AW.WeekdayID = 6 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Saturday,
 	Ag.Grade,
 	(Ag.Points * Asu.Credits) Points
 FROM Academic.StudentSubject Ass
 	INNER JOIN Academic.SubjectDetail Asd ON Asd.SubjectDetailID = Ass.SubjectDetailID
 	INNER JOIN Academic.Subject Asu ON Asu.SubjectID = Asd.SubjectID
-	INNER JOIN Academic.SubjectSchedule Asch ON Asch.SubjectDetailID = Asd.SubjectDetailID
-	INNER JOIN Academic.Weekday Aw ON Aw.WeekdayID = Asch.WeekdayID
+	INNER JOIN Academic.SubjectSchedule AsubSch ON AsubSch.SubjectDetailID = Asd.SubjectDetailID
+	INNER JOIN Academic.Weekday Aw ON Aw.WeekdayID = AsubSch.WeekdayID
 	INNER JOIN Academic.Professor Ap ON Ap.PersonID = Asd.ProfessorID
 	INNER JOIN Person.Person Pprof ON Pprof.PersonID = Ap.PersonID
 	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asd.SubjectDetailID
 	INNER JOIN Academic.Classroom Ac ON Ac.ClassroomID = Ascl.ClassroomID
 	LEFT JOIN Academic.Grade Ag ON Ag.GradeID = Ass.GradeID
+	GROUP BY  Ass.StudentID,
+	Asd.SubjectDetailID,
+	Asu.SubjectCode,
+	Asd.Section,
+	Asu.Name,
+	CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname),
+	Asu.Credits,
+	Ac.Code,
+	Asd.Trimester,
+	Asd.Year,
+	Ag.Grade,
+	Ag.Points * Asu.Credits
 GO
 
 -- Procedures
@@ -449,7 +460,7 @@ CREATE OR ALTER PROCEDURE Academic.SP_SubjectSelection
 	@StudentID int
 AS
 	BEGIN TRAN
-
+	
 	INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
 	VALUES(@SubjectDetailID, @StudentID)
 
@@ -496,8 +507,6 @@ GO
 
 
 -- Functions
-
-
 CREATE OR ALTER FUNCTION Person.F_ClassAvalibilityValidation(
 @SubjectDetailID int
 )
@@ -516,7 +525,6 @@ AS
 		RETURN 0
 	END
 GO
-
 
 CREATE OR ALTER FUNCTION Person.F_DocNoValidation(
 	@DocNo nvarchar(11)
@@ -661,7 +669,7 @@ AS
 		WHERE Ap.PersonID = @PersonID
 GO
 
-CREATE OR ALTER FUNCTION Academic.F_GetPasswordSalt(
+CREATE OR ALTER FUNCTION Person.F_GetPasswordSalt(
 	@PersonID int
 )
 RETURNS nvarchar(5)
@@ -725,19 +733,19 @@ GO
 GRANT VIEW DEFINITION ON Academic.F_SubjectScheduleValidation
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.F_PasswordValidation
+GRANT VIEW DEFINITION ON Person.F_PasswordValidation
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.F_GetPasswordSalt
+GRANT VIEW DEFINITION ON Person.F_GetPasswordSalt
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.SP_PasswordUpsert
+GRANT VIEW DEFINITION ON Person.SP_PasswordUpsert
 	TO projectIndiaCharlie
 GO
 GRANT VIEW DEFINITION ON Academic.F_ProfessorValidation
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.F_DocNoValidation
+GRANT VIEW DEFINITION ON Person.F_DocNoValidation
 	TO projectIndiaCharlie
 GO
 GRANT VIEW DEFINITION ON Academic.F_ProfessorLogin
@@ -752,13 +760,13 @@ GO
 GRANT VIEW DEFINITION ON Academic.SP_ProfessorRegistration
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.vPeopleDetails
+GRANT VIEW DEFINITION ON Person.vPeopleDetails
 	TO projectIndiaCharlie
 GO
 GRANT VIEW DEFINITION ON Academic.SP_SubjectSelection
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.SP_PersonRegistration
+GRANT VIEW DEFINITION ON Person.SP_PersonRegistration
 	TO projectIndiaCharlie
 GO
 GRANT VIEW DEFINITION ON Academic.SP_CareerRegistration
