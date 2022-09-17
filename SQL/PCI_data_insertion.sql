@@ -3,8 +3,8 @@ USE ProjectIndiaCharlie;
 DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
---SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -144,8 +144,70 @@ VALUES ('Medicina', 'MED', 204, 425, 2020, 1),
 ('Ingeniería Mecánica', 'MEC', 112, 280, 2020, 1);
 GO
 
+--Admins
+INSERT INTO Person.Person(DocNo, FirstName, FirstSurname, Gender, BirthDate, Email)
+VALUES		('66666666666', 'Nikita', 'Kravchenko', 'M', '1998-10-12', 'nikita1998@mail.com'),
+			('11111111111', 'Omar', 'Núñez', 'M', '2002-5-18', 'omarnun2002@mail.com');
+GO
 
+INSERT INTO Academic.Administrator(PersonID)
+VALUES		(1112201),(1112202);
+GO
 
+INSERT INTO Person.PersonPassword(PersonID ,PasswordHash, PasswordSalt)
+VALUES		(1112200, '06d6a394462a1f19abf14fa321174311d642dfc55f11d050b011c79de7321df3', 'mmmmm'),
+			(1112201, '06d6a394462a1f19abf14fa321174311d642dfc55f11d050b011c79de7321df3', 'mmmmm');
+GO
+
+--Datos de prueba de secciones
+INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
+VALUES (1, 1110408), (2, 1110409), (2, 1110408);
+GO
+
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110412;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110413;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110414;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110415;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110416;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110417;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110418;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110419;
+
+SELECT * FROM Academic.vSubjectSectionDetails
+WHERE SubjectDetailID = 2;
+
+SELECT * FROM Academic.F_GetStudentsSchedule(1110408);
+
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110422;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110423;
+	
+EXEC Academic.SP_SubjectElimination
+	@SubjectDetailId = 2,
+	@StudentId	= 1110422;
+
+--EXEC Academic.SP_SubjectSelection
+--	@SubjectDetailId = 2,
+--	@StudentId	= 1110424;
 SELECT *-- SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
 	--S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
 FROM Academic.SubjectSchedule SS
