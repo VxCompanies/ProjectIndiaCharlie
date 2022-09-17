@@ -53,18 +53,18 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet("Login")]
-    public async Task<ActionResult<VStudentDetail>> StudentLogin(int personId, string password)
+    public async Task<ActionResult<VStudentDetail>> StudentLogin(int studentId, string password)
     {
         try
         {
-            var passwordSalt = await _context.GetPasswordSalt(personId);
+            var passwordSalt = await _context.GetPasswordSalt(studentId);
 
             if (string.IsNullOrWhiteSpace(passwordSalt))
                 return NotFound();
 
             var passwordHash = PasswordHelpers.GetPasswordHash(password, passwordSalt);
 
-            var student = await _context.StudentLogin(personId, passwordHash);
+            var student = await _context.StudentLogin(studentId, passwordHash);
 
             return student is null ?
                 NotFound("Wrong student ID or password.") :
@@ -90,7 +90,9 @@ public class StudentController : ControllerBase
                 return Conflict($"Cannot select this subject because the schedule conflicts with '{scheduleValidation}'.");
             }
 
-            await _context.SubjectSelection(subjectId, studentId);
+            if (!await _context.SubjectSelection(subjectId, studentId))
+                return Conflict($"Subject section is full.");
+
             await _context.Database.CommitTransactionAsync();
 
             var subject = await _context.VStudentSubjects
@@ -113,7 +115,7 @@ public class StudentController : ControllerBase
                     .ToListAsync();
 
             return (await subjects).Count < 1 ?
-                NotFound() :
+                NotFound("No subjects selected.") :
                 Ok(await subjects);
         }
         catch (Exception e)

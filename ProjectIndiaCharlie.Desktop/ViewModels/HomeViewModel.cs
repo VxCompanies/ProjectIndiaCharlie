@@ -8,7 +8,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels;
 
 public class HomeViewModel : ViewModelBase
 {
-    public Person LogedUser { get; private set; }
+    public VStudentDetail Student { get; private set; }
 
     public ObservableCollection<SubjectStudent> SubjectsList { get; set; }
 
@@ -16,7 +16,7 @@ public class HomeViewModel : ViewModelBase
 
     public HomeViewModel()
     {
-        LogedUser = LogedPerson.Person!;
+        Student = LogedStudent.Student!;
         SubjectsList = new();
         GetPeopleAsyncCommand = new();
 
@@ -27,7 +27,7 @@ public class HomeViewModel : ViewModelBase
     {
         SubjectsList.Clear();
 
-        foreach (var subject in await AcademicService.GetStudentSubjects(LogedUser.PersonId.ToString()))
+        foreach (var subject in await AcademicService.GetStudentSubjects(Student.PersonId.ToString()))
             SubjectsList.Add(subject);
     }
 }

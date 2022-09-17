@@ -459,22 +459,17 @@ CREATE OR ALTER PROCEDURE Academic.SP_SubjectSelection
 	@SubjectDetailID int,
 	@StudentID int
 AS
-	BEGIN TRAN
-	
+	IF (Person.F_ClassAvalibilityValidation(@SubjectDetailID) != 1)
+		RETURN 0
 	INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
 	VALUES(@SubjectDetailID, @StudentID)
-
-	IF (Person.F_ClassAvalibilityValidation(@SubjectDetailID) = 1)
-		BEGIN
-			COMMIT
-			RETURN 1
-		END
-	ELSE
-		BEGIN
-			ROLLBACK
-			RETURN 0
-		END
+	RETURN 1
 GO
+
+SELECT Person.F_ClassAvalibilityValidation(1)
+DECLARE @R INT
+EXEC @R = Academic.SP_SubjectSelection 1, 1112199
+SELECT @R
 
 CREATE OR ALTER PROCEDURE Academic.SP_SubjectElimination
 	@SubjectDetailID int,
@@ -504,23 +499,25 @@ AS
 	RETURN 1
 GO
 
-
-
 -- Functions
 CREATE OR ALTER FUNCTION Person.F_ClassAvalibilityValidation(
-@SubjectDetailID int
+	@SubjectDetailID int
 )
 RETURNS BIT
 AS
 	BEGIN
-		IF (SELECT COUNT(StudentID) 
+		IF (
+			SELECT COUNT(StudentID) 
 			FROM Academic.StudentSubject
-			WHERE SubjectDetailID = @SubjectDetailID) 
-			<=
-			(SELECT Capacity 
-			FROM Academic.Classroom C
-			JOIN Academic.SubjectClassroom SC ON SC.ClassroomID = C.ClassroomID
-			WHERE SubjectDetailID = @SubjectDetailID)
+			WHERE SubjectDetailID = @SubjectDetailID
+		) 
+			<
+				(
+				SELECT Capacity 
+				FROM Academic.Classroom C
+				JOIN Academic.SubjectClassroom SC ON SC.ClassroomID = C.ClassroomID
+				WHERE SubjectDetailID = @SubjectDetailID
+			)
 				RETURN 1
 		RETURN 0
 	END

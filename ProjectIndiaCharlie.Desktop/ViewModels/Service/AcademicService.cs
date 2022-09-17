@@ -30,7 +30,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Service
                 var content = await response.Content.ReadAsStringAsync();
 
                 var subjectStudent = JsonSerializer.Deserialize<IEnumerable<SubjectStudent>>(content, _options);
-                LogedPerson.SubjectStudent = subjectStudent!;
+                LogedStudent.StudentSubjects = subjectStudent!;
                 return subjectStudent!;
             }
             catch (Exception)

@@ -3,8 +3,8 @@ USE ProjectIndiaCharlie;
 DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
-SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
---SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -151,7 +151,7 @@ VALUES		('66666666666', 'Nikita', 'Kravchenko', 'M', '1998-10-12', 'nikita1998@m
 GO
 
 INSERT INTO Academic.Administrator(PersonID)
-VALUES		(1112201),(1112202);
+VALUES		(1112200),(1112201);
 GO
 
 INSERT INTO Person.PersonPassword(PersonID ,PasswordHash, PasswordSalt)

@@ -26,19 +26,19 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="ID:"/>
-                    <TextBlock Text="{Binding LogedUser.PersonId, Mode=OneTime, UpdateSourceTrigger=Default}"/>
+                    <TextBlock Text="{Binding Student.PersonId, Mode=OneTime, UpdateSourceTrigger=Default}"/>
                     <TextBlock Text="Career"/>
-                    <TextBlock Text="{Binding LogedUser.Student.Career.Name, Mode=OneTime, UpdateSourceTrigger=Default}"/>
+                    <TextBlock Text="{Binding Student.Career, Mode=OneTime, UpdateSourceTrigger=Default}"/>
                     <TextBlock Text="Trimesters:"/>
-                    <TextBlock Text="{Binding LogedUser.Student.Trimester, Mode=OneTime, UpdateSourceTrigger=Default}"/>
+                    <TextBlock Text="{Binding Student.Trimester, Mode=OneTime, UpdateSourceTrigger=Default}"/>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="General Index:"/>
-                    <TextBlock Text="{Binding LogedUser.Student.GeneralIndex, Mode=OneTime, UpdateSourceTrigger=Default}"/>
+                    <TextBlock Text="{Binding Student.GeneralIndex, Mode=OneTime, UpdateSourceTrigger=Default}"/>
                     <TextBlock Text="Trimestral Index:"/>
-                    <TextBlock Text="{Binding LogedUser.Student.TrimestralIndex, Mode=OneTime, UpdateSourceTrigger=Default}"/>
-                    <TextBlock Text="Coordinator:"/>
-                    <TextBlock Text="{Binding LogedUser.Student.Career.Coordinator.Person.Email, Mode=OneTime, UpdateSourceTrigger=Default}"/>
+                    <TextBlock Text="{Binding Student.TrimestralIndex, Mode=OneTime, UpdateSourceTrigger=Default}"/>
+                    <!--<TextBlock Text="Coordinator:"/>
+                    <TextBlock Text="{Binding Student.CoordinatorEmail, Mode=OneTime, UpdateSourceTrigger=Default}"/>-->
                 </StackPanel>
             </Grid>
         </StackPanel>
