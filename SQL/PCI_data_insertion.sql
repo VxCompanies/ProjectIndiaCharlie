@@ -161,7 +161,7 @@ GO
 
 --Datos de prueba de secciones
 INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
-VALUES (1, 1110408), (2, 1110409), (1, 1110408);
+VALUES (1, 1110408), (2, 1110409), (2, 1110408);
 GO
 
 EXEC Academic.SP_SubjectSelection
@@ -191,6 +191,8 @@ EXEC Academic.SP_SubjectSelection
 
 SELECT * FROM Academic.vSubjectSectionDetails
 WHERE SubjectDetailID = 2;
+
+SELECT * FROM Academic.F_GetStudentsSchedule(1110408);
 
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
