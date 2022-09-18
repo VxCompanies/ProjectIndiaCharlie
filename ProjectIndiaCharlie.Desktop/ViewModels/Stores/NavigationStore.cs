@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Store;
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 
 public static class NavigationStore
 {

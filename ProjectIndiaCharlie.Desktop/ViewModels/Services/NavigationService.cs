@@ -1,6 +1,6 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Store;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Service;
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Services;
 
 public static class NavigationService
 {

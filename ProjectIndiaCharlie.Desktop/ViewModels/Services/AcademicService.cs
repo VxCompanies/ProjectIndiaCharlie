@@ -1,14 +1,13 @@
-﻿using ProjectIndiaCharlie.Desktop.Models;
-using ProjectIndiaCharlie.Desktop.ViewModels.Store;
+﻿using ProjectIndiaCharlie.Core.Models;
+using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Service
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Services
 {
     public class AcademicService
     {
@@ -17,7 +16,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Service
         private const string getStudentSubjectsUrl = $"{baseUrl}/Student/Subjects";
 
         private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
-        public static async Task<IEnumerable<SubjectStudent>> GetStudentSubjects(string personId)
+        public static async Task<IEnumerable<VStudentSubject>> GetStudentSubjects(string personId)
         {
             try
             {
@@ -25,17 +24,17 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Service
                 var response = await httpClient.GetAsync($"{getStudentSubjectsUrl}?studentId={personId}");
 
                 if (!response.IsSuccessStatusCode)
-                    return Enumerable.Empty<SubjectStudent>();
+                    return Enumerable.Empty<VStudentSubject>();
 
                 var content = await response.Content.ReadAsStringAsync();
 
-                var subjectStudent = JsonSerializer.Deserialize<IEnumerable<SubjectStudent>>(content, _options);
+                var subjectStudent = JsonSerializer.Deserialize<IEnumerable<VStudentSubject>>(content, _options);
                 LogedStudent.StudentSubjects = subjectStudent!;
                 return subjectStudent!;
             }
             catch (Exception)
             {
-                return Enumerable.Empty<SubjectStudent>();
+                return Enumerable.Empty<VStudentSubject>();
             }
         }
     }

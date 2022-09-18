@@ -8,13 +8,6 @@ DROP DATABASE IF EXISTS ProjectIndiaCharlie
 GO
 CREATE DATABASE ProjectIndiaCharlie
 GO
----- Login
---DROP LOGIN ProjectIndiaCharlieAPI
---GO
---CREATE LOGIN ProjectIndiaCharlieAPI
---WITH Password = 'picAPI',
---DEFAULT_DATABASE = ProjectIndiaCharlie
---GO
 
 USE ProjectIndiaCharlie
 GO
@@ -33,18 +26,6 @@ GO
 ALTER AUTHORIZATION ON SCHEMA::db_datawriter
 	TO API
 GO
-
----- Application Role
---CREATE APPLICATION ROLE Academics
---	WITH PASSWORD='p1c4P1',
---	DEFAULT_SCHEMA = Academic
---GO
---ALTER AUTHORIZATION ON SCHEMA::Academic
---TO Academics
---GO
---ALTER AUTHORIZATION ON SCHEMA::Person
---TO Academics
---GO
 
 -- Tables
 CREATE TABLE Person.Person(
@@ -459,7 +440,6 @@ AS
 	RETURN 1
 GO
 
-
 CREATE OR ALTER PROCEDURE Academic.SP_SubjectElimination
 	@SubjectDetailID int,
 	@StudentID int
@@ -501,6 +481,18 @@ AS
 		SELECT * FROM Academic.F_GetStudentsSchedule(@StudentID, @Year, @Trimester);
 GO
 
+CREATE OR ALTER PROCEDURE Academic.SP_PublishGrade
+	@StudentID int,
+	@SubjectDetailID int,
+	@GradeID int
+AS
+BEGIN
+	UPDATE Academic.StudentSubject
+	SET GradeID = @GradeID
+	WHERE SubjectDetailID = @SubjectDetailID AND
+		@StudentID = StudentID
+END
+GO
 
 -- Functions
 CREATE OR ALTER FUNCTION Person.F_ClassAvalibilityValidation(
@@ -617,6 +609,24 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER FUNCTION Academic.F_StudentSubjectValidation(
+	@SubjectDetailID int,
+	@StudentID int
+)
+RETURNS BIT
+AS
+BEGIN
+	IF EXISTS(
+		SELECT 1
+		FROM Academic.StudentSubject
+		WHERE SubjectDetailID = @SubjectDetailID AND
+		StudentID = @StudentID
+	)
+		RETURN 1
+	RETURN 0
+END
+GO
+
 CREATE OR ALTER FUNCTION Academic.F_GetSubjectSchedule(
 	@SubjectID int
 )
@@ -663,25 +673,12 @@ CREATE OR ALTER FUNCTION Academic.F_GetStudentsOfSubject(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT  SS.StudentID, CONCAT(P.FirstName, ' ', MiddleName, ' ', FirstSurname, ' ', SecondSurname) [Nombres], SS.GradeID
+		SELECT SS.StudentID, CONCAT(P.FirstName, ' ', MiddleName, ' ', FirstSurname, ' ', SecondSurname) [Nombres], SS.GradeID
 		FROM Academic.StudentSubject SS
 		JOIN Person.Person P ON SS.StudentID = P.PersonID
 
 		WHERE SS.SubjectDetailID = @SubjectID
 GO
-
-CREATE OR ALTER PROCEDURE Academic.F_PublishGrade
-	@StudentID int,
-	@SubjectDetailID int,
-	@GradeID int
-AS
-BEGIN
-	UPDATE Academic.StudentSubject
-	SET GradeID = @GradeID
-	WHERE SubjectDetailID = @SubjectDetailID AND @StudentID = StudentID
-END
-GO
-
 
 -- Login
 CREATE OR ALTER FUNCTION Academic.F_StudentLogin(
@@ -836,6 +833,25 @@ GRANT VIEW DEFINITION ON Academic.F_StudentValidation
 	TO projectIndiaCharlie
 GO
 
+---- Login
+--DROP LOGIN ProjectIndiaCharlieAPI
+--GO
+--CREATE LOGIN ProjectIndiaCharlieAPI
+--WITH Password = 'picAPI',
+--DEFAULT_DATABASE = ProjectIndiaCharlie
+--GO
+
+---- Application Role
+--CREATE APPLICATION ROLE Academics
+--	WITH PASSWORD='p1c4P1',
+--	DEFAULT_SCHEMA = Academic
+--GO
+--ALTER AUTHORIZATION ON SCHEMA::Academic
+--TO Academics
+--GO
+--ALTER AUTHORIZATION ON SCHEMA::Person
+--TO Academics
+--GO
 
 --INSERT INTO Person.Person(DocNo, FirstName, FirstSurname, Gender, BirthDate, Email)
 --VALUES('123', 'Juan', 'Cito', 'M', '2002-02-01', 'juancito@mail.com')

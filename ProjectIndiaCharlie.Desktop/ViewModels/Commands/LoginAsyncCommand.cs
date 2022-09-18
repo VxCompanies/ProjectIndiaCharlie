@@ -1,8 +1,8 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Service;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Command
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands
 {
     public class LoginAsyncCommand : AsyncCommandBase
     {

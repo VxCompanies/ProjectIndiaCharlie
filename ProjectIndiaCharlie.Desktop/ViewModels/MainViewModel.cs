@@ -1,4 +1,4 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Store;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
 {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Command;
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands;
 
 public abstract class AsyncCommandBase : CommandBase
 {

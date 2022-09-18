@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Command;
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands;
 
 public abstract class CommandBase : ICommand
 {

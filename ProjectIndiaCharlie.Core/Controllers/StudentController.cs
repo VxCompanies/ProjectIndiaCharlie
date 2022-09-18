@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ProjectIndiaCharlie.Core.Data;
 using ProjectIndiaCharlie.Core.Models;
@@ -105,6 +104,46 @@ public class StudentController : ControllerBase
         }
     }
 
+    // TODO: Waiting for Nikita
+    [HttpGet("SubjectRetirement")]
+    public async Task<ActionResult<VStudentDetail>> SubjectRetirement(string docNo)
+    {
+        try
+        {
+            var student = await _context.VStudentDetails
+                .FirstOrDefaultAsync(s => s.DocNo == docNo);
+
+            return (student is null) ?
+                NotFound() :
+                Ok(student);
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+
+    // TODO: Validation Function: Academic.F_StudentSubjectValidation(@SubjectDetailID int, @StudentID int)
+    // Elimination SP: Academic.SP_SubjectElimination @SubjectDetailID int, @StudentID int
+    [HttpGet("SubjectElimination")]
+    public async Task<ActionResult<VStudentDetail>> SubjectElimination(string docNo)
+    {
+        try
+        {
+            var student = await _context.VStudentDetails
+                .FirstOrDefaultAsync(s => s.DocNo == docNo);
+
+            return (student is null) ?
+                NotFound() :
+                Ok(student);
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+
+    // TODO: Modify with SQL function
     [HttpGet("SelectedSubjects")]
     public async Task<ActionResult<IEnumerable<VStudentSubject>>> GetStudentSubject(int studentId)
     {
@@ -124,13 +163,47 @@ public class StudentController : ControllerBase
         }
     }
 
-    [HttpGet("Search")]
-    public async Task<ActionResult<VStudentDetail>> GetStudent(string docNo)
+    // TODO
+    [HttpGet("GradeRevision")]
+    public async Task<ActionResult<VStudentDetail>> GradeRevision(string docNo)
     {
         try
         {
             var student = await _context.VStudentDetails
                 .FirstOrDefaultAsync(s => s.DocNo == docNo);
+
+            return (student is null) ?
+                NotFound() :
+                Ok(student);
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+
+    [HttpGet("Search")]
+    public async Task<ActionResult<VStudentDetail>> GetStudent(int? studentId = null, string? docNo = null)
+    {
+        if (studentId is null)
+            try
+            {
+                var student = await _context.VStudentDetails
+                    .FirstOrDefaultAsync(s => s.DocNo == docNo);
+
+                return (student is null) ?
+                    NotFound() :
+                    Ok(student);
+            }
+            catch (Exception e)
+            {
+                return Problem(detail: e.Message);
+            }
+        
+        try
+        {
+            var student = await _context.VStudentDetails
+                .FirstOrDefaultAsync(s => s.PersonId == studentId);
 
             return (student is null) ?
                 NotFound() :

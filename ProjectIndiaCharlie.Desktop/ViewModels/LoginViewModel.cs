@@ -1,4 +1,4 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Command;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Commands;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
 {

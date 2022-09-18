@@ -1,7 +1,6 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Command;
-using ProjectIndiaCharlie.Desktop.ViewModels.Service;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Command.Navigation
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.Navigation
 {
     public class NavigateHomeCommand : CommandBase
     {

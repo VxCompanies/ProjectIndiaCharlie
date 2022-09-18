@@ -3,10 +3,9 @@ USE ProjectIndiaCharlie;
 DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
---SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
---SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -19,7 +18,6 @@ WITH (
   CODEPAGE = ''ACP''
 );' --  
 EXEC(@SQL_BULK);
-
 
 SET @FileLoc = @Path + 'Persons.csv';
 
@@ -81,8 +79,6 @@ WITH (
 );' --  
 EXEC(@SQL_BULK);
 
-
-
 SET @FileLoc = @Path + 'SubjectSchedule.csv';
 
 SET @SQL_BULK = 'BULK INSERT  Academic.SubjectSchedule
@@ -128,7 +124,6 @@ VALUES	('Monday'),
 	('Saturday');
 GO
 
-
 INSERT INTO Academic.Grade(Grade, Points)
 VALUES ('A', 4),
 	('B+', 3.5),
@@ -137,8 +132,6 @@ VALUES ('A', 4),
 	('C', 2),
 	('D', 1),
 	('F', 0);
-	
-
 
 INSERT INTO Academic.Career(Name, Code, Subjects, Credits, Year, IsActive)
 VALUES ('Medicina', 'MED', 204, 425, 2020, 1),
@@ -198,9 +191,7 @@ WHERE SubjectDetailID = 2;
 --SET Year = 2022
 --WHERE SubjectDetailID = 2;
 
-EXEC Academic.SP_GetLastTrimesterStudentsSchedule
-@StudentID = 1110408;
-
+EXEC Academic.SP_GetLastTrimesterStudentsSchedule @StudentID = 1110408;
 
 SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 
@@ -227,8 +218,7 @@ FROM Academic.SubjectDetail SD
 JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID
 WHERE SubjectCode = 'MED348';
 
-
-EXEC Academic.F_PublishGrade
+EXEC Academic.SP_PublishGrade
 @StudentID = 1110409,
 @SubjectDetailID = 2,
 @GradeID = 1;
@@ -237,7 +227,6 @@ SELECT * FROM Academic.StudentSubject;
 SELECT * FROM Academic.F_GetSubjectsOfProfessor(1110201);
 SELECT * FROM Academic.F_GetStudentsOfSubject(2);
 GO
-
 
 SELECT *-- SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
 	--S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
@@ -274,15 +263,15 @@ JOIN Academic.SubjectDetail SD ON SS.SubjectDetailID = SD.SubjectDetailID
 ORDER BY SS.SubjectDetailID;
 SELECT * FROM Academic.Weekday;
 
-
 SELECT  SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
 	S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
 FROM Academic.SubjectSchedule SS
-JOIN Academic.SubjectDetail SD on SS.SubjectDetailID = SD.SubjectDetailID
-JOIN ACADEMIC.Subject S ON SD.SubjectId = S.SubjectId
-JOIN Person.Person P ON SD.ProfessorID = P.PersonID
-JOIN Academic.Weekday W ON SS.WeekdayID = W.WeekdayID
-WHERE S.Name LIKE '%base%'
+	JOIN Academic.SubjectDetail SD on SS.SubjectDetailID = SD.SubjectDetailID
+	JOIN ACADEMIC.Subject S ON SD.SubjectId = S.SubjectId
+	JOIN Person.Person P ON SD.ProfessorID = P.PersonID
+	JOIN Academic.Weekday W ON SS.WeekdayID = W.WeekdayID
+WHERE S.Name LIKE '%%' OR
+	S.SubjectCode LIKE '%INS%'
 ORDER BY SS.SubjectScheduleID;
 
 --WHERE P.PersonID = 1110201

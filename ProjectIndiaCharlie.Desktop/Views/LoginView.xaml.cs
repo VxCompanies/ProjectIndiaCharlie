@@ -1,5 +1,5 @@
 ﻿using ProjectIndiaCharlie.Desktop.ViewModels;
-using ProjectIndiaCharlie.Desktop.ViewModels.Service;
+using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using System;
 using System.Windows;
 using System.Windows.Controls;

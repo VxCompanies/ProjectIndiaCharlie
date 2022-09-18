@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectIndiaCharlie.Desktop.ViewModels;
-using ProjectIndiaCharlie.Desktop.ViewModels.Service;
+using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using System.Windows;
 
 namespace ProjectIndiaCharlie.Desktop;
@@ -24,7 +24,6 @@ public partial class App : Application
                 services.AddSingleton<IndexViewModel>();
                 services.AddSingleton<HomeViewModel>();
                 services.AddSingleton<LoginViewModel>();
-                services.AddSingleton<RegisterStudentViewModel>();
             })
             .Build();
     }

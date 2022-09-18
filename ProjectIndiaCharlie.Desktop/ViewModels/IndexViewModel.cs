@@ -1,5 +1,5 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Command.Navigation;
-using ProjectIndiaCharlie.Desktop.ViewModels.Store;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Commands.Navigation;
+using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
 {
