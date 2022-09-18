@@ -8,7 +8,8 @@ public static class PersonService
 {
     private const string mediaType = "application/json";
     //private const string baseUrl = "https://05d2-190-80-246-215.ngrok.io/api";
-    private const string baseUrl = "https://localhost:7073/api";
+    private const string baseUrl = " https://d31d-179-52-76-51.ngrok.io/api";
+    //private const string baseUrl = "https://localhost:7073/api";
     private const string getPeopleUrl = $"{baseUrl}/Academic/SubjectSections";
     private const string loginUrl = $"{baseUrl}/Login";
     private const string registerStudentUrl = $"{baseUrl}/Student/Registration";
