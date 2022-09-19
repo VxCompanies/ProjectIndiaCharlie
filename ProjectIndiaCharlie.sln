@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIndiaCharlie.Web", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04.WebAdministrator", "04.WebAdministrator", "{DB4F8A96-72B3-4DAB-9B71-F7BD5254DF8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIndiaCharlie.WebAdministrator", "ProjectIndiaCharlie.WebAdministrator\ProjectIndiaCharlie.WebAdministrator.csproj", "{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIndiaCharlie.WebAdministrator", "ProjectIndiaCharlie.WebAdministrator\ProjectIndiaCharlie.WebAdministrator.csproj", "{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{22644AE8-5C24-43C1-BB0B-7BD436E6D77B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,7 @@ Global
 		{A15834A6-FDD7-40C3-8571-6042CEF723C5} = {8A0F8F14-7D41-4D2A-B3A3-DFCBABDE9B43}
 		{DFEEBF54-1A0B-4008-BAFD-DB0CF3F4D591} = {C6450A8B-0FC3-4F72-87CF-E2AAD652968F}
 		{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9} = {DB4F8A96-72B3-4DAB-9B71-F7BD5254DF8D}
+		{22644AE8-5C24-43C1-BB0B-7BD436E6D77B} = {DB4F8A96-72B3-4DAB-9B71-F7BD5254DF8D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6DE168EE-3680-4C5C-B803-B02F95EA9696}

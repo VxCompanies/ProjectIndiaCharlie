@@ -1,14 +1,14 @@
-﻿using ProjectIndiaCharlie.Web.Models;
+﻿using ProjectIndiaCharlie.WebAdministrator.Models;
 using System.Text;
 using System.Text.Json;
 
-namespace ProjectIndiaCharlie.Web.Service;
+namespace ProjectIndiaCharlie.WebAdministrator.Service;
 
 public static class PersonService
 {
     private const string mediaType = "application/json";
     //private const string baseUrl = "https://05d2-190-80-246-215.ngrok.io/api";
-    private const string baseUrl = " https://d31d-179-52-76-51.ngrok.io/api";
+    private const string baseUrl = "https://672a-179-52-76-51.ngrok.io/api";
     //private const string baseUrl = "https://localhost:7073/api";
     private const string getPeopleUrl = $"{baseUrl}/Academic/SubjectSections";
     private const string loginUrl = $"{baseUrl}/Login";
@@ -56,7 +56,7 @@ public static class PersonService
             return null;
         }
     }
-     
+
     public static async Task<bool> RegisterPerson(Student student)
     {
         try
@@ -79,13 +79,13 @@ public static class PersonService
         }
     }
 
-    public static async Task<bool> RegisterPerson(Coordinator coordinator)
+    public static async Task<bool> RegisterPerson(Professor professor)
     {
         try
         {
             using var httpClient = new HttpClient();
 
-            var json = JsonSerializer.Serialize(coordinator);
+            var json = JsonSerializer.Serialize(professor);
             var content = new StringContent(json, Encoding.UTF8, mediaType);
 
             var response = await httpClient.PostAsync(registerStudentUrl, content);
