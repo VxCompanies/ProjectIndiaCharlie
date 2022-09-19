@@ -1,0 +1,25 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.StudentSubjectModel
+@{
+
+}
+
+<h3>Selected subjects</h3>
+<tbody>
+    @foreach (var subject in Model.StudentSubjectVM)
+        {
+            <tr>
+                <td>@subject.SubjectCode</td>
+                <td>@subject.Subject</td>
+                <td>@subject.Credits</td>
+                <td>@subject.Section</td>
+                <td>@subject.Professor</td>
+                <td>@subject.Monday</td>
+                <td>@subject.Tuesday</td>
+                <td>@subject.Wednesday</td>
+                <td>@subject.Thursday</td>
+                <td>@subject.Friday</td>
+                <td>@subject.Saturday</td>
+            </tr>
+        }
+    </tbody>

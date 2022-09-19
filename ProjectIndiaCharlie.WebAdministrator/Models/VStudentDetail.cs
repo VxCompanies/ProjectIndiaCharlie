@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProjectIndiaCharlie.WebAdministrator.Models
 {
-    public partial class VStudent
+    public partial class VStudentDetail
     {
         public int PersonId { get; set; }
         public string DocNo { get; set; } = null!;
@@ -17,9 +17,9 @@ namespace ProjectIndiaCharlie.WebAdministrator.Models
         public decimal GeneralIndex { get; set; }
         public decimal TrimestralIndex { get; set; }
         public int Trimester { get; set; }
-        public DateTime EnrolementDate { get; set; }
+        public DateTime EnrollementDate { get; set; }
         public string Career { get; set; } = null!;
-        public string Code { get; set; } = null!;
+        public string CareerCode { get; set; } = null!;
         public int Pensum { get; set; }
     }
 }

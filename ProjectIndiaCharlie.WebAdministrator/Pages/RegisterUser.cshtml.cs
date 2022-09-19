@@ -9,16 +9,27 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
     public class RegisterUserModel : PageModel
     {
 
+        [BindProperty]
+        public RegisterUserViewModel RegisterUserVM { get; set; }
+
+
         public async Task<IActionResult> OnPostAsync()
         {
-            Student student = new Student()
+            var student = new NewPerson()
             {
-                
+                DocNo = RegisterUserVM.DocNo,
+                FirstName = RegisterUserVM.firstName,
+                MiddleName = RegisterUserVM.middleName,
+                FirstSurname = RegisterUserVM.firstSurname,
+                SecondSurname = RegisterUserVM.secondSurname,
+                Gender = RegisterUserVM.gender,
+                BirthDate = RegisterUserVM.birthDate,
+                Email = RegisterUserVM.email,
+                CareerId = RegisterUserVM.careerId
             };
 
-            student.PersonId = 1;
 
-            var a = PersonService.RegisterPerson(student);
+            var a = StudentService.RegisterPerson(student);
 
             if (!ModelState.IsValid)
             {
@@ -37,12 +48,49 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
             [Required]
             public string Email { get; set; }
 
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
 
             [Required]
             public bool RememberMe { get; set; }
+
+            [Required]
+            [Display(Name = "Numero de documento")]
+            public string DocNo { get; set; }
+
+            [Required]
+            [Display(Name = "Primer nombre")]
+            public string firstName { get; set; }
+
+            
+            [Display(Name = "Segundo nombre")]
+            public string middleName { get; set; }
+
+            [Required]
+            [Display(Name = "Primer apellido")]
+            public string firstSurname { get; set; }
+
+            
+            [Display(Name = "Second surname")]
+            public string secondSurname { get; set; }
+
+            [Required]
+            [Display(Name = "Gender")]
+            public string gender { get; set; }
+
+            [Required]
+            [Display(Name = "Fecha de nacimiento")]
+            public DateTime birthDate { get; set; }
+
+            [Required]
+            [Display(Name = "Correo")]
+            public string email { get; set; }
+
+            [Required]
+            [Display(Name = "Carera")]
+            public int careerId { get; set; }
+
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
         }
     }
 }
