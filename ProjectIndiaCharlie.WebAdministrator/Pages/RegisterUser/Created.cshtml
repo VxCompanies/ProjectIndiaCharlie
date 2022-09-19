@@ -1,0 +1,25 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUser.CreatedModel
+@{
+}
+
+<h3>Created user</h3>
+
+<div class = "container border" style="padding:20px">
+	<div class = "form-group row" style="margin-bottom:20px" >
+		<div class = "col-2">
+			<label>ID:</label>
+		</div>
+		<div class = "col-5">
+			<span> @Html.DisplayFor(model => model.CreatedUserVM.UserID)</span>
+		</div>
+	</div>
+
+	<div class = "form-group row" style="margin-bottom:20px" >
+		<div class = "col-2">
+			<label>Password:</label>
+		</div>
+		<div class = "col-5">
+			<span>@Model.CreatedUserVM.Password</span>
+		</div>
+	</div>

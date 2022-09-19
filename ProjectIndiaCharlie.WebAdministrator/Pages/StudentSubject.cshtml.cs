@@ -7,16 +7,23 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
 {
     public class StudentSubjectModel : PageModel
     {
-        
+        [BindProperty(SupportsGet = true)]
+        public int ? IdSearched { get; set; }
+
         public IEnumerable<VStudentSubject> StudentSubjectVM { get; set; }
+
         public StudentSubjectModel()
         {
             StudentSubjectVM = new List<VStudentSubject>();
         }
+
         public async Task OnGet()
         {
-            var a  = await StudentService.GetSelectedSubjects(1110408);
-            StudentSubjectVM = a;
+            if (IdSearched != null)
+            {
+                var a = await StudentService.GetSelectedSubjects((int)IdSearched);
+                StudentSubjectVM = a;
+            }               
         }
     }
 }

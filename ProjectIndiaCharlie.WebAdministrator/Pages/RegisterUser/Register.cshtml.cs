@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using ProjectIndiaCharlie.WebAdministrator.Models;
 using ProjectIndiaCharlie.WebAdministrator.Service;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace ProjectIndiaCharlie.WebAdministrator.Pages
 {
@@ -15,6 +16,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
+
             var student = new NewPerson()
             {
                 DocNo = RegisterUserVM.DocNo,
@@ -28,14 +30,22 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
                 CareerId = RegisterUserVM.careerId
             };
 
-            var a = await StudentService.RegisterPerson(student);
-           
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            return RedirectToPage("./Index");
+            var a = await StudentService.RegisterPerson(student);
+
+            var userData = new CreatedUser()
+            {
+                UserID = a.PersonId,
+                Password = a.Password
+            };
+
+            TempData["createdPerson"] = JsonSerializer.Serialize(userData);
+
+            return RedirectToPage("/RegisterUser/Created");
         }
         public void OnGet()
         {
@@ -48,9 +58,6 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
 
 
             [Required]
-            public bool RememberMe { get; set; }
-
-            [Required]
             [Display(Name = "Numero de documento")]
             public string DocNo { get; set; }
 
@@ -60,7 +67,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
 
             
             [Display(Name = "Segundo nombre")]
-            public string middleName { get; set; }
+            public string? middleName { get; set; }
 
             [Required]
             [Display(Name = "Primer apellido")]
@@ -68,10 +75,10 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
 
             
             [Display(Name = "Second surname")]
-            public string secondSurname { get; set; }
+            public string? secondSurname { get; set; }
 
             [Required]
-            [Display(Name = "Gender")]
+            [Display(Name = "Genero")]
             public string gender { get; set; }
 
             [Required]
@@ -86,9 +93,6 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
             [Display(Name = "Carera")]
             public int careerId { get; set; }
 
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
         }
     }
 }
