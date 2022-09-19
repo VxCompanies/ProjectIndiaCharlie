@@ -54,11 +54,13 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
         public class RegisterUserViewModel
         {
             [Required]
+            [EmailAddress(ErrorMessage = "Invalid email adress")]
             public string Email { get; set; }
 
 
             [Required]
             [Display(Name = "Numero de documento")]
+            [MaxLength(13)]
             public string DocNo { get; set; }
 
             [Required]
@@ -74,7 +76,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
             public string firstSurname { get; set; }
 
             
-            [Display(Name = "Second surname")]
+            [Display(Name = "Segundo apellido")]
             public string? secondSurname { get; set; }
 
             [Required]

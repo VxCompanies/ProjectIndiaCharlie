@@ -52,7 +52,15 @@
 			</div>
 			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.secondSurname"></span>
 		</div>
-
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.email"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.email" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.email"></span>
+		</div>
 
 		<div class="form-group row" style="margin-bottom:20px">
 			<div class="col-2">
@@ -76,19 +84,12 @@
 				<label asp-for="RegisterUserVM.birthDate"></label>
 			</div>
 			<div class="col-5">
-				<input type="text" style="color:black !important" asp-for="RegisterUserVM.birthDate" class="form-control" />
+				<input type="date" data-val="true" style="color:black !important" 
+				asp-for="RegisterUserVM.birthDate" class="form-control" value = "2000-01-01"/>
 			</div>
 			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.birthDate"></span>
 		</div>
-		<div class="form-group row" style="margin-bottom:20px">
-			<div class="col-2">
-				<label asp-for="RegisterUserVM.email"></label>
-			</div>
-			<div class="col-5">
-				<input type="text" style="color:black !important" asp-for="RegisterUserVM.email" class="form-control" />
-			</div>
-			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.email"></span>
-		</div>
+		
 		<div class="form-group row" style="margin-bottom:20px">
 			<div class="col-2">
 				<label asp-for="RegisterUserVM.careerId"></label>
