@@ -28,14 +28,12 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
                 CareerId = RegisterUserVM.careerId
             };
 
-
-            var a = StudentService.RegisterPerson(student);
-
+            var a = await StudentService.RegisterPerson(student);
+           
             if (!ModelState.IsValid)
             {
                 return Page();
             }
-
 
             return RedirectToPage("./Index");
         }

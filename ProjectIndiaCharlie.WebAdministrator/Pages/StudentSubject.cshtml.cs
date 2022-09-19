@@ -13,7 +13,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
         {
             StudentSubjectVM = new List<VStudentSubject>();
         }
-        public async void OnGet()
+        public async Task OnGet()
         {
             var a  = await StudentService.GetSelectedSubjects(1110408);
             StudentSubjectVM = a;

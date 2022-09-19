@@ -64,25 +64,28 @@ public static class StudentService
         }
     }
 
-    public static async Task<bool> RegisterPerson(NewPerson newPerson)
+    public static async Task<NewPerson?> RegisterPerson(NewPerson newPerson)
     {
         try
         {
             using var httpClient = new HttpClient();
 
             var json = JsonSerializer.Serialize(newPerson);
-            var content = new StringContent(json, Encoding.UTF8, mediaType);
+            var content1 = new StringContent(json, Encoding.UTF8, mediaType);
 
-            var response = await httpClient.PostAsync(registerStudentUrl, content);
+            var response = await httpClient.PostAsync(registerStudentUrl, content1);
 
             if (!response.IsSuccessStatusCode)
-                return false;
+                return null;
 
-            return true;
+            var content2 = await response.Content.ReadAsStringAsync();
+            var createdPerson = JsonSerializer.Deserialize<NewPerson>(content2, _options);
+
+            return createdPerson!;
         }
         catch (Exception)
         {
-            return false;
+            return null;
         }
     }
 }

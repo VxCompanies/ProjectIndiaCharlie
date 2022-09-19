@@ -17,27 +17,6 @@ public static class PersonService
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
-//    public static async Task<VStudentDetail?> Login(string studentId, string password)
-//    {
-//        try
-//        {
-//            using var httpClient = new HttpClient();
-//            var response = await httpClient.GetAsync($"{loginUrl}?studentId={studentId}&password={password}");
-
-//            if (!response.IsSuccessStatusCode)
-//                return null;
-
-//            var content = await response.Content.ReadAsStringAsync();
-
-//            var logedStudent = JsonSerializer.Deserialize<VStudentDetail>(content, _options);
-//            LogedStudent.Student = logedStudent!;
-//            return logedStudent;
-//        }
-//        catch (Exception)
-//        {
-//            return null;
-//        }
-//    }
 
 
 }
