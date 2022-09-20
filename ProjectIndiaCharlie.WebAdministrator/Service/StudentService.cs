@@ -1,4 +1,5 @@
-﻿using ProjectIndiaCharlie.WebAdministrator.Models;
+﻿using Microsoft.Extensions.Configuration;
+using ProjectIndiaCharlie.WebAdministrator.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,22 @@ namespace ProjectIndiaCharlie.WebAdministrator.Service;
 
 public static class StudentService
 {
+    private readonly static string baseUrl = Program.Configuration.GetConnectionString("AcademicsAPI");
+
+    //public StudentService(IConfiguration configuration) => baseUrl = configuration.GetConnectionString("AcademicsAPI");
+
+    //public StudentService(IConfiguration configuration)
+    //{
+    //    baseUrl = configuration.GetConnectionString("AcademicsAPI");
+    //}
+
     private const string mediaType = "application/json";
-    private const string baseUrl = "https://localhost:7073/api";
-    //private const string baseUrl = "https://ee05-179-52-76-51.ngrok.io/api";
-    private const string loginUrl = $"{baseUrl}/Student/Login";
-    private const string getSelectedSubjects = $"{baseUrl}/Student/SelectedSubjects";
-    private const string registerStudentUrl = $"{baseUrl}/Student/Registration";
+    //private const string baseUrl = "https://localhost:7073/api";
+    //private string  = connectionString;
+
+    private static string loginUrl = $"{baseUrl}/Student/Login";
+    private static string getSelectedSubjects = $"{baseUrl}/Student/SelectedSubjects";
+    private static string registerStudentUrl = $"{baseUrl}/Student/Registration";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
