@@ -1,4 +1,4 @@
-﻿using ProjectIndiaCharlie.Core.Models;
+﻿using ProjectIndiaCharlie.Desktop.Models;
 using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Services
         private const string getStudentSubjectsUrl = $"{baseUrl}/Student/Subjects";
 
         private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
-        public static async Task<IEnumerable<VStudentSubject>> GetStudentSubjects(string personId)
+        public static async Task<IEnumerable<VStudentSubject>> GetStudentSubjects(int personId)
         {
             try
             {

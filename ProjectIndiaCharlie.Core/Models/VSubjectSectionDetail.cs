@@ -10,6 +10,8 @@ namespace ProjectIndiaCharlie.Core.Models
         public string Name { get; set; } = null!;
         public byte Credits { get; set; }
         public int Section { get; set; }
+        public int Year { get; set; }
+        public int Trimester { get; set; }
         public string Professor { get; set; } = null!;
         public string Capacity { get; set; } = null!;
         public string ClassroomCode { get; set; } = null!;

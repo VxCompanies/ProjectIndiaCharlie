@@ -1,5 +1,4 @@
-﻿using ProjectIndiaCharlie.Core.Models;
-using ProjectIndiaCharlie.Desktop.Models;
+﻿using ProjectIndiaCharlie.Desktop.Models;
 using ProjectIndiaCharlie.Desktop.ViewModels.Commands;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
@@ -11,24 +10,21 @@ public class HomeViewModel : ViewModelBase
 {
     public VStudentDetail Student { get; private set; }
 
-    public ObservableCollection<VStudentSubject> SubjectsList { get; set; }
-
-    public GetPeopleAsyncCommand GetPeopleAsyncCommand { get; set; }
+    public ObservableCollection<VStudentSubject> SelectedSubjectsList { get; set; }
 
     public HomeViewModel()
     {
         Student = LogedStudent.Student!;
-        SubjectsList = new();
-        GetPeopleAsyncCommand = new();
+        SelectedSubjectsList = new();
 
         GetSubjectsList();
     }
 
     private async void GetSubjectsList()
     {
-        SubjectsList.Clear();
+        SelectedSubjectsList.Clear();
 
-        foreach (var subject in await AcademicService.GetStudentSubjects(Student.PersonId.ToString()))
-            SubjectsList.Add(subject);
+        foreach (var subject in await StudentService.GetSelectedSubjects(Student.PersonId))
+            SelectedSubjectsList.Add(subject);
     }
 }

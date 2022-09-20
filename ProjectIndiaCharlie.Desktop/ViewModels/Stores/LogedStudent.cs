@@ -1,5 +1,4 @@
-﻿using ProjectIndiaCharlie.Core.Models;
-using ProjectIndiaCharlie.Desktop.Models;
+﻿using ProjectIndiaCharlie.Desktop.Models;
 using System.Collections.Generic;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels.Stores;

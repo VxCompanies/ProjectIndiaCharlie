@@ -46,20 +46,12 @@
             <TextBlock Text="Selection"
                        FontSize="22"
                        FontWeight="Bold"/>
-            <ListView BorderThickness="0"
-                      ItemsSource="{Binding SubjectsList}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0 0 0 15">
-                            <TextBlock Text="{Binding SubjectDetail.Subject.Name, Mode=OneTime, UpdateSourceTrigger=Default, StringFormat=Subject: {0}}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"/>
-                            <TextBlock Text="{Binding SubjectDetail.Subject.SubjectCode, Mode=OneTime, UpdateSourceTrigger=Default, StringFormat=Code: {0}}"/>
-                            <TextBlock Text="{Binding SubjectDetail.Subject.Credits, Mode=OneTime, UpdateSourceTrigger=Default, StringFormat=Credits: {0}}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <!--<DataGrid ItemsSource="{Binding SelectedSubjectsList}"/>-->
+            <DataGrid BorderThickness="0"
+                      ItemsSource="{Binding SelectedSubjectsList}"
+                      CanUserReorderColumns="False"
+                      IsReadOnly="True">
+            </DataGrid>
         </StackPanel>
     </Grid>
 </UserControl>

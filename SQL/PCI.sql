@@ -209,7 +209,6 @@ CREATE TABLE Academic.Administrator(
 )
 GO
 
-
 CREATE TABLE Academic.GradeRevision(
     PersonID int NOT NULL,
     SubjectDetailID int NOT NULL,
@@ -232,6 +231,31 @@ CREATE TABLE Academic.GradeRevision(
 GO
 
 -- Views
+CREATE OR ALTER VIEW Academic.vGradeRevision
+AS
+SELECT Agr.PersonID,
+	CONCAT(Pper.FirstName, IIF(Pper.MiddleName IS NULL, '', ' '), Pper.MiddleName, ' ', Pper.FirstSurname, IIF(Pper.SecondSurname IS NULL, '', ' '), Pper.SecondSurname) Student,
+	Agr.SubjectDetailID,
+	CONCAT(Asub.Name,'-', AsubDet.Section) Section,
+	Agr.DateRequested,
+	Agr.GradeID,
+	Ag.Grade,
+	Agr.ModifiedGradeID,
+	Agm.Grade ModifiedGrade,
+	CONCAT(Padm.FirstName, IIF(Padm.MiddleName IS NULL, '', ' '), Padm.MiddleName, ' ', Padm.FirstSurname, IIF(Padm.SecondSurname IS NULL, '', ' '), Padm.SecondSurname) Admin,
+	CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname) Professor
+FROM Academic.GradeRevision Agr
+	INNER JOIN Academic.Student Ast ON Ast.PersonID = Agr.PersonID
+	INNER JOIN Person.Person Pper ON Pper.PersonID = Ast.PersonID
+	INNER JOIN Academic.SubjectDetail AsubDet ON AsubDet.SubjectDetailID = Agr.SubjectDetailID
+	INNER JOIN Academic.Subject Asub ON Asub.SubjectID = AsubDet.SubjectID
+	INNER JOIN Academic.Grade Ag ON Ag.GradeID = Agr.GradeID
+	INNER JOIN Academic.Grade Agm ON Agm.GradeID = Agr.ModifiedGradeID
+	INNER JOIN Academic.Administrator Aad ON Aad.PersonID = Agr.AdminID
+	INNER JOIN Person.Person Padm ON Padm.PersonID = Aad.PersonID
+	INNER JOIN Person.Person Pprof ON Pprof.PersonID = Aad.PersonID
+GO
+
 CREATE OR ALTER VIEW Person.vPeopleDetails
 AS
 SELECT pp.PersonID,
@@ -259,6 +283,12 @@ SELECT Pvpd.*,
 FROM Person.vPeopleDetails Pvpd
 	INNER JOIN Academic.Student ast ON Pvpd.PersonID = ast.PersonID
 	INNER JOIN Academic.Career ac ON ast.CareerID = ac.CareerID
+GO
+
+CREATE OR ALTER VIEW Academic.vGrades
+AS
+	SELECT GradeID, Grade
+	FROM Academic.Grade 
 GO
 
 CREATE OR ALTER VIEW Academic.vProfessorDetails
@@ -306,6 +336,24 @@ FROM Academic.Subject Asub
 	Acl.Code
 GO
 
+CREATE OR ALTER VIEW Academic.vAdministratorDetails
+AS
+SELECT Pvpd.*
+FROM Person.vPeopleDetails Pvpd
+	INNER JOIN Academic.Administrator ad ON Pvpd.PersonID = ad.PersonID
+GO
+
+CREATE OR ALTER VIEW Academic.vAvailableCareers
+AS
+	SELECT Ac.CareerID,
+		Ac.Code,
+		Ac.Name,
+		Ac.Credits,
+		Ac.Year
+	FROM Academic.Career Ac
+	WHERE Ac.IsActive = 1
+GO
+
 CREATE OR ALTER VIEW Academic.vSubjectSchedule
 AS
 	SELECT AsubSche.SubjectDetailID,
@@ -324,7 +372,7 @@ SELECT Ass.StudentID,
 	Asu.Name Subject,
 	CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname) Professor,
 	Asu.Credits,
-	Ac.Code Classroom,
+	Ac.Code ClassroomCode,
 	Asd.Trimester,
 	Asd.Year,
 	MAX(CASE WHEN AW.WeekdayID = 1 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Monday,
@@ -412,6 +460,19 @@ AS
 	RETURN 1
 GO
 
+--Grade revision
+CREATE OR ALTER PROCEDURE SP_SubjectRetirement
+	@StudentID int,
+	@SubjectDetailID int
+AS
+BEGIN
+	Update Academic.StudentSubject
+	SET  GradeID = 8
+	WHERE StudentID = @StudentID AND
+		SubjectDetailID = @SubjectDetailID
+END
+GO
+
 CREATE OR ALTER PROCEDURE Academic.SP_StudentRegistration
 	@PersonID int,
 	@CareerID int
@@ -419,6 +480,43 @@ AS
 	INSERT INTO Academic.Student(PersonID, CareerID)
 	VALUES(@personId, @CareerId)
 	RETURN 1
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_ProcessGradeRevision
+@StudentID int,
+@SubjectDetailID int,
+@ModifiedGradeID int,
+@AdminID int
+AS
+BEGIN
+	DECLARE @ProfessorID int
+
+	IF NOT EXISTS(
+		SELECT 1 SubjectDetailID FROM Academic.GradeRevision
+		WHERE ModifiedGradeID is null and SubjectDetailID = @SubjectDetailID and PersonId = @StudentID
+	)
+			RETURN 0
+	BEGIN TRY
+		SET @ProfessorID = (SELECT TOP(1) ProfessorID FROM Academic.SubjectDetail WHERE SubjectDetailID = @SubjectDetailID)
+		
+		BEGIN TRAN
+		
+		UPDATE Academic.GradeRevision
+		SET ModifiedGradeID = @ModifiedGradeID, AdminID = @AdminID, ProfessorID = @ProfessorID, DateModified = GETDATE()
+		WHERE SubjectDetailID = @SubjectDetailID and PersonId = @StudentID
+
+		UPDATE Academic.StudentSubject
+		SET GradeID = @ModifiedGradeID
+		WHERE SubjectDetailID = @SubjectDetailID and StudentID = @StudentID;
+
+		COMMIT
+		RETURN 1
+	END TRY
+	BEGIN CATCH
+		ROLLBACK
+		RETURN 0
+	END CATCH	
+END
 GO
 
 CREATE OR ALTER PROCEDURE Academic.SP_ProfessorRegistration
@@ -479,6 +577,29 @@ AS
 					WHERE Year = @Year)
 		--RETURN
 		SELECT * FROM Academic.F_GetStudentsSchedule(@StudentID, @Year, @Trimester);
+GO
+
+CREATE OR ALTER PROCEDURE Academic.SP_RequestGradeRevision
+	@StudentID int,
+	@SubjectDetailID int
+AS
+BEGIN
+	DECLARE @GradeID int
+	SET @GradeID = (
+			SELECT Top(1) GradeID
+			FROM Academic.StudentSubject
+			WHERE StudentID = @StudentID AND
+				SubjectDetailID = @SubjectDetailID
+		)
+
+	IF (@GradeID is null)
+		RETURN 0
+
+	INSERT INTO Academic.GradeRevision(PersonID, SubjectDetailID, DateRequested, GradeID)
+	VALUES (@StudentID, @SubjectDetailID, GETDATE(), @GradeID)
+
+	RETURN 1
+END
 GO
 
 CREATE OR ALTER PROCEDURE Academic.SP_PublishGrade
@@ -646,12 +767,11 @@ CREATE OR ALTER FUNCTION Academic.F_GetStudentsSchedule(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT 	vSSD.SubjectCode, vSSD.Name, vSSD.Section, vSSD.Credits, vSSD.ClassroomCode,
-				vSSD.Monday, vSSD.Tuesday, vSSD.Wednesday, vSSD.Thursday, vSSD.Friday, vSSD.Saturday, SS.GradeID
-		FROM Academic.vSubjectSectionDetails vSSD
-		JOIN Academic.StudentSubject SS ON SS.SubjectDetailID = vSSD.SubjectDetailID
-		WHERE SS.StudentID = @StudentID		
-				AND vSSD.YEAR = @Year AND vSSD.Trimester = @Trimester
+		SELECT *
+		FROM Academic.vStudentSubjects vSSD
+		WHERE vSSD.StudentID = @StudentID		
+				AND vSSD.Year = @Year AND
+				vSSD.Trimester = @Trimester
 GO
 
 --Grade publication
@@ -694,6 +814,15 @@ AS
 			1 = (SELECT Person.F_PasswordValidation(@PersonID, @PasswordHash))
 GO
 
+CREATE OR ALTER FUNCTION Academic.F_GetUnsolvedRevisions()
+RETURNS TABLE
+AS
+	RETURN
+		SELECT *
+		FROM Academic.vGradeRevision 
+		WHERE ModifiedGradeID is null
+GO
+
 CREATE OR ALTER FUNCTION Academic.F_ProfessorLogin(
 	@PersonID int,
 	@PasswordHash nvarchar(64)
@@ -704,6 +833,14 @@ AS
 		SELECT *
 		FROM Academic.vProfessorDetails Ap
 		WHERE Ap.PersonID = @PersonID
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_GetGrades()
+RETURNS TABLE
+AS
+	RETURN
+		SELECT *
+		FROM Academic.vGrades
 GO
 
 CREATE OR ALTER FUNCTION Person.F_GetPasswordSalt(
@@ -778,58 +915,19 @@ GO
 GRANT VIEW DEFINITION ON Academic.vSubjectSectionDetails
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.F_SubjectScheduleValidation
+GRANT VIEW DEFINITION ON Academic.vAdministratorDetails
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Person.F_PasswordValidation
+GRANT VIEW DEFINITION ON Academic.vGradeRevision
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Person.F_GetPasswordSalt
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Person.SP_PasswordUpsert
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_ProfessorValidation
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Person.F_DocNoValidation
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_ProfessorLogin
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_GetSubjectSchedule
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_StudentRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_ProfessorRegistration
+GRANT VIEW DEFINITION ON Academic.vAvailableCareers
 	TO projectIndiaCharlie
 GO
 GRANT VIEW DEFINITION ON Person.vPeopleDetails
 	TO projectIndiaCharlie
 GO
-GRANT VIEW DEFINITION ON Academic.SP_SubjectSelection
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Person.SP_PersonRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_CareerRegistration
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_StudentLogin
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_SubjectClassroomAssignment
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.SP_SubjectScheduleAssignment
-	TO projectIndiaCharlie
-GO
-GRANT VIEW DEFINITION ON Academic.F_StudentValidation
+GRANT VIEW DEFINITION ON Academic.vGrades
 	TO projectIndiaCharlie
 GO
 

@@ -17,6 +17,8 @@ namespace ProjectIndiaCharlie.Core.Data
         {
         }
 
+        public virtual DbSet<VAdministratorDetail> VAdministratorDetails { get; set; } = null!;
+        public virtual DbSet<VAvailableCareer> VAvailableCareers { get; set; } = null!;
         public virtual DbSet<VPeopleDetail> VPeopleDetails { get; set; } = null!;
         public virtual DbSet<VProfessorDetail> VProfessorDetails { get; set; } = null!;
         public virtual DbSet<VStudentDetail> VStudentDetails { get; set; } = null!;
@@ -35,6 +37,46 @@ namespace ProjectIndiaCharlie.Core.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasDefaultSchema("Academic");
+
+            modelBuilder.Entity<VAdministratorDetail>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vAdministratorDetails");
+
+                entity.Property(e => e.BirthDate).HasColumnType("date");
+
+                entity.Property(e => e.DocNo).HasMaxLength(13);
+
+                entity.Property(e => e.Email).HasMaxLength(255);
+
+                entity.Property(e => e.FirstName).HasMaxLength(50);
+
+                entity.Property(e => e.FirstSurname).HasMaxLength(50);
+
+                entity.Property(e => e.Gender).HasMaxLength(1);
+
+                entity.Property(e => e.MiddleName).HasMaxLength(50);
+
+                entity.Property(e => e.PersonId).HasColumnName("PersonID");
+
+                entity.Property(e => e.SecondSurname).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<VAvailableCareer>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vAvailableCareers");
+
+                entity.Property(e => e.CareerId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("CareerID");
+
+                entity.Property(e => e.Code).HasMaxLength(3);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+            });
 
             modelBuilder.Entity<VPeopleDetail>(entity =>
             {
@@ -129,7 +171,7 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.ToView("vStudentSubjects");
 
-                entity.Property(e => e.Classroom).HasMaxLength(7);
+                entity.Property(e => e.ClassroomCode).HasMaxLength(7);
 
                 entity.Property(e => e.Friday)
                     .HasMaxLength(25)

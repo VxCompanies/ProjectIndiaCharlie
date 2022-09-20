@@ -12,7 +12,7 @@ namespace ProjectIndiaCharlie.Core.Models
         public string Subject { get; set; } = null!;
         public string Professor { get; set; } = null!;
         public byte Credits { get; set; }
-        public string Classroom { get; set; } = null!;
+        public string ClassroomCode { get; set; } = null!;
         public int Trimester { get; set; }
         public int Year { get; set; }
         public string? Monday { get; set; }

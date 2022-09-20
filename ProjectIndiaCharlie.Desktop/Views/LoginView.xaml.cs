@@ -31,7 +31,7 @@ namespace ProjectIndiaCharlie.Desktop.Views
 
         private async void Login(object sender, RoutedEventArgs e)
         {
-            if (await PersonService.Login(tbUserId.Text, pbPassword.Password) is null)
+            if (await StudentService.Login(tbUserId.Text, pbPassword.Password) is null)
             {
                 MessageBox.Show("Wrong id or password.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;

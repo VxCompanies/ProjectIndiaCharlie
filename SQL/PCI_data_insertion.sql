@@ -131,7 +131,9 @@ VALUES ('A', 4),
 	('C+', 2.5),
 	('C', 2),
 	('D', 1),
-	('F', 0);
+	('F', 0),
+	('R', 0);
+GO
 
 INSERT INTO Academic.Career(Name, Code, Subjects, Credits, Year, IsActive)
 VALUES ('Medicina', 'MED', 204, 425, 2020, 1),

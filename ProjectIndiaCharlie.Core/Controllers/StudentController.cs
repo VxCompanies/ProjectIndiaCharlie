@@ -76,26 +76,26 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("SubjectSelection")]
-    public async Task<ActionResult<string>> SubjectSelection(int subjectId, int studentId)
+    public async Task<ActionResult<string>> SubjectSelection(int subjectDetailID, int studentId)
     {
         try
         {
             await _context.Database.BeginTransactionAsync();
 
-            var scheduleValidation = await _context.SubjectScheduleValidation(subjectId, studentId);
+            var scheduleValidation = await _context.SubjectScheduleValidation(subjectDetailID, studentId);
             if (!string.IsNullOrWhiteSpace(scheduleValidation))
             {
                 await _context.Database.RollbackTransactionAsync();
                 return Conflict($"Cannot select this subject because the schedule conflicts with '{scheduleValidation}'.");
             }
 
-            if (!await _context.SubjectSelection(subjectId, studentId))
+            if (!await _context.SubjectSelection(subjectDetailID, studentId))
                 return Conflict($"Subject section is full.");
 
             await _context.Database.CommitTransactionAsync();
 
             var subject = await _context.VStudentSubjects
-                            .FirstAsync(s => s.SubjectDetailId == subjectId);
+                            .FirstAsync(s => s.SubjectDetailId == subjectDetailID);
             return base.CreatedAtAction("SubjectSelection", $"Successfully selected {subject.SubjectCode}-{subject.Section}.");
         }
         catch (Exception e)
@@ -104,18 +104,17 @@ public class StudentController : ControllerBase
         }
     }
 
-    // TODO: Waiting for Nikita
     [HttpGet("SubjectRetirement")]
-    public async Task<ActionResult<VStudentDetail>> SubjectRetirement(string docNo)
+    public async Task<ActionResult<VStudentDetail>> SubjectRetirement(int subjectDetailID, int studentID)
     {
         try
         {
-            var student = await _context.VStudentDetails
-                .FirstOrDefaultAsync(s => s.DocNo == docNo);
+            if (!await _context.StudentSubjectValidation(subjectDetailID, studentID))
+                return NotFound("Student is not taking the subject.");
 
-            return (student is null) ?
-                NotFound() :
-                Ok(student);
+            await _context.StudentSubjectElimination(studentID, subjectDetailID);
+
+            return Ok("Subject successfully retired.");
         }
         catch (Exception e)
         {
@@ -123,19 +122,17 @@ public class StudentController : ControllerBase
         }
     }
 
-    // TODO: Validation Function: Academic.F_StudentSubjectValidation(@SubjectDetailID int, @StudentID int)
-    // Elimination SP: Academic.SP_SubjectElimination @SubjectDetailID int, @StudentID int
     [HttpGet("SubjectElimination")]
-    public async Task<ActionResult<VStudentDetail>> SubjectElimination(string docNo)
+    public async Task<ActionResult<VStudentDetail>> SubjectElimination(int subjectDetailID, int studentID)
     {
         try
         {
-            var student = await _context.VStudentDetails
-                .FirstOrDefaultAsync(s => s.DocNo == docNo);
+            if (!await _context.StudentSubjectValidation(subjectDetailID, studentID))
+                return NotFound("Student is not taking the subject.");
 
-            return (student is null) ?
-                NotFound() :
-                Ok(student);
+            await _context.StudentSubjectElimination(subjectDetailID, studentID);
+
+            return Ok("Subject successfully eliminated.");
         }
         catch (Exception e)
         {
@@ -143,19 +140,16 @@ public class StudentController : ControllerBase
         }
     }
 
-    // TODO: Modify with SQL function
-    [HttpGet("SelectedSubjects")]
-    public async Task<ActionResult<IEnumerable<VStudentSubject>>> GetStudentSubject(int studentId)
+    [HttpGet("Schedule")]
+    public async Task<ActionResult<IEnumerable<VStudentSubject>>> GetStudentSchedule(int studentId)
     {
         try
         {
-            var subjects = _context.VStudentSubjects
-                    .Where(s => s.StudentId == studentId)
-                    .ToListAsync();
+            var subjects = await _context.GetStudentSchedule(studentId);
 
-            return (await subjects).Count < 1 ?
+            return !subjects.Any() ?
                 NotFound("No subjects selected.") :
-                Ok(await subjects);
+                Ok(subjects);
         }
         catch (Exception e)
         {
@@ -163,18 +157,15 @@ public class StudentController : ControllerBase
         }
     }
 
-    // TODO
-    [HttpGet("GradeRevision")]
-    public async Task<ActionResult<VStudentDetail>> GradeRevision(string docNo)
+    [HttpGet("RequestGradeRevision")]
+    public async Task<ActionResult<string>> RequestGradeRevision(int studentId, int subjectDetailID)
     {
         try
         {
-            var student = await _context.VStudentDetails
-                .FirstOrDefaultAsync(s => s.DocNo == docNo);
+            if (!await _context.RequestGradeRevision(studentId, subjectDetailID))
+                return NotFound("Student is not taking the subject.");
 
-            return (student is null) ?
-                NotFound() :
-                Ok(student);
+            return Ok("Request sended successfully.");
         }
         catch (Exception e)
         {
