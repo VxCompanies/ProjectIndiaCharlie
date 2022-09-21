@@ -1,0 +1,50 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.StudentSubjectModel
+@{
+
+}
+
+<h3>Selected subjects</h3>
+
+<form>
+    <p>
+        Title: <input type="text" asp-for="IdSearched" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>SubjectCode</th>
+            <th>Name</th>
+            <th>Credits</th>
+            <th>Section</th>
+            <th>Professor</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in @Model.StudentSubjectVM)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => s.SubjectCode)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Subject)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Credits)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Section)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Professor)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Monday)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Tuesday)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Wednesday)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Thursday)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Friday)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Saturday)</td>
+                </tr>
+            }
+    </tbody>
+</table>

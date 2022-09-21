@@ -1,0 +1,112 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUserModel
+@{
+}
+
+
+<h3>Student registration</h3>
+<div class = "container border" style="padding:20px">
+	<form method = "post">
+		<div class = "form-group row" style="margin-bottom:20px" >
+			<div class = "col-2">
+				<label asp-for="RegisterUserVM.DocNo"></label>
+			</div>
+			<div class = "col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.DocNo" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.DocNo"></span>
+		</div>
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.firstName"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.firstName" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.firstName"></span>
+		</div>
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.middleName"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.middleName" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.middleName"></span>
+		</div>
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.firstSurname"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.firstSurname" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.firstSurname"></span>
+		</div>
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.secondSurname"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.secondSurname" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.secondSurname"></span>
+		</div>
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.email"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.email" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.email"></span>
+		</div>
+
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.gender"></label>
+			</div>
+			<div class = "col-5">
+				<div class="form-check form-check-inline">
+					<input asp-for = "RegisterUserVM.gender" class="form-check-input" type="radio" id="id_GeneroMasculino" checked="checked" value="M">
+					<label class="form-check-label" for="Masculino">Masculino</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input asp-for = "RegisterUserVM.gender" class="form-check-input" type="radio" id="id_GeneroFemenino" value="F">
+					<label class="form-check-label" for="Feminino">Feminino</label>
+				</div>
+				<span class ="text-danger col-5" asp-validation-for = "RegisterUserVM.gender"></span>
+			</div>	
+		</div>
+
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.birthDate"></label>
+			</div>
+			<div class="col-5">
+				<input type="date" data-val="true" style="color:black !important" 
+				asp-for="RegisterUserVM.birthDate" class="form-control" value = "2000-01-01"/>
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.birthDate"></span>
+		</div>
+		
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="RegisterUserVM.careerId"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="RegisterUserVM.careerId" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.careerId"></span>
+		</div>
+
+		<div class = "form-group row" style="margin-bottom:20px">			
+			<div class = "col-2">
+				<input type ="submit" class="btn-primary btn" value = "login"/>
+			</div>
+			<div class = "col-2">
+				<input type ="submit" class="btn-primary btn" value = "Register"/>
+			</div>
+		</div>
+	</form>
+</div>
