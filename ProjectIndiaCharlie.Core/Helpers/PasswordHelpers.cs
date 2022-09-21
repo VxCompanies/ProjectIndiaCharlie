@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ProjectIndiaCharlie.Core.Controllers
+namespace ProjectIndiaCharlie.Core.Helpers
 {
     public static class PasswordHelpers
     {

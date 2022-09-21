@@ -73,21 +73,10 @@ public partial class ProjectIndiaCharlieContext
         };
         await Database.ExecuteSqlInterpolatedAsync($"EXEC {flag} = Academic.SP_SubjectSelection {subjectId}, {studentId}");
 
-        return (bool)flag.Value;
+        return Convert.ToBoolean((int)flag.Value);
     }
 
-    public async Task<bool> SubjectRetirement(int subjectId, int studentId)
-    {
-        var flag = new SqlParameter()
-        {
-            ParameterName = "flag",
-            SqlDbType = SqlDbType.Int,
-            Direction = ParameterDirection.Output
-        };
-        await Database.ExecuteSqlInterpolatedAsync($"EXEC {flag} = Academic.SP_SubjectRetirement {studentId}, {subjectId}");
-
-        return (bool)flag.Value;
-    }
+    public async Task SubjectRetirement(int subjectDetailId, int studentId) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_SubjectRetirement {studentId}, {subjectDetailId}");
 
     public async Task StudentSubjectElimination(int subjectDetailID, int studentID) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_SubjectElimination {subjectDetailID}, {studentID}");
 
@@ -109,11 +98,12 @@ public partial class ProjectIndiaCharlieContext
         return (bool)flag.Value;
     }
 
-    public async Task GetUnsolvedRevisions() => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_RequestGradeRevision");
+    public async Task<IEnumerable<VGradeRevision>> GetUnsolvedRevisions() => await VGradeRevisions.FromSqlInterpolated($"SELECT * FROM Academic.F_GetUnsolvedRevisions()")
+        .ToListAsync();
 
-    //public async Task<IEnumerable<vGrades>> GetGrades() => await VGrades.ToListAsync();
+    public async Task ProcessGradeRevision(int studentID, int subjectDetailID, int modifiedgradeId, int adminId) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_ProcessGradeRevision {studentID}, {subjectDetailID}, {modifiedgradeId}, {adminId}");
 
-    public async Task<bool> RequestGradeRevision(int subjectDetailID, int studentID)
+    public async Task<bool> RequestGradeRevision(int studentID, int subjectDetailID)
     {
         var flag = new SqlParameter()
         {
@@ -126,4 +116,7 @@ public partial class ProjectIndiaCharlieContext
 
         return (bool)flag.Value;
     }
+
+    public async Task<IEnumerable<VSubjectSectionDetail>> GetSubjectsOfProfessor(int professorId) => await VSubjectSectionDetails.FromSqlInterpolated($"SELECT`* FROM Academic.F_GetSubjectsOfProfessor({professorId})")
+        .ToListAsync();
 }

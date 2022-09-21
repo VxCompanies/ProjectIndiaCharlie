@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectIndiaCharlie.Core.Data;
+using ProjectIndiaCharlie.Core.Helpers;
 using ProjectIndiaCharlie.Core.Models;
 using System.Data;
 
@@ -100,11 +101,12 @@ public class StudentController : ControllerBase
         }
         catch (Exception e)
         {
+            await _context.Database.RollbackTransactionAsync();
             return Problem(detail: e.Message);
         }
     }
 
-    [HttpGet("SubjectRetirement")]
+    [HttpPost("SubjectRetirement")]
     public async Task<ActionResult<VStudentDetail>> SubjectRetirement(int subjectDetailID, int studentID)
     {
         try
@@ -112,7 +114,7 @@ public class StudentController : ControllerBase
             if (!await _context.StudentSubjectValidation(subjectDetailID, studentID))
                 return NotFound("Student is not taking the subject.");
 
-            await _context.StudentSubjectElimination(studentID, subjectDetailID);
+            await _context.SubjectRetirement(studentID, subjectDetailID);
 
             return Ok("Subject successfully retired.");
         }
@@ -122,7 +124,7 @@ public class StudentController : ControllerBase
         }
     }
 
-    [HttpGet("SubjectElimination")]
+    [HttpDelete("SubjectElimination")]
     public async Task<ActionResult<VStudentDetail>> SubjectElimination(int subjectDetailID, int studentID)
     {
         try
@@ -157,7 +159,7 @@ public class StudentController : ControllerBase
         }
     }
 
-    [HttpGet("RequestGradeRevision")]
+    [HttpPost("RequestGradeRevision")]
     public async Task<ActionResult<string>> RequestGradeRevision(int studentId, int subjectDetailID)
     {
         try

@@ -242,18 +242,18 @@ SELECT Agr.PersonID,
 	Ag.Grade,
 	Agr.ModifiedGradeID,
 	Agm.Grade ModifiedGrade,
-	CONCAT(Padm.FirstName, IIF(Padm.MiddleName IS NULL, '', ' '), Padm.MiddleName, ' ', Padm.FirstSurname, IIF(Padm.SecondSurname IS NULL, '', ' '), Padm.SecondSurname) Admin,
-	CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname) Professor
+	IIF(Padm.PersonID IS NULL, NULL, CONCAT(Padm.FirstName, IIF(Padm.MiddleName IS NULL, '', ' '), Padm.MiddleName, ' ', Padm.FirstSurname, IIF(Padm.SecondSurname IS NULL, '', ' '), Padm.SecondSurname)) Admin,
+	IIF(Pprof.PersonID IS NULL, NULL, CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname)) Professor
 FROM Academic.GradeRevision Agr
 	INNER JOIN Academic.Student Ast ON Ast.PersonID = Agr.PersonID
 	INNER JOIN Person.Person Pper ON Pper.PersonID = Ast.PersonID
 	INNER JOIN Academic.SubjectDetail AsubDet ON AsubDet.SubjectDetailID = Agr.SubjectDetailID
 	INNER JOIN Academic.Subject Asub ON Asub.SubjectID = AsubDet.SubjectID
 	INNER JOIN Academic.Grade Ag ON Ag.GradeID = Agr.GradeID
-	INNER JOIN Academic.Grade Agm ON Agm.GradeID = Agr.ModifiedGradeID
-	INNER JOIN Academic.Administrator Aad ON Aad.PersonID = Agr.AdminID
-	INNER JOIN Person.Person Padm ON Padm.PersonID = Aad.PersonID
-	INNER JOIN Person.Person Pprof ON Pprof.PersonID = Aad.PersonID
+	LEFT JOIN Academic.Grade Agm ON Agm.GradeID = Agr.ModifiedGradeID
+	LEFT JOIN Academic.Administrator Aad ON Aad.PersonID = Agr.AdminID
+	LEFT JOIN Person.Person Padm ON Padm.PersonID = Aad.PersonID
+	LEFT JOIN Person.Person Pprof ON Pprof.PersonID = Aad.PersonID
 GO
 
 CREATE OR ALTER VIEW Person.vPeopleDetails
@@ -307,6 +307,7 @@ SELECT Asdet.SubjectDetailID,
 	Asdet.Section,
 	Asdet.Year,
 	Asdet.Trimester,
+	Avprof.PersonID ProfessorID,
 	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname) Professor,
 	CONCAT(COUNT(AstuSub.StudentID), '/', Acl.Capacity) Capacity,
 	Acl.Code ClassroomCode,
@@ -332,6 +333,7 @@ FROM Academic.Subject Asub
 	Asdet.Section,
 	Asdet.Year,
 	Asdet.Trimester,
+	Avprof.PersonID,
 	Acl.Capacity,
 	Acl.Code
 GO
@@ -461,7 +463,7 @@ AS
 GO
 
 --Grade revision
-CREATE OR ALTER PROCEDURE SP_SubjectRetirement
+CREATE OR ALTER PROCEDURE Academic.SP_SubjectRetirement
 	@StudentID int,
 	@SubjectDetailID int
 AS
@@ -472,7 +474,9 @@ BEGIN
 		SubjectDetailID = @SubjectDetailID
 END
 GO
-
+EXEC Academic.SP_SubjectRetirement 1110408, 1
+SELECT * FROM Academic.StudentSubject
+SELECT * FROM Academic.vStudentSubjects
 CREATE OR ALTER PROCEDURE Academic.SP_StudentRegistration
 	@PersonID int,
 	@CareerID int
@@ -483,10 +487,10 @@ AS
 GO
 
 CREATE OR ALTER PROCEDURE Academic.SP_ProcessGradeRevision
-@StudentID int,
-@SubjectDetailID int,
-@ModifiedGradeID int,
-@AdminID int
+	@StudentID int,
+	@SubjectDetailID int,
+	@ModifiedGradeID int,
+	@AdminID int
 AS
 BEGIN
 	DECLARE @ProfessorID int
@@ -781,10 +785,9 @@ CREATE OR ALTER FUNCTION Academic.F_GetSubjectsOfProfessor(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT SD.SubjectDetailID, S.SubjectCode, S.Name, SD.Section, SD.Year, SD.Trimester
-		FROM Academic.SubjectDetail SD
-		JOIN Academic.Subject S On SD.SubjectID = S.SubjectID
-		WHERE SD.ProfessorID = @ProfessorId
+		SELECT *
+		FROM Academic.vSubjectSectionDetails Avsub
+		WHERE Avsub.ProfessorID = @ProfessorId
 GO
 
 CREATE OR ALTER FUNCTION Academic.F_GetStudentsOfSubject(
@@ -833,14 +836,6 @@ AS
 		SELECT *
 		FROM Academic.vProfessorDetails Ap
 		WHERE Ap.PersonID = @PersonID
-GO
-
-CREATE OR ALTER FUNCTION Academic.F_GetGrades()
-RETURNS TABLE
-AS
-	RETURN
-		SELECT *
-		FROM Academic.vGrades
 GO
 
 CREATE OR ALTER FUNCTION Person.F_GetPasswordSalt(
@@ -900,6 +895,8 @@ GO
 ALTER ROLE API
 ADD MEMBER projectIndiaCharlie
 GO
+ALTER AUTHORIZATION ON SCHEMA::Academic
+	TO projectIndiaCharlie
 GRANT VIEW DEFINITION ON Academic.vStudentSubjects
 	TO projectIndiaCharlie
 GO

@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ProjectIndiaCharlie.Core.Data;
+using ProjectIndiaCharlie.Core.Helpers;
 using ProjectIndiaCharlie.Core.Models;
 using System.Data;
 
@@ -76,17 +77,16 @@ namespace ProjectIndiaCharlie.Core.Controllers
             }
         }
 
-        // TODO: Waiting for Nikita
         [HttpGet("SubjectSections")]
-        public async Task<ActionResult<IEnumerable<VSubjectSectionDetail>>> GetSubjectSections()
+        public async Task<ActionResult<IEnumerable<VSubjectSectionDetail>>> GetSubjectSections(int professorId)
         {
             try
             {
-                var subjects = _context.VSubjectSectionDetails;
+                var subjects = await _context.GetSubjectsOfProfessor(professorId);
 
-                return subjects is null ?
-                    NotFound() :
-                    Ok(await subjects.ToListAsync());
+                return !subjects.Any() ?
+                    NotFound("Professor does not have any subjects yet.") :
+                    Ok(subjects);
             }
             catch (Exception e)
             {
@@ -94,12 +94,7 @@ namespace ProjectIndiaCharlie.Core.Controllers
             }
         }
 
-        //// For professors
-        //[HttpGet("Student/List")]
-        //public async Task<ActionResult<IEnumerable<Student>>> GetStudents() =>
-        //    (_context.Students is null) ?
-        //    NotFound() :
-        //    Ok(await _context.Students.Include(p => p.Person)
-        //    .ToListAsync());
+        [HttpGet("GradesList")]
+        public async Task<ActionResult<IEnumerable<VGrade>>> GetGrades() => Ok(await _context.VGrades.ToListAsync());
     }
 }

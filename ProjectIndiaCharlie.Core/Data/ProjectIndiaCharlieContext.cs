@@ -19,6 +19,8 @@ namespace ProjectIndiaCharlie.Core.Data
 
         public virtual DbSet<VAdministratorDetail> VAdministratorDetails { get; set; } = null!;
         public virtual DbSet<VAvailableCareer> VAvailableCareers { get; set; } = null!;
+        public virtual DbSet<VGrade> VGrades { get; set; } = null!;
+        public virtual DbSet<VGradeRevision> VGradeRevisions { get; set; } = null!;
         public virtual DbSet<VPeopleDetail> VPeopleDetails { get; set; } = null!;
         public virtual DbSet<VProfessorDetail> VProfessorDetails { get; set; } = null!;
         public virtual DbSet<VStudentDetail> VStudentDetails { get; set; } = null!;
@@ -30,7 +32,7 @@ namespace ProjectIndiaCharlie.Core.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
+                optionsBuilder.UseSqlServer("Name=ConnectionStrings:ScaffoldingConnection");
             }
         }
 
@@ -76,6 +78,48 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.Code).HasMaxLength(3);
 
                 entity.Property(e => e.Name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<VGrade>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGrades");
+
+                entity.Property(e => e.Grade).HasMaxLength(2);
+
+                entity.Property(e => e.GradeId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("GradeID");
+            });
+
+            modelBuilder.Entity<VGradeRevision>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vGradeRevision");
+
+                entity.Property(e => e.Admin).HasMaxLength(203);
+
+                entity.Property(e => e.DateRequested).HasColumnType("datetime");
+
+                entity.Property(e => e.Grade).HasMaxLength(2);
+
+                entity.Property(e => e.GradeId).HasColumnName("GradeID");
+
+                entity.Property(e => e.ModifiedGrade).HasMaxLength(2);
+
+                entity.Property(e => e.ModifiedGradeId).HasColumnName("ModifiedGradeID");
+
+                entity.Property(e => e.PersonId).HasColumnName("PersonID");
+
+                entity.Property(e => e.Professor).HasMaxLength(203);
+
+                entity.Property(e => e.Section).HasMaxLength(113);
+
+                entity.Property(e => e.Student).HasMaxLength(203);
+
+                entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
             });
 
             modelBuilder.Entity<VPeopleDetail>(entity =>
@@ -244,6 +288,8 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.Name).HasMaxLength(100);
 
                 entity.Property(e => e.Professor).HasMaxLength(203);
+
+                entity.Property(e => e.ProfessorId).HasColumnName("ProfessorID");
 
                 entity.Property(e => e.Saturday)
                     .HasMaxLength(25)
