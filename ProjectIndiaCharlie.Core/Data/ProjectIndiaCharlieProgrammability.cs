@@ -117,6 +117,6 @@ public partial class ProjectIndiaCharlieContext
         return (bool)flag.Value;
     }
 
-    public async Task<IEnumerable<VSubjectSectionDetail>> GetSubjectsOfProfessor(int professorId) => await VSubjectSectionDetails.FromSqlInterpolated($"SELECT`* FROM Academic.F_GetSubjectsOfProfessor({professorId})")
+    public async Task<IEnumerable<VSubjectSectionDetail>> GetSubjectsOfProfessor(int professorId) => await VSubjectSectionDetails.FromSqlInterpolated($"SELECT * FROM Academic.F_GetSubjectsOfProfessor({professorId})")
         .ToListAsync();
 }
