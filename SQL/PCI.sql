@@ -242,7 +242,9 @@ SELECT Agr.PersonID,
 	Ag.Grade,
 	Agr.ModifiedGradeID,
 	Agm.Grade ModifiedGrade,
+	Aad.PersonID AdminId,
 	IIF(Padm.PersonID IS NULL, NULL, CONCAT(Padm.FirstName, IIF(Padm.MiddleName IS NULL, '', ' '), Padm.MiddleName, ' ', Padm.FirstSurname, IIF(Padm.SecondSurname IS NULL, '', ' '), Padm.SecondSurname)) Admin,
+	Pprof.PersonID ProfessorId,
 	IIF(Pprof.PersonID IS NULL, NULL, CONCAT(Pprof.FirstName, IIF(Pprof.MiddleName IS NULL, '', ' '), Pprof.MiddleName, ' ', Pprof.FirstSurname, IIF(Pprof.SecondSurname IS NULL, '', ' '), Pprof.SecondSurname)) Professor
 FROM Academic.GradeRevision Agr
 	INNER JOIN Academic.Student Ast ON Ast.PersonID = Agr.PersonID
@@ -253,7 +255,8 @@ FROM Academic.GradeRevision Agr
 	LEFT JOIN Academic.Grade Agm ON Agm.GradeID = Agr.ModifiedGradeID
 	LEFT JOIN Academic.Administrator Aad ON Aad.PersonID = Agr.AdminID
 	LEFT JOIN Person.Person Padm ON Padm.PersonID = Aad.PersonID
-	LEFT JOIN Person.Person Pprof ON Pprof.PersonID = Aad.PersonID
+	LEFT JOIN Academic.Professor Aprof ON Aprof.PersonID = Agr.AdminID
+	LEFT JOIN Person.Person Pprof ON Pprof.PersonID = Aprof.PersonID
 GO
 
 CREATE OR ALTER VIEW Person.vPeopleDetails
