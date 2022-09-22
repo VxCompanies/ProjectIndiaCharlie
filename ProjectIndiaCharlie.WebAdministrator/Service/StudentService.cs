@@ -14,20 +14,12 @@ public static class StudentService
 {
     private readonly static string baseUrl = Program.Configuration.GetConnectionString("AcademicsAPI");
 
-    //public StudentService(IConfiguration configuration) => baseUrl = configuration.GetConnectionString("AcademicsAPI");
-
-    //public StudentService(IConfiguration configuration)
-    //{
-    //    baseUrl = configuration.GetConnectionString("AcademicsAPI");
-    //}
-
     private const string mediaType = "application/json";
-    //private const string baseUrl = "https://localhost:7073/api";
-    //private string  = connectionString;
 
     private static string loginUrl = $"{baseUrl}/Student/Login";
-    private static string getSelectedSubjects = $"{baseUrl}/Student/SelectedSubjects";
+    private static string getSelectedSubjects = $"{baseUrl}/Student/Schedule";
     private static string registerStudentUrl = $"{baseUrl}/Student/Registration";
+    private static string getUnresolvedRevisions = $"{baseUrl}/Admin/GetUnsolvedRevisions";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -93,6 +85,28 @@ public static class StudentService
             var createdPerson = JsonSerializer.Deserialize<NewPerson>(content2, _options);
 
             return createdPerson!;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public static async Task<IEnumerable<VGradeRevision>> GetUnresolvedRevisions()
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+
+            var response = await httpClient.GetAsync(getUnresolvedRevisions);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var content = await response.Content.ReadAsStringAsync();
+            var revisions = JsonSerializer.Deserialize<IEnumerable<VGradeRevision>>(content, _options);
+
+            return revisions!;
         }
         catch (Exception)
         {

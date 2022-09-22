@@ -1,0 +1,36 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.Revision.IndexModel
+@{
+}
+
+<h3>Nuevas revisiones</h3>
+
+<table class="table">
+    <thead>
+
+        <tr>
+            <th>Estudiante ID</th>
+            <th>Nombre</th>
+            <th>Materia</th>
+            <th>Subject Detail</th>
+            <th>Data solicitada</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var s in @Model.UnresolverRevision)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => s.PersonId)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Student)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Section)</td>
+                    <td>@Html.DisplayFor(modelItem => s.SubjectDetailId)</td>
+                    <td>@Html.DisplayFor(modelItem => s.DateRequested)</td>
+                    <td>@Html.DisplayFor(modelItem => s.Grade)</td>
+                <td>
+                    <a asp-page="./Process" asp-route-PersonId="@(s.PersonId)" asp-route-SubjectDetailId="@(s.SubjectDetailId)">Edit</a>
+                </td>
+                </tr>
+            }
+    </tbody>
+</table>

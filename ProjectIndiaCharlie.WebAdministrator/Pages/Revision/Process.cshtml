@@ -1,0 +1,33 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.Revision.ProcessModel
+@{
+}
+
+<h3>Revision</h3>
+
+<table class="table">
+    <thead>
+
+        <tr>
+            <th>Estudiante ID</th>
+            <th>Nombre</th>
+            <th>Materia</th>
+            <th>Subject Detail</th>
+            <th>Data solicitada</th>
+            <th>Grade</th>
+        </tr>
+    </thead>
+    <tbody>
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => Model.UnresolverRevision.PersonId)</td>
+                <td>@Html.DisplayFor(modelItem => Model.UnresolverRevision.Student)</td>
+                <td>@Html.DisplayFor(modelItem => Model.UnresolverRevision.Section)</td>
+                <td>@Html.DisplayFor(modelItem => Model.UnresolverRevision.SubjectDetailId)</td>
+                <td>@Html.DisplayFor(modelItem => Model.UnresolverRevision.DateRequested)</td>
+                <td>@Html.DisplayFor(modelItem => Model.UnresolverRevision.Grade)</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
