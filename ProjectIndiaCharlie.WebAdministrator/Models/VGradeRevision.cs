@@ -14,7 +14,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Models
         public string Grade { get; set; } = null!;
         public int? ModifiedGradeId { get; set; }
         public string? ModifiedGrade { get; set; }
-        public string? Admin { get; set; }
-        public string? Professor { get; set; }
+        public int? Admin { get; set; }
+        public int? Professor { get; set; }
     }
 }
