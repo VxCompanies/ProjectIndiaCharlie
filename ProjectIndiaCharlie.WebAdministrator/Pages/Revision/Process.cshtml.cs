@@ -63,10 +63,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.Revision
                 Student = "sd"
             };
 
-            if (!ModelState.IsValid)
-            {
-                return NotFound();
-            }
+
 
             var a = await StudentService.ProcessRevision(revision);
 
