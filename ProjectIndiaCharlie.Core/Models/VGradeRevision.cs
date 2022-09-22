@@ -14,7 +14,9 @@ namespace ProjectIndiaCharlie.Core.Models
         public string Grade { get; set; } = null!;
         public int? ModifiedGradeId { get; set; }
         public string? ModifiedGrade { get; set; }
+        public int AdminId { get; set; }
         public string? Admin { get; set; }
+        public int ProfessorId { get; set; }
         public string? Professor { get; set; }
     }
 }

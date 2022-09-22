@@ -101,6 +101,8 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.Admin).HasMaxLength(203);
 
+                entity.Property(e => e.AdminId).HasColumnName("AdminId");
+
                 entity.Property(e => e.DateRequested).HasColumnType("datetime");
 
                 entity.Property(e => e.Grade).HasMaxLength(2);
@@ -114,6 +116,8 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
 
                 entity.Property(e => e.Professor).HasMaxLength(203);
+
+                entity.Property(e => e.ProfessorId).HasColumnName("ProfessorId");
 
                 entity.Property(e => e.Section).HasMaxLength(113);
 
