@@ -20,7 +20,7 @@ public static class StudentService
     private static string getSelectedSubjects = $"{baseUrl}/Student/Schedule";
     private static string registerStudentUrl = $"{baseUrl}/Student/Registration";
     private static string getUnresolvedRevisions = $"{baseUrl}/Admin/GetUnsolvedRevisions";
-    private static string ProcessRevisionURL = $"{baseUrl}/Admin/ProcessGradeRevisions";
+    private static string processRevisionURL = $"{baseUrl}/Admin/ProcessGradeRevisions?studentID={{0}}&subjectDetailID={{1}}&modifiedgradeId={{2}}&adminId={{3}}";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -124,7 +124,7 @@ public static class StudentService
             var json = JsonSerializer.Serialize(newRevision);
             var content1 = new StringContent(json, Encoding.UTF8, mediaType);
 
-            var response = await httpClient.PostAsync(ProcessRevisionURL, content1);
+            var response = await httpClient.PostAsync(string.Format(processRevisionURL, newRevision.PersonId, newRevision.SubjectDetailId, newRevision.ModifiedGradeId, newRevision.Admin), content1);
 
             if (!response.IsSuccessStatusCode)
                 return "Oooops";
