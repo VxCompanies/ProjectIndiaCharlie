@@ -14,20 +14,13 @@ public static class StudentService
 {
     private readonly static string baseUrl = Program.Configuration.GetConnectionString("AcademicsAPI");
 
-    //public StudentService(IConfiguration configuration) => baseUrl = configuration.GetConnectionString("AcademicsAPI");
-
-    //public StudentService(IConfiguration configuration)
-    //{
-    //    baseUrl = configuration.GetConnectionString("AcademicsAPI");
-    //}
-
     private const string mediaType = "application/json";
-    //private const string baseUrl = "https://localhost:7073/api";
-    //private string  = connectionString;
 
     private static string loginUrl = $"{baseUrl}/Student/Login";
-    private static string getSelectedSubjects = $"{baseUrl}/Student/SelectedSubjects";
+    private static string getSelectedSubjects = $"{baseUrl}/Student/Schedule";
     private static string registerStudentUrl = $"{baseUrl}/Student/Registration";
+    private static string getUnresolvedRevisions = $"{baseUrl}/Admin/GetUnsolvedRevisions";
+    private static string processRevisionURL = $"{baseUrl}/Admin/ProcessGradeRevisions?studentID={{0}}&subjectDetailID={{1}}&modifiedgradeId={{2}}&adminId={{3}}";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -97,6 +90,53 @@ public static class StudentService
         catch (Exception)
         {
             return null;
+        }
+    }
+
+    public static async Task<IEnumerable<VGradeRevision>> GetUnresolvedRevisions()
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+
+            var response = await httpClient.GetAsync(getUnresolvedRevisions);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var content = await response.Content.ReadAsStringAsync();
+            var revisions = JsonSerializer.Deserialize<IEnumerable<VGradeRevision>>(content, _options);
+
+            return revisions!;
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+
+    public static async Task<string> ProcessRevision(VGradeRevision newRevision)
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+
+            var json = JsonSerializer.Serialize(newRevision);
+            var content1 = new StringContent(json, Encoding.UTF8, mediaType);
+
+            var response = await httpClient.PostAsync(string.Format(processRevisionURL, newRevision.PersonId, newRevision.SubjectDetailId, newRevision.ModifiedGradeId, newRevision.Admin), content1);
+
+            if (!response.IsSuccessStatusCode)
+                return "Oooops";
+
+            var content2 = await response.Content.ReadAsStringAsync();
+            //var madeRevision = JsonSerializer.Deserialize<string>(content2, _options);
+
+            return content2!;
+        }
+        catch (Exception e)
+        {
+            return e.Message;
         }
     }
 }
