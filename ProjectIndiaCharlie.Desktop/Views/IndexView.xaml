@@ -5,26 +5,75 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
              xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="1080" d:DesignWidth="1920">
     <UserControl.Resources>
         <vm:IndexViewModel x:Key="vm"/>
     </UserControl.Resources>
-    <Grid DataContext="{StaticResource vm}">
+    <Grid DataContext="{StaticResource vm}"
+          Background="#3B75A5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".2*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition MaxWidth="450"
+                              MinWidth="300"
+                              Width=".3*"/>
+            <ColumnDefinition MinWidth="800"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0">
-            <RadioButton Content="Home"
-                         IsChecked="True"
-                         Command="{Binding NavigateHomeCommand}"/>
-        </StackPanel>
-        <ContentControl Grid.Column="1"
-                        Content="{Binding CurrentIndexViewModel}">
+        <Border Grid.Column="0"
+                Background="#203F59"
+                CornerRadius="0 20 20 0">
+            <StackPanel Margin="0 101 0 0">
+                <RadioButton IsChecked="True"
+                             Command="{Binding NavigateHomeCommand}"
+                             Style="{StaticResource menuButton}"
+                             Padding="0 90 0 90">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="Home"
+                                      Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Home"
+                                   Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton Command="{Binding NavigateSelectionCommand}"
+                             Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="SquareCheck"
+                                      Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Selection"
+                                   Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton Command="{Binding NavigateHomeCommand}"
+                             Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="ClipboardList"
+                                      Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Reports"
+                                   Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton Command="{Binding NavigateHomeCommand}"
+                             Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="Search"
+                                      Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Revisions"
+                                   Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </RadioButton>
+            </StackPanel>
+        </Border>
+        <ContentControl Content="{Binding CurrentIndexViewModel}"
+                        Grid.Column="1">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                     <local:HomeView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:SelectionViewModel}">
+                    <local:SelectionView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
+                    <local:ReportsView/>
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

@@ -1,30 +1,15 @@
 ﻿using ProjectIndiaCharlie.Desktop.Models;
-using ProjectIndiaCharlie.Desktop.ViewModels.Commands;
-using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
-using System.Collections.ObjectModel;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels;
 
 public class HomeViewModel : ViewModelBase
 {
-    public VStudentDetail Student { get; private set; }
-
-    public ObservableCollection<VStudentSubject> SelectedSubjectsList { get; set; }
-
-    public HomeViewModel()
-    {
-        Student = LogedStudent.Student!;
-        SelectedSubjectsList = new();
-
-        GetSubjectsList();
-    }
-
-    private async void GetSubjectsList()
-    {
-        SelectedSubjectsList.Clear();
-
-        foreach (var subject in await StudentService.GetSelectedSubjects(Student.PersonId))
-            SelectedSubjectsList.Add(subject);
-    }
+    public VStudentDetail Student => LogedStudent.Student!;
+    public string Names => $"{Student.FirstName} {Student.MiddleName}";
+    public string LastNames => $"{Student.FirstSurname} {Student.SecondSurname}";
+    public string Career => $"{Student.CareerCode} {Student.Pensum} - {Student.Career}";
+    public decimal TrimestralIndexPercentage => Student.TrimestralIndex * 25;
+    public decimal GeneralIndexPercentage => Student.GeneralIndex * 25;
+    public decimal TrimesterPercentage => Student.Trimester * (50/7);
 }

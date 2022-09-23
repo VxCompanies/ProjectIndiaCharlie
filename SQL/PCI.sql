@@ -17,16 +17,6 @@ GO
 CREATE SCHEMA Person
 GO
 
--- API Role
-CREATE ROLE API
-GO
-ALTER AUTHORIZATION ON SCHEMA::db_datareader
-	TO API
-GO
-ALTER AUTHORIZATION ON SCHEMA::db_datawriter
-	TO API
-GO
-
 -- Tables
 CREATE TABLE Person.Person(
 	PersonID int identity(1110201, 1),
@@ -101,7 +91,7 @@ GO
 CREATE TABLE Academic.Grade(
 	GradeID int identity,
 	Grade nvarchar(2) NOT NULL,
-	Points float NOT NULL,
+	Points decimal(8, 4) NOT NULL,
 	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
 	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
 
@@ -425,7 +415,8 @@ AS
 	)
     BEGIN
         UPDATE Person.PersonPassword
-        SET PasswordHash = @passwordHash
+        SET PasswordHash = @PasswordHash,
+			PasswordSalt = @PasswordSalt
         WHERE PersonID = @personID
 		RETURN 0
     END
@@ -477,9 +468,7 @@ BEGIN
 		SubjectDetailID = @SubjectDetailID
 END
 GO
-EXEC Academic.SP_SubjectRetirement 1110408, 1
-SELECT * FROM Academic.StudentSubject
-SELECT * FROM Academic.vStudentSubjects
+
 CREATE OR ALTER PROCEDURE Academic.SP_StudentRegistration
 	@PersonID int,
 	@CareerID int
@@ -573,19 +562,6 @@ AS
 	RETURN 1
 GO
 
-CREATE OR ALTER PROCEDURE Academic.SP_GetLastTrimesterStudentsSchedule
-	@StudentID int
-AS
-		DECLARE @Year int,
-			@Trimester int
-
-		Set @Year = (SELECT  MAX(Year) FROM Academic.vSubjectSectionDetails) 
-		Set @Trimester = (SELECT MAX(Trimester) FROM Academic.vSubjectSectionDetails
-					WHERE Year = @Year)
-		--RETURN
-		SELECT * FROM Academic.F_GetStudentsSchedule(@StudentID, @Year, @Trimester);
-GO
-
 CREATE OR ALTER PROCEDURE Academic.SP_RequestGradeRevision
 	@StudentID int,
 	@SubjectDetailID int
@@ -638,7 +614,7 @@ AS
 				(
 				SELECT Capacity 
 				FROM Academic.Classroom C
-				JOIN Academic.SubjectClassroom SC ON SC.ClassroomID = C.ClassroomID
+					JOIN Academic.SubjectClassroom SC ON SC.ClassroomID = C.ClassroomID
 				WHERE SubjectDetailID = @SubjectDetailID
 			)
 				RETURN 1
@@ -820,6 +796,19 @@ AS
 			1 = (SELECT Person.F_PasswordValidation(@PersonID, @PasswordHash))
 GO
 
+CREATE OR ALTER FUNCTION Academic.F_AdminLogin(
+	@PersonID int,
+	@PasswordHash nvarchar(64)
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT *
+		FROM Academic.vAdministratorDetails Adt
+		WHERE Adt.PersonID = @PersonID AND
+			1 = (SELECT Person.F_PasswordValidation(@PersonID, @PasswordHash))
+GO
+
 CREATE OR ALTER FUNCTION Academic.F_GetUnsolvedRevisions()
 RETURNS TABLE
 AS
@@ -852,6 +841,50 @@ BEGIN
 	FROM Person.PersonPassword Ppp
 	WHERE Ppp.PersonID = @PersonID
 	RETURN @passwordSalt
+END
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_GetStudentCurrentSchedule(
+	@StudentID int
+)
+RETURNS @schedule table(
+	StudentID int,
+	SubjectDetailID int,
+	SubjectCode nvarchar(8),
+	Section int,
+	Subject nvarchar(100),
+	Professor nvarchar(75),
+	Credits tinyint,
+	ClassroomCode nvarchar(7),
+	Trimester int,
+	Year int,
+	Monday nvarchar(25),
+	Tuesday nvarchar(25),
+	Wednesday nvarchar(25),
+	Thursday nvarchar(25),
+	Friday nvarchar(25),
+	Saturday nvarchar(25),
+	Grade nvarchar(2),
+	Points decimal(8, 4)
+)
+AS
+BEGIN
+		DECLARE @Year int,
+			@Trimester int
+
+		Set @Year = (
+			SELECT  MAX(Year)
+			FROM Academic.vSubjectSectionDetails
+		) 
+		Set @Trimester = (
+			SELECT MAX(Trimester)
+			FROM Academic.vSubjectSectionDetails
+					WHERE Year = @Year
+		)
+
+		INSERT INTO @schedule SELECT * FROM Academic.F_GetStudentsSchedule(@StudentID, @Year, @Trimester)
+
+		RETURN
 END
 GO
 
@@ -895,41 +928,176 @@ CREATE USER projectIndiaCharlie
 FOR LOGIN projectIndiaCharlieAPI
 WITH DEFAULT_SCHEMA = Academic
 GO
-ALTER ROLE API
-ADD MEMBER projectIndiaCharlie
+-- API Role
+CREATE ROLE API
 GO
-ALTER AUTHORIZATION ON SCHEMA::Academic
-	TO projectIndiaCharlie
+ALTER AUTHORIZATION ON SCHEMA::db_datareader
+	TO API
+GO
+ALTER AUTHORIZATION ON SCHEMA::db_datawriter
+	TO API
+GO
+ALTER ROLE API
+	ADD MEMBER projectIndiaCharlie
+GO
+
+-- Views
+-- View Definition
 GRANT VIEW DEFINITION ON Academic.vStudentSubjects
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vStudentDetails
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vSubjectSchedule
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vProfessorDetails
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vSubjectSectionDetails
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vAdministratorDetails
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vGradeRevision
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vAvailableCareers
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Person.vPeopleDetails
-	TO projectIndiaCharlie
+	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vGrades
-	TO projectIndiaCharlie
+	TO API
 GO
+-- Select
+GRANT SELECT ON Academic.vStudentSubjects
+	TO API
+GO
+GRANT SELECT ON Academic.vStudentDetails
+	TO API
+GO
+GRANT SELECT ON Academic.vSubjectSchedule
+	TO API
+GO
+GRANT SELECT ON Academic.vProfessorDetails
+	TO API
+GO
+GRANT SELECT ON Academic.vSubjectSectionDetails
+	TO API
+GO
+GRANT SELECT ON Academic.vAdministratorDetails
+	TO API
+GO
+GRANT SELECT ON Academic.vGradeRevision
+	TO API
+GO
+GRANT SELECT ON Academic.vAvailableCareers
+	TO API
+GO
+GRANT SELECT ON Person.vPeopleDetails
+	TO API
+GO
+GRANT SELECT ON Academic.vGrades
+	TO API
+GO
+
+-- Functions
+GRANT SELECT ON Academic.F_GetSubjectSchedule
+	TO API
+GO
+GRANT SELECT ON Academic.F_StudentLogin
+	TO API
+GO
+GRANT SELECT ON Academic.F_AdminLogin
+	TO API
+GO
+GRANT SELECT ON Academic.F_GetSubjectsOfProfessor
+	TO API
+GO
+GRANT EXECUTE ON Academic.F_StudentValidation
+	TO API
+GO
+GRANT SELECT ON Academic.F_GetStudentsSchedule
+	TO API
+GO
+GRANT EXECUTE ON Person.F_ClassAvalibilityValidation
+	TO API
+GO
+GRANT EXECUTE ON Academic.F_SubjectScheduleValidation
+	TO API
+GO
+GRANT EXECUTE ON Academic.F_ProfessorValidation
+	TO API
+GO
+GRANT EXECUTE ON Person.F_PasswordValidation
+	TO API
+GO
+GRANT EXECUTE ON Person.F_DocNoValidation
+	TO API
+GO
+GRANT EXECUTE ON Person.F_GetPasswordSalt
+	TO API
+GO
+GRANT SELECT ON Academic.F_GetUnsolvedRevisions
+	TO API
+GO
+GRANT SELECT ON Academic.F_GetStudentCurrentSchedule
+	TO API
+GO
+GRANT SELECT ON Academic.F_ProfessorLogin
+	TO API
+GO
+GRANT SELECT ON Academic.F_GetStudentsOfSubject
+	TO API
+GO
+GRANT EXECUTE ON Academic.F_StudentSubjectValidation
+	TO API
+GO
+-- SPs
+GRANT EXECUTE ON Academic.SP_SubjectScheduleAssignment
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_SubjectSelection
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_CareerRegistration
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_StudentRegistration
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_SubjectElimination
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_ProfessorRegistration
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_SubjectRetirement
+	TO API
+GO
+GRANT EXECUTE ON Person.SP_PersonRegistration
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_SubjectClassroomAssignment
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_ProcessGradeRevision
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_PublishGrade
+	TO API
+GO
+GRANT EXECUTE ON Person.SP_PasswordUpsert
+	TO API
+GO
+GRANT EXECUTE ON Academic.SP_RequestGradeRevision
+	TO API
+GO
+
 
 ---- Login
 --DROP LOGIN ProjectIndiaCharlieAPI

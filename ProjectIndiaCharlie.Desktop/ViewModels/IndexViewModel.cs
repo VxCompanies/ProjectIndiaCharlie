@@ -8,12 +8,16 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
         public ViewModelBase? CurrentIndexViewModel => NavigationStore.CurrentIndexViewModel;
 
         public NavigateHomeCommand NavigateHomeCommand { get; }
+        public NavigateReportsCommand NavigateReportsCommand { get; }
+        public NavigateSelectionCommand NavigateSelectionCommand { get; }
 
         public IndexViewModel()
         {
             NavigationStore.CurrentIndexViewModelChanged += OnCurrentIndexViewModelChanged;
 
-            NavigateHomeCommand = new NavigateHomeCommand();
+            NavigateHomeCommand = new();
+            NavigateReportsCommand = new();
+            NavigateSelectionCommand = new();
         }
 
         private void OnCurrentIndexViewModelChanged() => OnPropertyChanged(nameof(CurrentIndexViewModel));

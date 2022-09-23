@@ -11,7 +11,13 @@ namespace ProjectIndiaCharlie.Desktop.Views
     /// </summary>
     public partial class LoginView : UserControl
     {
-        public LoginView() => InitializeComponent();
+        public LoginView()
+        {
+            InitializeComponent();
+            tbUserId.Text = "1110487";
+            pbPassword.Password = "qwerty123";
+            Login(new(), new());
+        }
 
         //private void PasswordChanged(object sender, RoutedEventArgs e)
         //{
@@ -31,7 +37,7 @@ namespace ProjectIndiaCharlie.Desktop.Views
 
         private async void Login(object sender, RoutedEventArgs e)
         {
-            if (await StudentService.Login(tbUserId.Text, pbPassword.Password) is null)
+            if (!await StudentService.Login(tbUserId.Text, pbPassword.Password))
             {
                 MessageBox.Show("Wrong id or password.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;

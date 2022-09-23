@@ -13,7 +13,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands
             if (int.TryParse(loginViewModel!.UserId, out int userId))
                 return;
 
-            if (await StudentService.Login(loginViewModel!.UserId, loginViewModel!.Password) is null)
+            if (!await StudentService.Login(loginViewModel!.UserId, loginViewModel!.Password))
             {
                 MessageBox.Show("Wrong id or password.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;

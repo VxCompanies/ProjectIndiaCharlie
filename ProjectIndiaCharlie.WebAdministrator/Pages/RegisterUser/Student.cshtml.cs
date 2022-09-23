@@ -5,7 +5,7 @@ using ProjectIndiaCharlie.WebAdministrator.Service;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
-namespace ProjectIndiaCharlie.WebAdministrator.Pages
+namespace ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUser
 {
     public class RegisterUserModel : PageModel
     {
@@ -67,7 +67,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
             [Display(Name = "Primer nombre")]
             public string firstName { get; set; }
 
-            
+
             [Display(Name = "Segundo nombre")]
             public string? middleName { get; set; }
 
@@ -75,7 +75,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
             [Display(Name = "Primer apellido")]
             public string firstSurname { get; set; }
 
-            
+
             [Display(Name = "Segundo apellido")]
             public string? secondSurname { get; set; }
 

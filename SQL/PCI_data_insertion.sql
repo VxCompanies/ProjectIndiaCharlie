@@ -4,8 +4,8 @@ DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
 
-SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
---SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -143,14 +143,14 @@ GO
 
 --Admins
 INSERT INTO Person.Person(DocNo, FirstName, FirstSurname, Gender, BirthDate, Email)
-VALUES		('66666666666', 'Nikita', 'Kravchenko', 'M', '1998-10-12', 'nikita1998@mail.com'),
-			('11111111111', 'Omar', 'Núñez', 'M', '2002-5-18', 'omarnun2002@mail.com');
+VALUES		('666-6666666-6', 'Nikita', 'Kravchenko', 'M', '1998-10-12', 'nikita1998@mail.com'),
+			('111-1111111-1', 'Omar', 'Núñez', 'M', '2002-5-18', 'omarnun2002@mail.com');
 GO
 
 INSERT INTO Academic.Administrator(PersonID)
 VALUES		(1112200),(1112201);
 GO
-
+SELECT * FROM Academic.Professor
 INSERT INTO Person.PersonPassword(PersonID ,PasswordHash, PasswordSalt)
 VALUES		(1112200, '06d6a394462a1f19abf14fa321174311d642dfc55f11d050b011c79de7321df3', 'mmmmm'),
 			(1112201, '06d6a394462a1f19abf14fa321174311d642dfc55f11d050b011c79de7321df3', 'mmmmm');
@@ -193,7 +193,7 @@ WHERE SubjectDetailID = 2;
 --SET Year = 2022
 --WHERE SubjectDetailID = 2;
 
-EXEC Academic.SP_GetLastTrimesterStudentsSchedule @StudentID = 1110408;
+SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
 
 SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 
@@ -212,8 +212,7 @@ EXEC Academic.SP_SubjectElimination
 --	@SubjectDetailId = 2,
 --	@StudentId	= 1110424;
 
-EXEC Academic.SP_GetLastTrimesterStudentsSchedule
-@StudentID = 1110408;
+SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
 
 SELECT * 
 FROM Academic.SubjectDetail SD

@@ -5,53 +5,109 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
              xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
+             xmlns:xrpb="http://XamlRadialProgressBar/DotNet"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="1000" d:DesignWidth="1520">
     <UserControl.Resources>
         <vm:HomeViewModel x:Key="vm"/>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="#8C7472"/>
+        </Style>
+        <Style TargetType="xrpb:RadialProgressBar">
+            <Setter Property="Foreground"
+                    Value="#8C7472"/>
+            <Setter Property="OuterBackgroundBrush"
+                    Value="#EEEEEE"/>
+            <Setter Property="ArcBackgroundWidth"
+                    Value="10"/>
+            <Setter Property="Height"
+                    Value="300"/>
+            <Setter Property="Width"
+                    Value="300"/>
+        </Style>
     </UserControl.Resources>
-    <Grid DataContext="{StaticResource vm}">
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
-            <TextBlock Text="Indicators"
-                       FontSize="22"
-                       FontWeight="Bold"/>
-            <Grid>
+    <Border Margin="30"
+            Background="#FFFFFF"
+            CornerRadius="10">
+        <Grid DataContext="{StaticResource vm}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0"
+                        Margin="40 50 0 0">
+                <TextBlock Text="{Binding Names, Mode=OneWay}"
+                           FontWeight="SemiBold"
+                           FontSize="64"/>
+                <TextBlock Text="{Binding LastNames, Mode=OneWay}"
+                           FontWeight="SemiBold"
+                           FontSize="40"/>
+                <TextBlock Text="{Binding Student.PersonId, Mode=OneWay}"
+                           FontSize="32"
+                           FontWeight="Light"/>
+                <TextBlock Text="{Binding Career, Mode=OneWay}"
+                           FontSize="32"
+                           FontWeight="Light"/>
+                <TextBlock Text="Consejero:"
+                           FontSize="32"
+                           FontWeight="SemiBold"/>
+                <TextBlock Text="consejería.academica@intec.edu.do"
+                           FontSize="32"
+                           FontWeight="Light"/>
+            </StackPanel>
+            <Grid Grid.Row="1"
+                  Margin="30 50 30 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="ID:"/>
-                    <TextBlock Text="{Binding Student.PersonId, Mode=OneTime, UpdateSourceTrigger=Default}"/>
-                    <TextBlock Text="Career"/>
-                    <TextBlock Text="{Binding Student.Career, Mode=OneTime, UpdateSourceTrigger=Default}"/>
-                    <TextBlock Text="Trimesters:"/>
-                    <TextBlock Text="{Binding Student.Trimester, Mode=OneTime, UpdateSourceTrigger=Default}"/>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="General Index:"/>
-                    <TextBlock Text="{Binding Student.GeneralIndex, Mode=OneTime, UpdateSourceTrigger=Default}"/>
-                    <TextBlock Text="Trimestral Index:"/>
-                    <TextBlock Text="{Binding Student.TrimestralIndex, Mode=OneTime, UpdateSourceTrigger=Default}"/>
-                    <!--<TextBlock Text="Coordinator:"/>
-                    <TextBlock Text="{Binding Student.CoordinatorEmail, Mode=OneTime, UpdateSourceTrigger=Default}"/>-->
-                </StackPanel>
+                <!--Circular progress bar-->
+                <Grid Grid.Column="0">
+                    <xrpb:RadialProgressBar Value="{Binding GeneralIndexPercentage, Mode=OneWay}"/>
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Student.GeneralIndex}"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold"
+                                   FontSize="64"
+                                   Margin="0 15"/>
+                        <TextBlock Text="General Index"
+                                   TextAlignment="Center"
+                                   FontSize="24"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <xrpb:RadialProgressBar Value="{Binding TrimestralIndexPercentage, Mode=OneWay}">
+                    </xrpb:RadialProgressBar>
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Student.TrimestralIndex, Mode=OneWay}"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold"
+                                   FontSize="64"
+                                   Margin="0 15"/>
+                        <TextBlock Text="Trimestral Index"
+                                   TextAlignment="Center"
+                                   FontSize="24"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="2">
+                    <xrpb:RadialProgressBar Value="{Binding TrimesterPercentage, Mode=OneWay}"/>
+                    <StackPanel VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Student.Trimester, Mode=OneWay}"
+                                   TextAlignment="Center"
+                                   FontWeight="Bold"
+                                   FontSize="64"
+                                   Margin="0 15"/>
+                        <TextBlock Text="Trimester"
+                                   TextAlignment="Center"
+                                   FontSize="24"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
-        </StackPanel>
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="Selection"
-                       FontSize="22"
-                       FontWeight="Bold"/>
-            <!--<DataGrid ItemsSource="{Binding SelectedSubjectsList}"/>-->
-            <DataGrid BorderThickness="0"
-                      ItemsSource="{Binding SelectedSubjectsList}"
-                      CanUserReorderColumns="False"
-                      IsReadOnly="True">
-            </DataGrid>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </Border>
 </UserControl>

@@ -47,10 +47,9 @@ namespace ProjectIndiaCharlie.Core.Controllers
             {
                 if (newProfessor.PersonId > 0)
                 {
-                    var flag = await _context.VProfessorDetails
-                        .FindAsync(newProfessor.PersonId);
+                    var flag = await _context.ProfessorValidation(newProfessor.PersonId);
 
-                    if (flag is not null)
+                    if (flag)
                         return Conflict("Professor already registered.");
                 }
 
@@ -94,7 +93,25 @@ namespace ProjectIndiaCharlie.Core.Controllers
             }
         }
 
-        [HttpGet("GradesList")]
-        public async Task<ActionResult<IEnumerable<VGrade>>> GetGrades() => Ok(await _context.VGrades.ToListAsync());
+        [HttpPost("PublishGrade")]
+        public async Task<ActionResult<string>> PublishGrade(int studentId, int subjectDetailId, int gradeId)
+        {
+            try
+            {
+                if (!await _context.StudentSubjectValidation(studentId, subjectDetailId))
+                    return NotFound("The student is not taking the subject.");
+
+                await _context.PublishGrade(studentId, subjectDetailId, gradeId);
+                return CreatedAtAction("PublishGrade", "Grade published successfully.");
+            }
+            catch (Exception e)
+            {
+                return Problem(detail: e.Message);
+            }
+        }
+
+        // TODO: GetStudentsOfSubjects
+        [HttpGet("GetStudentsOfSubjects")]
+        public async Task<ActionResult<IEnumerable<object>>> GetStudentsOfSubjects() => Ok(await _context.VGrades.ToListAsync());
     }
 }

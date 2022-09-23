@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProjectIndiaCharlie.Core.Models
+namespace ProjectIndiaCharlie.Desktop.Models
 {
-    public partial class VStudentSubject
+    public partial class VSubjectSectionDetail
     {
-        public int StudentId { get; set; }
         public int SubjectDetailId { get; set; }
         public string SubjectCode { get; set; } = null!;
-        public int Section { get; set; }
-        public string Subject { get; set; } = null!;
-        public string Professor { get; set; } = null!;
+        public string Name { get; set; } = null!;
         public byte Credits { get; set; }
-        public string ClassroomCode { get; set; } = null!;
-        public int Trimester { get; set; }
+        public int Section { get; set; }
         public int Year { get; set; }
+        public int Trimester { get; set; }
+        public int ProfessorId { get; set; }
+        public string Professor { get; set; } = null!;
+        public string Capacity { get; set; } = null!;
+        public string ClassroomCode { get; set; } = null!;
         public string? Monday { get; set; }
         public string? Tuesday { get; set; }
         public string? Wednesday { get; set; }
         public string? Thursday { get; set; }
         public string? Friday { get; set; }
         public string? Saturday { get; set; }
-        public string? Grade { get; set; }
-        public decimal? Points { get; set; }
     }
 }

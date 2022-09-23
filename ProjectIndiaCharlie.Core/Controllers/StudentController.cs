@@ -22,10 +22,9 @@ public class StudentController : ControllerBase
         {
             if (newStudent.PersonId > 0)
             {
-                var flag = await _context.VStudentDetails
-                    .FindAsync(newStudent.PersonId);
+                var flag = await _context.StudentValidation(newStudent.PersonId);
 
-                if (flag is not null)
+                if (flag)
                     return Conflict("Student already registered.");
             }
 
@@ -67,7 +66,7 @@ public class StudentController : ControllerBase
             var student = await _context.StudentLogin(studentId, passwordHash);
 
             return student is null ?
-                NotFound("Wrong student ID or password.") :
+                NotFound("Wrong student Id or password.") :
                 Ok(student);
         }
         catch (Exception e)
@@ -77,26 +76,26 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("SubjectSelection")]
-    public async Task<ActionResult<string>> SubjectSelection(int subjectDetailID, int studentId)
+    public async Task<ActionResult<string>> SubjectSelection(int studentId, int subjectDetailId)
     {
         try
         {
             await _context.Database.BeginTransactionAsync();
 
-            var scheduleValidation = await _context.SubjectScheduleValidation(subjectDetailID, studentId);
+            var scheduleValidation = await _context.SubjectScheduleValidation(studentId, subjectDetailId);
             if (!string.IsNullOrWhiteSpace(scheduleValidation))
             {
                 await _context.Database.RollbackTransactionAsync();
                 return Conflict($"Cannot select this subject because the schedule conflicts with '{scheduleValidation}'.");
             }
 
-            if (!await _context.SubjectSelection(subjectDetailID, studentId))
+            if (!await _context.SubjectSelection(studentId, subjectDetailId))
                 return Conflict($"Subject section is full.");
 
             await _context.Database.CommitTransactionAsync();
 
             var subject = await _context.VStudentSubjects
-                            .FirstAsync(s => s.SubjectDetailId == subjectDetailID);
+                            .FirstAsync(s => s.SubjectDetailId == subjectDetailId);
             return base.CreatedAtAction("SubjectSelection", $"Successfully selected {subject.SubjectCode}-{subject.Section}.");
         }
         catch (Exception e)
@@ -106,15 +105,15 @@ public class StudentController : ControllerBase
         }
     }
 
-    [HttpPost("SubjectRetirement")]
-    public async Task<ActionResult<VStudentDetail>> SubjectRetirement(int subjectDetailID, int studentID)
+    [HttpPut("SubjectRetirement")]
+    public async Task<ActionResult<string>> SubjectRetirement(int studentId, int subjectDetailId)
     {
         try
         {
-            if (!await _context.StudentSubjectValidation(subjectDetailID, studentID))
+            if (!await _context.StudentSubjectValidation(studentId, subjectDetailId))
                 return NotFound("Student is not taking the subject.");
 
-            await _context.SubjectRetirement(studentID, subjectDetailID);
+            await _context.SubjectRetirement(studentId, subjectDetailId);
 
             return Ok("Subject successfully retired.");
         }
@@ -125,14 +124,14 @@ public class StudentController : ControllerBase
     }
 
     [HttpDelete("SubjectElimination")]
-    public async Task<ActionResult<VStudentDetail>> SubjectElimination(int subjectDetailID, int studentID)
+    public async Task<ActionResult<string>> SubjectElimination(int studentId, int subjectDetailId)
     {
         try
         {
-            if (!await _context.StudentSubjectValidation(subjectDetailID, studentID))
+            if (!await _context.StudentSubjectValidation(studentId, subjectDetailId))
                 return NotFound("Student is not taking the subject.");
 
-            await _context.StudentSubjectElimination(subjectDetailID, studentID);
+            await _context.StudentSubjectElimination(studentId, subjectDetailId);
 
             return Ok("Subject successfully eliminated.");
         }
@@ -160,14 +159,33 @@ public class StudentController : ControllerBase
     }
 
     [HttpPost("RequestGradeRevision")]
-    public async Task<ActionResult<string>> RequestGradeRevision(int studentId, int subjectDetailID)
+    public async Task<ActionResult<string>> RequestGradeRevision(int studentId, int subjectDetailId)
     {
         try
         {
-            if (!await _context.RequestGradeRevision(studentId, subjectDetailID))
+            if (!await _context.RequestGradeRevision(studentId, subjectDetailId))
                 return NotFound("Student is not taking the subject.");
 
             return Ok("Request sended successfully.");
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+
+    // TODO: GetGrades
+    [HttpGet("GetGrades")]
+    public async Task<ActionResult<IEnumerable<object>>> GetGrades(int studentId, int year, int trimester)
+    {
+        try
+        {
+            var student = await _context.VStudentDetails
+                .FirstOrDefaultAsync(s => s.PersonId == studentId);
+
+            return (student is null) ?
+                NotFound() :
+                Ok(student);
         }
         catch (Exception e)
         {

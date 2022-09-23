@@ -32,7 +32,7 @@ namespace ProjectIndiaCharlie.Core.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Name=ConnectionStrings:ScaffoldingConnection");
+                optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
             }
         }
 
@@ -101,8 +101,6 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.Admin).HasMaxLength(203);
 
-                entity.Property(e => e.AdminId).HasColumnName("AdminId");
-
                 entity.Property(e => e.DateRequested).HasColumnType("datetime");
 
                 entity.Property(e => e.Grade).HasMaxLength(2);
@@ -116,8 +114,6 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.PersonId).HasColumnName("PersonID");
 
                 entity.Property(e => e.Professor).HasMaxLength(203);
-
-                entity.Property(e => e.ProfessorId).HasColumnName("ProfessorId");
 
                 entity.Property(e => e.Section).HasMaxLength(113);
 
@@ -230,6 +226,8 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.Monday)
                     .HasMaxLength(25)
                     .IsUnicode(false);
+
+                entity.Property(e => e.Points).HasColumnType("decimal(12, 4)");
 
                 entity.Property(e => e.Professor).HasMaxLength(203);
 

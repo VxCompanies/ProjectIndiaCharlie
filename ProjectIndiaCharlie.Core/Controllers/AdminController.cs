@@ -39,8 +39,7 @@ namespace ProjectIndiaCharlie.Core.Controllers
         }
 
         [HttpGet("CareersList")]
-        public async Task<ActionResult<IEnumerable<VAvailableCareer>>> GetCareers() => Ok(await _context.VAvailableCareers
-            .ToListAsync());
+        public async Task<ActionResult<IEnumerable<VAvailableCareer>>> GetCareers() => Ok(await _context.VAvailableCareers.ToListAsync());
 
         [HttpGet("GetUnsolvedRevisions")]
         public async Task<ActionResult<IEnumerable<VGradeRevision>>> GetUnsolvedRevisions()
@@ -51,14 +50,25 @@ namespace ProjectIndiaCharlie.Core.Controllers
                 Ok(revisions);
         }
 
-        [HttpPost("ProcessGradeRevisions")]
-        public async Task<ActionResult<IEnumerable<VGradeRevision>>> ProcessGradeRevisions(int studentID, int subjectDetailID, int modifiedgradeId, int adminId)
+        [HttpPut("ProcessGradeRevisions")]
+        public async Task<ActionResult<string>> ProcessGradeRevisions(int studentID, int subjectDetailID, int modifiedgradeId, int adminId)
         {
             await _context.ProcessGradeRevision(studentID, subjectDetailID, modifiedgradeId, adminId);
             return Ok("Grade revision processed successfully.");
         }
 
-        [HttpGet("GradesList")]
-        public async Task<ActionResult<IEnumerable<VGrade>>> GetGrades() => Ok(await _context.VGrades.ToListAsync());
+        [HttpPost("CareerRegistration")]
+        public async Task<ActionResult<string>> CareerRegistration(NewCareer newCareer)
+        {
+            try
+            {
+                await _context.CareerRegistration(newCareer);
+                return CreatedAtAction("CareerRegistration", "Career registered successfully.");
+            }
+            catch (Exception e)
+            {
+                return Problem(detail: e.Message);
+            }        
+        }
     }
 }

@@ -6,32 +6,36 @@
              xmlns:local="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
              xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="1080" d:DesignWidth="1920">
     <UserControl.Resources>
         <vm:LoginViewModel x:Key="vm"/>
     </UserControl.Resources>
     <Grid DataContext="{StaticResource vm}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="107*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Path Data="M371.45304,633.32941 C532.45304,448.32941 345,-9.3543286 2.6343542E-08,0.1456714 L1.4415723,756.74441"
+        <Grid Grid.Column="0" Grid.RowSpan="2">
+            <Path Data="M371.45304 633.32941 C532.45304 448.32941 345 -9.3543286 2.6343542E-08 0.1456714 L1.4415723 756.74441"
                   StrokeThickness="4"
                   Fill="#2D5A7F"
-                  Margin="-134,-179,0,-128" RenderTransformOrigin="0.5,0.5" Stretch="Fill">
+                  Margin="-133 -179 0 -311" RenderTransformOrigin="0.5 0.5" Stretch="Fill">
             </Path>
-            <Path Data="M376.08418,628.27533 C537.08418,443.27533 123.5,386.58882 -8.5265128E-14,-4.2632564E-14 L-14.028533,823.10186"
+            <Path Data="M376.08418 628.27533 C537.08418 443.27533 123.5 386.58882 -8.5265128E-14 -4.2632564E-14 L-14.028533 823.10186"
                   StrokeThickness="4"
                   Fill="#1A344B"
-                  Margin="-54,-203,28,-199" RenderTransformOrigin="0.5,0.5" Stretch="Fill">
+                  Margin="-54 -203 28 -399" RenderTransformOrigin="0.5 0.5" Stretch="Fill">
             </Path>
         </Grid>
         <StackPanel Grid.Column="1"
-                    VerticalAlignment="Top"
-                    Margin="50,104,50,0" Grid.RowSpan="2">
-            <!--<TextBlock Text="{Binding UserId, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBox Text="{Binding UserId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    VerticalAlignment="Center"
+                    Margin="50 0">
+            <!--<TextBlock Text="{Binding UserId  Mode=OneWay  UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox Text="{Binding UserId  Mode=TwoWay  UpdateSourceTrigger=PropertyChanged}"/>
             <PasswordBox PasswordChanged="PasswordChanged"/>
             <Button Content="Login"
                     Command="{Binding LoginAsyncCommand}"

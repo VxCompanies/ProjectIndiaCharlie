@@ -12,7 +12,7 @@ namespace ProjectIndiaCharlie.Desktop.Models
         public string Subject { get; set; } = null!;
         public string Professor { get; set; } = null!;
         public byte Credits { get; set; }
-        public string Classroom { get; set; } = null!;
+        public string ClassroomCode { get; set; } = null!;
         public int Trimester { get; set; }
         public int Year { get; set; }
         public string? Monday { get; set; }
@@ -22,6 +22,6 @@ namespace ProjectIndiaCharlie.Desktop.Models
         public string? Friday { get; set; }
         public string? Saturday { get; set; }
         public string? Grade { get; set; }
-        public double? Points { get; set; }
+        public decimal? Points { get; set; }
     }
 }
