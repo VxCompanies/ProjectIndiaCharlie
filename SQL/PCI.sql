@@ -233,7 +233,7 @@ PointsTrimester float,
 PontsSumm float,
 TrimesteralIndex float,
 GeneralIndex float,
-ModifiedDate datetime,
+ModifiedDate datetime DEFAULT GETDATE(),
 
 FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
 FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
