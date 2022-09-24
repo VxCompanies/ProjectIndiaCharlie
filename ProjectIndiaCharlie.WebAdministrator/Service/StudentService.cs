@@ -17,7 +17,8 @@ public static class StudentService
     private const string mediaType = "application/json";
 
     private static string loginUrl = $"{baseUrl}/Student/Login";
-    private static string getSelectedSubjects = $"{baseUrl}/Student/Schedule";
+    private static string getSchedule = $"{baseUrl}/Student/Schedule?studentId={{0}}";
+
     private static string registerStudentUrl = $"{baseUrl}/Student/Registration";
     private static string getUnresolvedRevisions = $"{baseUrl}/Admin/GetUnsolvedRevisions";
     private static string processRevisionURL = $"{baseUrl}/Admin/ProcessGradeRevisions?studentID={{0}}&subjectDetailID={{1}}&modifiedgradeId={{2}}&adminId={{3}}";
@@ -46,21 +47,20 @@ public static class StudentService
     //    }
     //}
 
-    public static async Task<IEnumerable<VStudentSubject>> GetSelectedSubjects(int studentId)
+
+    public static async Task<IEnumerable<VStudentSubject>> GetSchedule(int studentId)
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync($"{getSelectedSubjects}?studentId={studentId}");
+            var response = await httpClient.GetAsync(string.Format(getSchedule, studentId));
 
             if (!response.IsSuccessStatusCode)
                 return Enumerable.Empty<VStudentSubject>();
 
             var content = await response.Content.ReadAsStringAsync();
 
-            var studentSubjects = JsonSerializer.Deserialize<IEnumerable<VStudentSubject>>(content, _options);
-
-            return studentSubjects!;
+            return JsonSerializer.Deserialize<IEnumerable<VStudentSubject>>(content, _options)!;
         }
         catch (Exception)
         {
@@ -122,9 +122,8 @@ public static class StudentService
             using var httpClient = new HttpClient();
 
             var json = JsonSerializer.Serialize(newRevision);
-            var content1 = new StringContent(json, Encoding.UTF8, mediaType);
 
-            var response = await httpClient.PostAsync(string.Format(processRevisionURL, newRevision.PersonId, newRevision.SubjectDetailId, newRevision.ModifiedGradeId, newRevision.Admin), content1);
+            var response = await httpClient.PutAsync(string.Format(processRevisionURL, newRevision.PersonId, newRevision.SubjectDetailId, newRevision.ModifiedGradeId, newRevision.Admin), null);
 
             if (!response.IsSuccessStatusCode)
                 return "Oooops";

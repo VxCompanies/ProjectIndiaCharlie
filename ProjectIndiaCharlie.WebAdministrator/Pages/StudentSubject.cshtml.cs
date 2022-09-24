@@ -11,7 +11,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
         public int ? IdSearched { get; set; }
 
         public IEnumerable<VStudentSubject> StudentSubjectVM { get; set; }
-
+        
         public StudentSubjectModel()
         {
             StudentSubjectVM = new List<VStudentSubject>();
@@ -21,7 +21,8 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages
         {
             if (IdSearched != null)
             {
-                var a = await StudentService.GetSelectedSubjects((int)IdSearched);
+                var a = await StudentService.GetSchedule((int)IdSearched);
+
                 StudentSubjectVM = a;
             }               
         }

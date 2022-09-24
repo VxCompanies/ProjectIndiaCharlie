@@ -3,8 +3,14 @@
 @{
 }
 
-<h3>Nuevas revisiones</h3>
+<h3>Nuevas revisiones:</h3>
+@if (@Model.UnresolverRevision == null)
+{
+    <h4>No hay revisiones pendientes</h4>
+}
 
+@if (@Model.UnresolverRevision != null)
+{
 <table class="table">
     <thead>
 
@@ -18,7 +24,8 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var s in @Model.UnresolverRevision)
+
+            @foreach (var s in @Model.UnresolverRevision)
             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => s.PersonId)</td>
@@ -27,10 +34,11 @@
                     <td>@Html.DisplayFor(modelItem => s.SubjectDetailId)</td>
                     <td>@Html.DisplayFor(modelItem => s.DateRequested)</td>
                     <td>@Html.DisplayFor(modelItem => s.Grade)</td>
-                <td>
-                    <a asp-page="./Process" asp-route-PersonId="@(s.PersonId)" asp-route-SubjectDetailId="@(s.SubjectDetailId)">Edit</a>
-                </td>
+                    <td>
+                        <a asp-page="./Process" asp-route-PersonId="@(s.PersonId)" asp-route-SubjectDetailId="@(s.SubjectDetailId)">Edit</a>
+                    </td>
                 </tr>
-            }
+            }        
     </tbody>
 </table>
+}

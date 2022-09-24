@@ -29,7 +29,7 @@
             <th>Saturday</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody 
         @foreach (var s in @Model.StudentSubjectVM)
             {
                 <tr>
@@ -46,5 +46,6 @@
                     <td>@Html.DisplayFor(modelItem => s.Saturday)</td>
                 </tr>
             }
+
     </tbody>
 </table>
