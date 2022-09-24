@@ -220,7 +220,6 @@ CREATE TABLE Academic.GradeRevision(
 )
 GO
 
-DROP TABLE Academic.IndexHistory;
 
 CREATE TABLE Academic.IndexHistory(
 IndexHistoryID int PRIMARY KEY IDENTITY,
@@ -241,18 +240,6 @@ FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
 );
 GO
 
-CREATE OR ALTER PROCEDURE SP_CalculateIndex
-AS
-	SELECT * 
-	FROM Academic.StudentSubject SS
-	JOIN Academic.SubjectDetail SD ON SD.SubjectDetailID = SS.SubjectDetailID 
-	JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID 
-
-	SELECT * 
-	FROM Academic.SubjectDetail SD
-	JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID
-	WHERE Year = 2022 AND Trimester = 3
-GO
 
 -- Views
 CREATE OR ALTER VIEW Academic.vGradeRevision
