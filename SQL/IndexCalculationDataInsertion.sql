@@ -51,26 +51,52 @@ EXEC Academic.SP_PublishGrade
 @StudentID = 1111666,
 @GradeId = 6;
 
-SELECT * 
-FROM Academic.IndexHistory;
+--
+EXEC Academic.SP_RequestGradeRevision
+@SubjectDetailID = 529,
+@StudentID = 1111666;
 
-SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS
+SELECT * FROM Academic.GradeRevision
 
-SELECT * FROM Academic.Grade;
+EXEC Academic.SP_ProcessGradeRevision
+@SubjectDetailID = 529,
+@ModifiedGradeID = 3,
+@AdminID = 1112200,
+@StudentID = 1111666;
+
+BEGIN TRAN 
+UPDATE Academic.GradeRevision
+		SET ModifiedGradeID = 3, AdminID = 1122, ProfessorID = @ProfessorID, DateModified = GETDATE()
+		WHERE SubjectDetailID = @SubjectDetailID and PersonId = @StudentID
+		PRINT('updated grade revision')
+ROLLBACK
+
+CREATE OR ALTER FUNCTION dbo.IsZero(
+@number int)
+RETURNS INT
+AS
+BEGIN
+	IF (@number = 0)
+		return 1
+	return @number
+END
 GO
 
 
-CREATE OR ALTER PROCEDURE SP_CalculateIndexByTrimester
+
+CREATE OR ALTER PROCEDURE Academic.SP_CalculateIndexByTrimester
 @Year int,
 @Trimester int
 AS
 DECLARE @StudentQuantity int,
 @StudentID int,
 @StudentCareer int,
-@AccumulatedCredits int,
-@AccumulatedPoints int,
-@TrimesterCredits int,
-@TrimesterPoints int
+@AccumulatedCredits float,
+@AccumulatedPoints float,
+@TrimesterCredits float,
+@TrimesterPoints float,
+@TrimestralIndex decimal(3, 2),
+@GeneralIndex decimal(3, 2)
 
 --Select Estudiantes que cursaban materias en el trimestre
 SELECT DISTINCT(SS.StudentID)
@@ -87,28 +113,45 @@ BEGIN
 	SET @StudentID = (SELECT TOP(1) StudentID FROM #studentTemp);
 	SET @StudentCareer = (SELECT TOP(1) CareerID FROM Academic.Student WHERE PersonID = @StudentID);
 
-	SET @TrimesterCredits = (SELECT SUM(GSS.Credits) FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS WHERE GSS.Grade != 'R');
-	SET @TrimesterPoints = (SELECT SUM(GSS.Points) FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS);
+	SET @TrimesterCredits = (SELECT ISNULL(SUM(GSS.Credits),0) FROM Academic.F_GetStudentsSchedule (@StudentID, @Year, @Trimester) GSS WHERE GSS.Grade != 'R');
+	SET @TrimesterPoints = (SELECT ISNULL(SUM(GSS.Points), 0) FROM Academic.F_GetStudentsSchedule (@StudentID, @Year, @Trimester) GSS);
 
-
+	SET @AccumulatedCredits = (	SELECT ISNULL(SUM(CreditsTrimester), 0)
+								FROM Academic.IndexHistory 
+								WHERE PersonID = @StudentID AND CareerID = @StudentCareer) + @TrimesterCredits;
+	SET @AccumulatedPoints  = (	SELECT ISNULL(SUM(PointsTrimester), 0)
+								FROM Academic.IndexHistory 
+								WHERE PersonID = @StudentID AND CareerID = @StudentCareer) + @TrimesterPoints;
+	
+	SET @TrimestralIndex = (@TrimesterPoints/  dbo.IsZero(@TrimesterCredits));
+	SET @GeneralIndex = (@AccumulatedPoints/ dbo.IsZero(@AccumulatedCredits));
 
 	INSERT INTO Academic.IndexHistory(	PersonID, CareerID, Year, Trimester, 
-			CreditsTrimester, CreditsSumm, PointsTrimester,PontsSumm , TrimesteralIndex, GeneralIndex)
+			CreditsTrimester, CreditsSumm, PointsTrimester,PontsSumm , 
+			TrimesteralIndex, GeneralIndex)
 	VALUES(	@StudentID, @StudentCareer, @Year, @Trimester,
-			@TrimesterCredits, 0, @TrimesterPoints, 0, (@TrimesterCredits*4/@TrimesterPoints), 0)
-
-
-	SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS
-	SELECT * FROM Academic.IndexHistory;
-
+			@TrimesterCredits, @AccumulatedCredits, @TrimesterPoints, @AccumulatedPoints, 
+			@TrimestralIndex, @GeneralIndex)
 
 	DELETE TOP(1)  FROM #studentTemp;
 	SET @StudentQuantity = @StudentQuantity - 1;
 END
-
-
 DROP TABLE #studentTemp;
 GO
 
 
+
+BEGIN TRAN
+EXEC Academic.SP_CalculateIndexByTrimester
+@Year = 2022,
+@Trimester = 3;
+
+SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS;
+SELECT * FROM Academic.F_GetStudentsSchedule (1110408, 2022, 3) GSS;
+
+
+SELECT * FROM Academic.IndexHistory;
+
 ROLLBACK
+
+SELECT * FROM Academic.StudentSubject

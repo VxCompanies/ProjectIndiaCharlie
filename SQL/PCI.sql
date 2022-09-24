@@ -233,7 +233,7 @@ PointsTrimester float,
 PontsSumm float,
 TrimesteralIndex float,
 GeneralIndex float,
-ModifiedDate datetime DEFAULT GETDATE(),
+ModifiedDate datetime DEFAULT GETDATE,
 
 FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
 FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
@@ -514,10 +514,12 @@ BEGIN
 	)
 			RETURN 0
 	BEGIN TRY
+
 		SET @ProfessorID = (SELECT TOP(1) ProfessorID FROM Academic.SubjectDetail WHERE SubjectDetailID = @SubjectDetailID)
-		
+				PRINT('Set prof')
+
 		BEGIN TRAN
-		
+
 		UPDATE Academic.GradeRevision
 		SET ModifiedGradeID = @ModifiedGradeID, AdminID = @AdminID, ProfessorID = @ProfessorID, DateModified = GETDATE()
 		WHERE SubjectDetailID = @SubjectDetailID and PersonId = @StudentID
@@ -525,7 +527,6 @@ BEGIN
 		UPDATE Academic.StudentSubject
 		SET GradeID = @ModifiedGradeID
 		WHERE SubjectDetailID = @SubjectDetailID and StudentID = @StudentID;
-
 		COMMIT
 		RETURN 1
 	END TRY
