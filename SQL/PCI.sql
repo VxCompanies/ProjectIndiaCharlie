@@ -220,6 +220,25 @@ CREATE TABLE Academic.GradeRevision(
 )
 GO
 
+CREATE TABLE Academic.IndexHistory(
+IndexHistoryID int PRIMARY KEY IDENTITY,
+PersonID int,
+CareerID int,
+Year int,
+Trimester int,
+CreditsTrimester int,
+CreditsSumm int,
+PointsTrimester float,
+PontsSumm float,
+TrimesteralIndex decimal(3,2),
+GeneralIndex decimal(3,2),
+ModifiedDate datetime DEFAULT GETDATE(),
+
+FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
+FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
+);
+GO
+
 -- Views
 CREATE OR ALTER VIEW Academic.vGradeRevision
 AS
@@ -598,6 +617,90 @@ BEGIN
 END
 GO
 
+
+CREATE OR ALTER PROCEDURE Academic.SP_UpdateStudentIndex
+@StudentID int,
+@GeneralIndex decimal (3,2),
+@TrimestralIndex decimal (3,2)
+AS
+BEGIN
+	UPDATE Academic.Student
+	SET GeneralIndex = @GeneralIndex, TrimestralIndex = @TrimestralIndex
+	WHERE PersonID = @StudentID
+	RETURN 1
+END
+GO
+
+
+CREATE OR ALTER PROCEDURE Academic.SP_CalculateIndexByTrimester
+@Year int,
+@Trimester int
+AS
+DECLARE @StudentQuantity int,
+@StudentID int,
+@StudentCareer int,
+@AccumulatedCredits float,
+@AccumulatedPoints float,
+@TrimesterCredits float,
+@TrimesterPoints float,
+@TrimestralIndex decimal(3, 2),
+@GeneralIndex decimal(3, 2)
+
+--Select Estudiantes que cursaban materias en el trimestre
+SELECT DISTINCT(SS.StudentID)
+INTO #studentTemp
+from Academic.StudentSubject SS
+JOIN Academic.SubjectDetail SD ON SD.SubjectDetailID = SS.SubjectDetailID
+where YEAR = @Year AND Trimester = @Trimester
+
+SET @StudentQuantity = (SELECT COUNT(StudentID) FROM #studentTemp);
+PRINT @StudentQuantity;
+
+WHILE @StudentQuantity > 0
+BEGIN
+	SET @StudentID = (SELECT TOP(1) StudentID FROM #studentTemp);
+	SET @StudentCareer = (SELECT TOP(1) CareerID FROM Academic.Student WHERE PersonID = @StudentID);
+
+	SET @TrimesterCredits = (SELECT ISNULL(SUM(GSS.Credits),0) FROM Academic.F_GetStudentsSchedule (@StudentID, @Year, @Trimester) GSS WHERE GSS.Grade != 'R');
+	SET @TrimesterPoints = (SELECT ISNULL(SUM(GSS.Points), 0) FROM Academic.F_GetStudentsSchedule (@StudentID, @Year, @Trimester) GSS);
+
+	SET @AccumulatedCredits = (	SELECT ISNULL(SUM(CreditsTrimester), 0)
+								FROM Academic.IndexHistory 
+								WHERE PersonID = @StudentID AND CareerID = @StudentCareer) + @TrimesterCredits;
+	SET @AccumulatedPoints  = (	SELECT ISNULL(SUM(PointsTrimester), 0)
+								FROM Academic.IndexHistory 
+								WHERE PersonID = @StudentID AND CareerID = @StudentCareer) + @TrimesterPoints;
+	
+	SET @TrimestralIndex = (@TrimesterPoints/  dbo.IsZero(@TrimesterCredits));
+	SET @GeneralIndex = (@AccumulatedPoints/ dbo.IsZero(@AccumulatedCredits));
+
+	IF EXISTS (SELECT * FROM Academic.IndexHistory WHERE PersonID = @StudentID AND Year = @Year and Trimester = @Trimester)
+		BEGIN
+		UPDATE 	Academic.IndexHistory
+		SET CreditsTrimester = @TrimesterCredits, CreditsSumm = @AccumulatedCredits, PointsTrimester = @TrimesterPoints,PontsSumm =  @AccumulatedPoints, 
+				TrimesteralIndex = @TrimestralIndex, GeneralIndex = @TrimestralIndex
+		WHERE PersonID = @StudentID AND Year = @Year and Trimester = @Trimester
+		END
+	ELSE
+		BEGIN
+		INSERT INTO Academic.IndexHistory(	PersonID, CareerID, Year, Trimester, 
+				CreditsTrimester, CreditsSumm, PointsTrimester,PontsSumm , 
+				TrimesteralIndex, GeneralIndex)
+		VALUES(	@StudentID, @StudentCareer, @Year, @Trimester,
+				@TrimesterCredits, @AccumulatedCredits, @TrimesterPoints, @AccumulatedPoints, 
+				@TrimestralIndex, @GeneralIndex)
+		END
+	EXEC Academic.SP_UpdateStudentIndex
+		@StudentID = @StudentID,
+		@GeneralIndex = @GeneralIndex,
+		@TrimestralIndex = @TrimestralIndex;
+
+	DELETE TOP(1)  FROM #studentTemp;
+	SET @StudentQuantity = @StudentQuantity - 1;
+END
+DROP TABLE #studentTemp;
+GO
+
 -- Functions
 CREATE OR ALTER FUNCTION Person.F_ClassAvalibilityValidation(
 	@SubjectDetailID int
@@ -633,7 +736,7 @@ AS
 		WHERE AvsubSecDet.SubjectDetailId IN (
 			SELECT AstuSub.SubjectDetailId
 			FROM Academic.StudentSubject AstuSub
-			WHERE AstuSub.StudentID = 1110408
+			WHERE AstuSub.StudentID = @StudentID
 		)
 GO
 
@@ -909,6 +1012,16 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER FUNCTION dbo.IsZero(
+@number int)
+RETURNS INT
+AS
+BEGIN
+	IF (@number = 0)
+		return 1
+	return @number
+END;
+GO
 -- Triggers
 CREATE TRIGGER DateModifiedPersonPerson
     ON Person.Person

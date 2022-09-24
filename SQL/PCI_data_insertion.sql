@@ -4,8 +4,8 @@ DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
 
---SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -157,34 +157,7 @@ VALUES		(1112200, '06d6a394462a1f19abf14fa321174311d642dfc55f11d050b011c79de7321
 GO
 
 --Datos de prueba de secciones
-INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
-VALUES (1, 1110408), (2, 1110409), (2, 1110408);
-GO
 
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110412;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110413;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110414;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110415;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110416;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110417;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110418;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110419;
 
 SELECT * FROM Academic.vSubjectSectionDetails
 WHERE SubjectDetailID = 2;
@@ -200,17 +173,91 @@ SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
 	@StudentId	= 1110422;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110423;
+
 	
 EXEC Academic.SP_SubjectElimination
 	@SubjectDetailId = 2,
 	@StudentId	= 1110422;
 
---EXEC Academic.SP_SubjectSelection
---	@SubjectDetailId = 2,
---	@StudentId	= 1110424;
+--Grades publications
+
+SELECT * FROM Academic.Student
+WHERE PersonID = 1111666;
+
+SELECT * FROM Academic.Subject
+WHERE Name like '%s%';
+
+SELECT * FROM Academic.SubjectDetail
+WHERE SubjectID = 1195;
+--326 vectorial | 919 Fisica  2 | 850 Dise;o de software | 529 big data
+
+--Student 1111666 Seleccion
+EXEC Academic.SP_SubjectSelection
+@SubjectDetailID = 326,
+@StudentID = 1111666;
+
+EXEC Academic.SP_SubjectSelection
+@SubjectDetailID = 919,
+@StudentID = 1111666;
+
+EXEC Academic.SP_SubjectSelection
+@SubjectDetailID = 850,
+@StudentID = 1111666;
+
+EXEC Academic.SP_SubjectSelection
+@SubjectDetailID = 529,
+@StudentID = 1111666;
+
+SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3);
+
+
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110408;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 1,
+	@StudentId	= 1110408;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110409;
+
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 2,
+@StudentID = 1110408,
+@GradeId = 2;
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 1,
+@StudentID = 1110408,
+@GradeId = 8;
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 2,
+@StudentID = 1110409,
+@GradeId = 8;
+
+
+--Student 1111666 Publicacion
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 326,
+@StudentID = 1111666,
+@GradeId = 8;
+
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 919,
+@StudentID = 1111666,
+@GradeId = 2;
+
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 850,
+@StudentID = 1111666,
+@GradeId = 1;
+
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 529,
+@StudentID = 1111666,
+@GradeId = 6;
+GO
+
+
 
 SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
 
@@ -274,53 +321,20 @@ FROM Academic.SubjectSchedule SS
 WHERE S.Name LIKE '%%' OR
 	S.SubjectCode LIKE '%INS%'
 ORDER BY SS.SubjectScheduleID;
+SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS;
+SELECT * FROM Academic.F_GetStudentsSchedule (1110408, 2022, 3) GSS;
+SELECT * FROM Academic.F_GetStudentsSchedule (1110409, 2022, 3) GSS;
 
---WHERE P.PersonID = 1110201
-	--UPDATE Person.Person 
---SET 
---    --DocNo = '40243310243',
---	Email = 'androidd@mail.com'
---WHERE
---    PersonID = 1;
+EXEC Academic.SP_CalculateIndexByTrimester
+@Year = 2022,
+@Trimester = 3;
 
---EXEC Person.SP_AssignRole
---	@PersonID	= 1110202,
---	@RoleId		= 2;
 
---EXEC Person.SP_AssignRole
---	@PersonID	= 1110202,
---	@RoleId		= 3;
+SELECT * FROM Academic.IndexHistory
+ORDER BY PersonID;
+SELECT * FROM Academic.StudentSubject
 
---EXEC Person.SP_AssignRole
---	@PersonID	= 1110201,
---	@RoleId		= 1,
---	@CareerID = 1;
+SELECT * FROM Academic.Student
+WHERE GeneralIndex != 0
 
---EXEC Person.SP_UpsertPassword 
---@PersonID	= 1110201,
---@PasswordHash = '7aa29861c7da79138967fcdf217112320bb79afbab5cb5d470a040a1f473f96d',
---@PasswordSalt = 'jbchk';
 
---EXEC Person.SP_UpsertPassword 
---@PersonID	= 1110202,
---@PasswordHash = 'd87c4581fc345b94449702d0ed8e954adaaa07ee86417decdf0a07fad4b9d4dd',
---@PasswordSalt = '12345';
-
---EXEC Person.SP_PersonRegistration 
---	@DocNo			= '40231024361', 
---	@FirstName		= 'Nikita', 
---	@MiddleName		= 'Alekseevich', 
---	@FirstSurname	= 'Kravchenko', 
---	@Gender			= 'M', 
---	@BirthDate		= '1998-10-12', 
---	@Email			= 'android.oct7@gmail.com';
---GO
-
---EXEC Person.SP_PersonRegistration 
---	@DocNo			= '98765432109', 
---	@FirstName		= 'Ramón', 
---	@FirstSurname	= 'Ramírez', 
---	@Gender			= 'M', 
---	@BirthDate		= '2000-01-02', 
---	@Email			= 'ran.32@gmail.com';
---GO
