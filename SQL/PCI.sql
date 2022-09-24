@@ -220,6 +220,40 @@ CREATE TABLE Academic.GradeRevision(
 )
 GO
 
+DROP TABLE Academic.IndexHistory;
+
+CREATE TABLE Academic.IndexHistory(
+IndexHistoryID int PRIMARY KEY IDENTITY,
+PersonID int,
+CareerID int,
+Year int,
+Trimester int,
+CreditsTrimester int,
+CreditsSumm int,
+PointsTrimester float,
+PontsSumm float,
+TrimesteralIndex float,
+GeneralIndex float,
+ModifiedDate datetime,
+
+FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
+FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
+);
+GO
+
+CREATE OR ALTER PROCEDURE SP_CalculateIndex
+AS
+	SELECT * 
+	FROM Academic.StudentSubject SS
+	JOIN Academic.SubjectDetail SD ON SD.SubjectDetailID = SS.SubjectDetailID 
+	JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID 
+
+	SELECT * 
+	FROM Academic.SubjectDetail SD
+	JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID
+	WHERE Year = 2022 AND Trimester = 3
+GO
+
 -- Views
 CREATE OR ALTER VIEW Academic.vGradeRevision
 AS
@@ -885,8 +919,22 @@ BEGIN
 		INSERT INTO @schedule SELECT * FROM Academic.F_GetStudentsSchedule(@StudentID, @Year, @Trimester)
 
 		RETURN
-END
+END;
 GO
+
+CREATE OR ALTER FUNCTION F_GetSubjectStudent(
+@SubjectDetailID int)
+RETURNS TABLE
+AS
+RETURN
+SELECT SS.StudentID, CONCAT(P.FirstName, ' ', P.MiddleName, ' ', P.FirstSurname, ' ', P.SecondSurname) [Nombre], C.Code [CareerCode], S.Trimester
+FROM Academic.StudentSubject SS
+JOIN Person.Person P ON P.PersonID = SS.StudentID
+JOIN Academic.Student S ON S.PersonID = SS.StudentID
+JOIN Academic.Career C ON C.CareerID = S.CareerID
+WHERE SS.SubjectDetailID = @SubjectDetailID
+GO
+
 
 -- Triggers
 CREATE TRIGGER DateModifiedPersonPerson
