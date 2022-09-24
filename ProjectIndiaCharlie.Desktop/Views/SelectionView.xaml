@@ -18,6 +18,20 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
+                <Button Background="Transparent"
+                        BorderThickness="0"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Panel.ZIndex="2"
+                        DataContext="{StaticResource vm}"
+                        Command="{Binding QuitSubjectAsyncCommand}"
+                        CommandParameter="{Binding}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="Trash"
+                                      Width="20"
+                                      Height="20"/>
+                    </StackPanel>
+                </Button>
                 <ListView ItemsSource="{Binding SelectedSubjects}"
                           SelectedItem="{Binding SelectedSubject}"
                           Grid.Row="0">
@@ -30,17 +44,6 @@
                                             <TextBlock Text="{Binding SubjectCode, StringFormat={}{0} -}"/>
                                             <TextBlock Text="{Binding Name}"
                                                        Margin="3 0"/>
-                                            <Button Background="Transparent"
-                                                    BorderThickness="0"
-                                                    DataContext="{StaticResource vm}"
-                                                    Command="{Binding DeleteSubjectAsyncCommand}"
-                                                    CommandParameter="{Binding SelectedSubject}">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <fa:IconImage Icon="Trash"
-                                                                  Width="15"
-                                                                  Height="15"/>
-                                                </StackPanel>
-                                            </Button>
                                         </StackPanel>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

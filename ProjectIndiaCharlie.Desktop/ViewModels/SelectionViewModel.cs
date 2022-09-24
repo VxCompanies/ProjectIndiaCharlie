@@ -1,15 +1,12 @@
 ﻿using ProjectIndiaCharlie.Desktop.Models;
+using ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
-using ProjectIndiaCharlie.Desktop.ViewModels.Stores;
 using System.Collections.ObjectModel;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
 {
     public class SelectionViewModel : ViewModelBase
     {
-        public ObservableCollection<VSubjectSectionDetail> SelectedSubjects { get; set; }
-        public ObservableCollection<VSubjectSectionDetail> SubjectSections { get; set; }
-
         private VSubjectSectionDetail _selectedSubject;
         public VSubjectSectionDetail SelectedSubject
         {
@@ -21,24 +18,31 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
             }
         }
 
+        public ObservableCollection<VSubjectSectionDetail> SelectedSubjects { get; set; }
+        public ObservableCollection<VSubjectSectionDetail> SubjectSections { get; set; }
+
+        public QuitSubjectAsyncCommand QuitSubjectAsyncCommand { get; set; }
+
         public SelectionViewModel()
         {
             SelectedSubjects = new();
             SubjectSections = new();
 
+            QuitSubjectAsyncCommand = new();
+
             GetSelectedSubjects();
             GetSelectionSubjects();
         }
 
-        private async void GetSelectedSubjects()
+        public async void GetSelectedSubjects()
         {
             SelectedSubjects.Clear();
 
-            foreach (var subject in await StudentService.GetSelectionSchedule(LogedStudent.Student!.PersonId))
+            foreach (var subject in await StudentService.GetSelectionSchedule())
                 SelectedSubjects.Add(subject);
         }
 
-        private async void GetSelectionSubjects()
+        public async void GetSelectionSubjects()
         {
             SubjectSections.Clear();
 

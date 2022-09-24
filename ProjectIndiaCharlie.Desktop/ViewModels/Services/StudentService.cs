@@ -16,10 +16,10 @@ public static class StudentService
     //private const string baseUrl = "https://ee05-179-52-76-51.ngrok.io/api/Student/";
     private const string loginUrl = $"{baseUrl}Login?studentId={{0}}&password={{1}}";
     private const string getSchedule = $"{baseUrl}Schedule?studentId={{0}}";
-    private const string subjectSelection = $"{baseUrl}SubjectSelection?studentId={{0}}&subjectDetailID={{1}}";
-    private const string subjectRetirement = $"{baseUrl}SubjectRetirement?studentId={{0}}&subjectDetailID={{1}}";
-    private const string subjectElimination = $"{baseUrl}SubjectElimination?studentId={{0}}&subjectDetailID={{1}}";
-    private const string requestGradeRevision = $"{baseUrl}RequestGradeRevision?studentId={{0}}&subjectDetailID={{1}}";
+    private const string subjectSelection = $"{baseUrl}SubjectSelection?studentId={{0}}&subjectDetailId={{1}}";
+    private const string subjectRetirement = $"{baseUrl}SubjectRetirement?studentId={{0}}&subjectDetailId={{1}}";
+    private const string subjectElimination = $"{baseUrl}SubjectElimination?studentId={{0}}&subjectDetailId={{1}}";
+    private const string requestGradeRevision = $"{baseUrl}RequestGradeRevision?studentId={{0}}&subjectDetailId={{1}}";
     private const string getSelectionSchedule = $"{baseUrl}GetSelectionSchedule?studentId={{0}}";
     private const string getSelectionSubjects = $"{baseUrl}GetSelectionSubjects";
 
@@ -47,12 +47,12 @@ public static class StudentService
         }
     }
 
-    public static async Task<IEnumerable<VStudentSubject>> GetSchedule(int studentId)
+    public static async Task<IEnumerable<VStudentSubject>> GetSchedule()
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(string.Format(getSchedule, studentId));
+            var response = await httpClient.GetAsync(string.Format(getSchedule, LogedStudent.Student!.PersonId));
 
             if (!response.IsSuccessStatusCode)
                 return Enumerable.Empty<VStudentSubject>();
@@ -67,16 +67,14 @@ public static class StudentService
         }
     }
 
-    public static async Task<string> SubjectSelection(int studentId, int subjectDetailId)
+    public static async Task<string> SubjectSelection(int subjectDetailId)
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.PostAsync(string.Format(subjectSelection, studentId, subjectDetailId), null);
+            var response = await httpClient.PostAsync(string.Format(subjectSelection, LogedStudent.Student!.PersonId, subjectDetailId), null);
 
-            var content = await response.Content.ReadAsStringAsync();
-
-            return JsonSerializer.Deserialize<string>(content, _options)!;
+            return await response.Content.ReadAsStringAsync();
         }
         catch (Exception e)
         {
@@ -84,16 +82,14 @@ public static class StudentService
         }
     }
 
-    public static async Task<string> SubjectRetirement(int studentId, int subjectDetailId)
+    public static async Task<string> SubjectRetirement(int subjectDetailId)
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.PutAsync(string.Format(subjectRetirement, studentId, subjectDetailId), null);
+            var response = await httpClient.PutAsync(string.Format(subjectRetirement, LogedStudent.Student!.PersonId, subjectDetailId), null);
 
-            var content = await response.Content.ReadAsStringAsync();
-
-            return JsonSerializer.Deserialize<string>(content, _options)!;
+            return await response.Content.ReadAsStringAsync();
         }
         catch (Exception e)
         {
@@ -101,16 +97,15 @@ public static class StudentService
         }
     }
 
-    public static async Task<string> SubjectElimination(int studentId, int subjectDetailId)
+    public static async Task<string> SubjectElimination(int subjectDetailId)
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.DeleteAsync(string.Format(subjectElimination, studentId, subjectDetailId));
+            var response = await httpClient.DeleteAsync(string.Format(subjectElimination, LogedStudent.Student!.PersonId, subjectDetailId));
 
-            var content = await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<string>(content, _options)!;
         }
         catch (Exception e)
         {
@@ -118,16 +113,14 @@ public static class StudentService
         }
     }
 
-    public static async Task<string> RequestGradeRevision(int studentId, int subjectDetailId)
+    public static async Task<string> RequestGradeRevision(int subjectDetailId)
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.PostAsync(string.Format(requestGradeRevision, studentId, subjectDetailId), null);
+            var response = await httpClient.PostAsync(string.Format(requestGradeRevision, LogedStudent.Student!.PersonId, subjectDetailId), null);
 
-            var content = await response.Content.ReadAsStringAsync();
-
-            return JsonSerializer.Deserialize<string>(content, _options)!;
+            return await response.Content.ReadAsStringAsync();
         }
         catch (Exception e)
         {
@@ -135,12 +128,12 @@ public static class StudentService
         }
     }
 
-    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSelectionSchedule(int studentId)
+    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSelectionSchedule()
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(string.Format(getSelectionSchedule, studentId));
+            var response = await httpClient.GetAsync(string.Format(getSelectionSchedule, LogedStudent.Student!.PersonId));
 
             if (!response.IsSuccessStatusCode)
                 return Enumerable.Empty<VSubjectSectionDetail>();

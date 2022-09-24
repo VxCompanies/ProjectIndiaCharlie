@@ -633,7 +633,7 @@ AS
 		WHERE AvsubSecDet.SubjectDetailId IN (
 			SELECT AstuSub.SubjectDetailId
 			FROM Academic.StudentSubject AstuSub
-			WHERE AstuSub.StudentID = @StudentID
+			WHERE AstuSub.StudentID = 1110408
 		)
 GO
 
@@ -785,17 +785,22 @@ AS
 GO
 
 CREATE OR ALTER FUNCTION Academic.F_GetStudentsOfSubject(
-	@SubjectID int
+	@SubjectDetailID int
 )
 RETURNS TABLE
 AS
 	RETURN
 		SELECT SS.StudentID,
-			CONCAT(P.FirstName, IIF(P.MiddleName IS NULL, '', ' '), P.MiddleName, ' ', P.FirstSurname, IIF(P.SecondSurname IS NULL, '', ' '), P.SecondSurname) Nombres,
-			SS.GradeID
+			CONCAT(P.FirstName, IIF(P.MiddleName IS NULL, '', ' '), P.MiddleName, ' ', P.FirstSurname, IIF(P.SecondSurname IS NULL, '', ' '), P.SecondSurname) Nombre,
+			C.Code CareerCode,
+			S.Trimester,
+			G.Grade
 		FROM Academic.StudentSubject SS
-			JOIN Person.Person P ON SS.StudentID = P.PersonID
-		WHERE SS.SubjectDetailID = @SubjectID
+			JOIN Person.Person P ON P.PersonID = SS.StudentID
+			JOIN Academic.Student S ON S.PersonID = SS.StudentID
+			JOIN Academic.Career C ON C.CareerID = S.CareerID
+			LEFT JOIN Academic.Grade G ON G.GradeID = SS.GradeID
+		WHERE SS.SubjectDetailID =  @SubjectDetailID
 GO
 
 -- Login

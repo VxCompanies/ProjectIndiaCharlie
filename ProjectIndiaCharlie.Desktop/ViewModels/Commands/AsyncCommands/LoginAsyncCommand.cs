@@ -10,9 +10,6 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
         {
             var loginViewModel = parameter as LoginViewModel;
 
-            if (int.TryParse(loginViewModel!.UserId, out int userId))
-                return;
-
             if (!await StudentService.Login(loginViewModel!.UserId, loginViewModel!.Password))
             {
                 MessageBox.Show("Wrong id or password.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
