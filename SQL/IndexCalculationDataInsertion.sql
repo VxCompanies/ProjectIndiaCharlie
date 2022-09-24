@@ -5,7 +5,7 @@ SELECT * FROM Academic.Student
 WHERE PersonID = 1111666;
 
 SELECT * FROM Academic.Subject
-WHERE Name like '%anal%';
+WHERE Name like '%s%';
 
 SELECT * FROM Academic.SubjectDetail
 WHERE SubjectID = 1195;
@@ -30,6 +30,31 @@ EXEC Academic.SP_SubjectSelection
 
 SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3);
 
+
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110408;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 1,
+	@StudentId	= 1110408;
+EXEC Academic.SP_SubjectSelection
+	@SubjectDetailId = 2,
+	@StudentId	= 1110409;
+
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 2,
+@StudentID = 1110408,
+@GradeId = 2;
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 1,
+@StudentID = 1110408,
+@GradeId = 8;
+EXEC Academic.SP_PublishGrade
+@SubjectDetailID = 2,
+@StudentID = 1110409,
+@GradeId = 8;
+
+
 --Student 1111666 Publicacion
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 326,
@@ -50,26 +75,8 @@ EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 529,
 @StudentID = 1111666,
 @GradeId = 6;
+GO
 
---
-EXEC Academic.SP_RequestGradeRevision
-@SubjectDetailID = 529,
-@StudentID = 1111666;
-
-SELECT * FROM Academic.GradeRevision
-
-EXEC Academic.SP_ProcessGradeRevision
-@SubjectDetailID = 529,
-@ModifiedGradeID = 3,
-@AdminID = 1112200,
-@StudentID = 1111666;
-
-BEGIN TRAN 
-UPDATE Academic.GradeRevision
-		SET ModifiedGradeID = 3, AdminID = 1122, ProfessorID = @ProfessorID, DateModified = GETDATE()
-		WHERE SubjectDetailID = @SubjectDetailID and PersonId = @StudentID
-		PRINT('updated grade revision')
-ROLLBACK
 
 CREATE OR ALTER FUNCTION dbo.IsZero(
 @number int)
@@ -79,10 +86,21 @@ BEGIN
 	IF (@number = 0)
 		return 1
 	return @number
-END
+END;
 GO
 
-
+Create or alter PROCEDURE Academic.SP_UpdateStudentIndex
+@StudentID int,
+@GeneralIndex decimal (3,2),
+@TrimestralIndex decimal (3,2)
+AS
+BEGIN
+	UPDATE Academic.Student
+	SET GeneralIndex = @GeneralIndex, TrimestralIndex = @TrimestralIndex
+	WHERE PersonID = @StudentID
+	RETURN 1
+END
+GO
 
 CREATE OR ALTER PROCEDURE Academic.SP_CalculateIndexByTrimester
 @Year int,
@@ -103,7 +121,7 @@ SELECT DISTINCT(SS.StudentID)
 INTO #studentTemp
 from Academic.StudentSubject SS
 JOIN Academic.SubjectDetail SD ON SD.SubjectDetailID = SS.SubjectDetailID
-where YEAR = 2022 AND Trimester = 3
+where YEAR = @Year AND Trimester = @Trimester
 
 SET @StudentQuantity = (SELECT COUNT(StudentID) FROM #studentTemp);
 PRINT @StudentQuantity;
@@ -126,12 +144,26 @@ BEGIN
 	SET @TrimestralIndex = (@TrimesterPoints/  dbo.IsZero(@TrimesterCredits));
 	SET @GeneralIndex = (@AccumulatedPoints/ dbo.IsZero(@AccumulatedCredits));
 
-	INSERT INTO Academic.IndexHistory(	PersonID, CareerID, Year, Trimester, 
-			CreditsTrimester, CreditsSumm, PointsTrimester,PontsSumm , 
-			TrimesteralIndex, GeneralIndex)
-	VALUES(	@StudentID, @StudentCareer, @Year, @Trimester,
-			@TrimesterCredits, @AccumulatedCredits, @TrimesterPoints, @AccumulatedPoints, 
-			@TrimestralIndex, @GeneralIndex)
+	IF EXISTS (SELECT * FROM Academic.IndexHistory WHERE PersonID = @StudentID AND Year = @Year and Trimester = @Trimester)
+		BEGIN
+		UPDATE 	Academic.IndexHistory
+		SET CreditsTrimester = @TrimesterCredits, CreditsSumm = @AccumulatedCredits, PointsTrimester = @TrimesterPoints,PontsSumm =  @AccumulatedPoints, 
+				TrimesteralIndex = @TrimestralIndex, GeneralIndex = @TrimestralIndex
+		WHERE PersonID = @StudentID AND Year = @Year and Trimester = @Trimester
+		END
+	ELSE
+		BEGIN
+		INSERT INTO Academic.IndexHistory(	PersonID, CareerID, Year, Trimester, 
+				CreditsTrimester, CreditsSumm, PointsTrimester,PontsSumm , 
+				TrimesteralIndex, GeneralIndex)
+		VALUES(	@StudentID, @StudentCareer, @Year, @Trimester,
+				@TrimesterCredits, @AccumulatedCredits, @TrimesterPoints, @AccumulatedPoints, 
+				@TrimestralIndex, @GeneralIndex)
+		END
+	EXEC Academic.SP_UpdateStudentIndex
+		@StudentID = @StudentID,
+		@GeneralIndex = @GeneralIndex,
+		@TrimestralIndex = @TrimestralIndex;
 
 	DELETE TOP(1)  FROM #studentTemp;
 	SET @StudentQuantity = @StudentQuantity - 1;
@@ -140,18 +172,20 @@ DROP TABLE #studentTemp;
 GO
 
 
+SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS;
+SELECT * FROM Academic.F_GetStudentsSchedule (1110408, 2022, 3) GSS;
 
-BEGIN TRAN
 EXEC Academic.SP_CalculateIndexByTrimester
 @Year = 2022,
 @Trimester = 3;
 
-SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS;
-SELECT * FROM Academic.F_GetStudentsSchedule (1110408, 2022, 3) GSS;
 
-
-SELECT * FROM Academic.IndexHistory;
-
-ROLLBACK
-
+SELECT * FROM Academic.IndexHistory
+ORDER BY PersonID;
 SELECT * FROM Academic.StudentSubject
+
+SELECT * FROM Academic.Student
+WHERE GeneralIndex != 0
+
+
+

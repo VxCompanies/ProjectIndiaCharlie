@@ -231,9 +231,9 @@ CreditsTrimester int,
 CreditsSumm int,
 PointsTrimester float,
 PontsSumm float,
-TrimesteralIndex float,
-GeneralIndex float,
-ModifiedDate datetime DEFAULT GETDATE,
+TrimesteralIndex decimal(3,2),
+GeneralIndex decimal(3,2),
+ModifiedDate datetime DEFAULT GETDATE(),
 
 FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
 FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)

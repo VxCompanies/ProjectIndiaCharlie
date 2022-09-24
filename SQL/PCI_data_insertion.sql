@@ -157,34 +157,7 @@ VALUES		(1112200, '06d6a394462a1f19abf14fa321174311d642dfc55f11d050b011c79de7321
 GO
 
 --Datos de prueba de secciones
-INSERT INTO Academic.StudentSubject(SubjectDetailID, StudentID)
-VALUES (1, 1110408), (2, 1110409), (2, 1110408);
-GO
 
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110412;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110413;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110414;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110415;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110416;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110417;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110418;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110419;
 
 SELECT * FROM Academic.vSubjectSectionDetails
 WHERE SubjectDetailID = 2;
@@ -200,9 +173,7 @@ SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
 	@StudentId	= 1110422;
-EXEC Academic.SP_SubjectSelection
-	@SubjectDetailId = 2,
-	@StudentId	= 1110423;
+
 	
 EXEC Academic.SP_SubjectElimination
 	@SubjectDetailId = 2,
