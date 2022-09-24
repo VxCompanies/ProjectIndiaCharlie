@@ -193,6 +193,41 @@ public class StudentController : ControllerBase
         }
     }
 
+    [HttpGet("GetSelectionSchedule")]
+    public async Task<ActionResult<IEnumerable<VSubjectSectionDetail>>> GetSelectionSchedule(int studentId)
+    {
+        try
+        {
+            var selectionSchedule = await _context.GetSelectionSchedule(studentId);
+
+            return (!selectionSchedule.Any()) ?
+                NotFound("No subjects selected.") :
+                Ok(selectionSchedule);
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+
+    [HttpGet("GetSelectionSubjects")]
+    public async Task<ActionResult<IEnumerable<VSubjectSectionDetail>>> GetSelectionSubjects()
+    {
+        try
+        {
+            var student = await _context.VSubjectSectionDetails
+                .ToListAsync();
+
+            return (!student.Any()) ?
+                NotFound("There are no subjects for this trimester selection.") :
+                Ok(student);
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+
     [HttpGet("Search")]
     public async Task<ActionResult<VStudentDetail>> GetStudent(int? studentId = null, string? docNo = null)
     {

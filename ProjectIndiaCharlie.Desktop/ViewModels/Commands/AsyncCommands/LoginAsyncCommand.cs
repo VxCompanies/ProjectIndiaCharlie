@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
 {
     public class LoginAsyncCommand : AsyncCommandBase
     {

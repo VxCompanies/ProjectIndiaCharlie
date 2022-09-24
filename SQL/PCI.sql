@@ -622,6 +622,21 @@ AS
 	END
 GO
 
+CREATE OR ALTER FUNCTION Academic.F_GetSelectionSchedule(
+	@StudentID int
+)
+RETURNS TABLE
+AS
+	RETURN
+		SELECT *
+		FROM Academic.vSubjectSectionDetails AvsubSecDet
+		WHERE AvsubSecDet.SubjectDetailId IN (
+			SELECT AstuSub.SubjectDetailId
+			FROM Academic.StudentSubject AstuSub
+			WHERE AstuSub.StudentID = @StudentID
+		)
+GO
+
 CREATE OR ALTER FUNCTION Person.F_DocNoValidation(
 	@DocNo nvarchar(11)
 )
@@ -775,10 +790,11 @@ CREATE OR ALTER FUNCTION Academic.F_GetStudentsOfSubject(
 RETURNS TABLE
 AS
 	RETURN
-		SELECT SS.StudentID, CONCAT(P.FirstName, ' ', MiddleName, ' ', FirstSurname, ' ', SecondSurname) [Nombres], SS.GradeID
+		SELECT SS.StudentID,
+			CONCAT(P.FirstName, IIF(P.MiddleName IS NULL, '', ' '), P.MiddleName, ' ', P.FirstSurname, IIF(P.SecondSurname IS NULL, '', ' '), P.SecondSurname) Nombres,
+			SS.GradeID
 		FROM Academic.StudentSubject SS
-		JOIN Person.Person P ON SS.StudentID = P.PersonID
-
+			JOIN Person.Person P ON SS.StudentID = P.PersonID
 		WHERE SS.SubjectDetailID = @SubjectID
 GO
 
@@ -1034,6 +1050,9 @@ GRANT EXECUTE ON Academic.F_ProfessorValidation
 	TO API
 GO
 GRANT EXECUTE ON Person.F_PasswordValidation
+	TO API
+GO
+GRANT SELECT ON Academic.F_GetSelectionSchedule
 	TO API
 GO
 GRANT EXECUTE ON Person.F_DocNoValidation

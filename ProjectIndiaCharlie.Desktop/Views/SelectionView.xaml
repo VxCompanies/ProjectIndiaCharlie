@@ -5,34 +5,159 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
              xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <vm:SelectionViewModel x:Key="vm"/>
     </UserControl.Resources>
     <Grid DataContext="{StaticResource vm}">
-        <ListView ItemsSource="{Binding SelectedSubjects}">
-            <ListView.View>
-                <GridView AllowsColumnReorder="False">
-                    <GridViewColumn DisplayMemberBinding="{Binding ClassroomCode}">
-                        <TreeView>
-                            <TreeViewItem Header="Employee1">
-                                <TreeViewItem Header="Jesper"/>
-                                <TreeViewItem Header="Aaberg"/>
-                                <TreeViewItem Header="12345"/>
-                            </TreeViewItem>
-                            <TreeViewItem Header="Employee2">
-                                <TreeViewItem Header="Dominik"/>
-                                <TreeViewItem Header="Paiha"/>
-                                <TreeViewItem Header="98765"/>
-                            </TreeViewItem>
-                        </TreeView>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Field 2"/>
-                    <GridViewColumn Header="Field 3"/>
-                    <GridViewColumn Header="Field 4"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <Border CornerRadius="20">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <ListView ItemsSource="{Binding SelectedSubjects}"
+                          SelectedItem="{Binding SelectedSubject}"
+                          Grid.Row="0">
+                    <ListView.View>
+                        <GridView AllowsColumnReorder="False">
+                            <GridViewColumn Header="Subject">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding SubjectCode, StringFormat={}{0} -}"/>
+                                            <TextBlock Text="{Binding Name}"
+                                                       Margin="3 0"/>
+                                            <Button Background="Transparent"
+                                                    BorderThickness="0"
+                                                    DataContext="{StaticResource vm}"
+                                                    Command="{Binding DeleteSubjectAsyncCommand}"
+                                                    CommandParameter="{Binding SelectedSubject}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <fa:IconImage Icon="Trash"
+                                                                  Width="15"
+                                                                  Height="15"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Cr">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Credits}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Sec">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Section}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Professor">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Professor}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Mon">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Monday}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Tue">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Tuesday}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Wed">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Wednesday}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Thu">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Thursday}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Fri">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Friday}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Sat">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Saturday}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBlock Text="{Binding SubjectCode}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding Section}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding ClassroomCode}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding Professor}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <ListView ItemsSource="{Binding SubjectSections}"
+                          SelectedItem="{Binding SelectedSubject}"
+                          Grid.Row="1">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding SubjectCode}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding Section}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding ClassroomCode}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding Name}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                                <TextBlock Text="{Binding Professor}"
+                                           FontSize="22"
+                                           Margin="15"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

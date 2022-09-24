@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands
+namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
 {
     public class RegisterStudentAsyncCommand : AsyncCommandBase
     {

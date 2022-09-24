@@ -20,6 +20,8 @@ public static class StudentService
     private const string subjectRetirement = $"{baseUrl}SubjectRetirement?studentId={{0}}&subjectDetailID={{1}}";
     private const string subjectElimination = $"{baseUrl}SubjectElimination?studentId={{0}}&subjectDetailID={{1}}";
     private const string requestGradeRevision = $"{baseUrl}RequestGradeRevision?studentId={{0}}&subjectDetailID={{1}}";
+    private const string getSelectionSchedule = $"{baseUrl}GetSelectionSchedule?studentId={{0}}";
+    private const string getSelectionSubjects = $"{baseUrl}GetSelectionSubjects";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -130,6 +132,46 @@ public static class StudentService
         catch (Exception e)
         {
             return e.Message;
+        }
+    }
+
+    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSelectionSchedule(int studentId)
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(string.Format(getSelectionSchedule, studentId));
+
+            if (!response.IsSuccessStatusCode)
+                return Enumerable.Empty<VSubjectSectionDetail>();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<IEnumerable<VSubjectSectionDetail>>(content, _options)!;
+        }
+        catch (Exception e)
+        {
+            return Enumerable.Empty<VSubjectSectionDetail>();
+        }
+    }
+
+    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSelectionSubjects()
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(getSelectionSubjects);
+
+            if (!response.IsSuccessStatusCode)
+                return Enumerable.Empty<VSubjectSectionDetail>();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<IEnumerable<VSubjectSectionDetail>>(content, _options)!;
+        }
+        catch (Exception e)
+        {
+            return Enumerable.Empty<VSubjectSectionDetail>();
         }
     }
 }

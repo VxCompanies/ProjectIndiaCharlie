@@ -158,6 +158,10 @@ public partial class ProjectIndiaCharlieContext
     public async Task<IEnumerable<VGradeRevision>> GetUnsolvedRevisions() => await VGradeRevisions.FromSqlInterpolated($"SELECT * FROM Academic.F_GetUnsolvedRevisions()")
         .ToListAsync();
 
+    public async Task<IEnumerable<VSubjectSectionDetail>> GetSelectionSchedule(int studentId) => await VSubjectSectionDetails
+        .FromSqlInterpolated($"SELECT * FROM Academic.F_GetSelectionSchedule({studentId})")
+        .ToListAsync();
+
     public async Task<IEnumerable<VStudentSubject>> GetStudentSchedule(int studentId) => await VStudentSubjects
         .FromSqlInterpolated($"SELECT * FROM Academic.F_GetStudentCurrentSchedule({studentId})")
         .ToListAsync();

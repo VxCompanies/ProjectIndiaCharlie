@@ -10,6 +10,13 @@ builder.Services.AddControllers()
     .ReferenceLoopHandling.Ignore
     );
 
+builder.Services
+    .AddCors(c => c
+    .AddDefaultPolicy(p => p
+    .WithOrigins("*")
+    .AllowAnyMethod()
+    .AllowAnyHeader()));
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -29,6 +36,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseCors();
 
 app.UseHttpsRedirection();
 

@@ -1,8 +1,8 @@
-﻿using ProjectIndiaCharlie.Desktop.ViewModels.Commands;
+﻿using ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
 {
-	public class LoginViewModel : ViewModelBase
+    public class LoginViewModel : ViewModelBase
 	{
 		private string _userId;
 		public string UserId
