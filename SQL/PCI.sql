@@ -591,7 +591,7 @@ BEGIN
 			SELECT Top(1) GradeID
 			FROM Academic.StudentSubject
 			WHERE StudentID = @StudentID AND
-				SubjectDetailID = @SubjectDetailID
+				SubjectDetailID = @SubjectDetailID AND GradeID != 8
 		)
 
 	IF (@GradeID is null)
