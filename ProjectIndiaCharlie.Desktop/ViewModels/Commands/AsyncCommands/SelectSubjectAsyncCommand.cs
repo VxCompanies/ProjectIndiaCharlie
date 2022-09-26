@@ -1,20 +1,30 @@
 ﻿using ProjectIndiaCharlie.Desktop.ViewModels.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
 {
-    public class QuitSubjectAsyncCommand : AsyncCommandBase
+    public class SelectSubjectAsyncCommand : AsyncCommandBase
     {
         public override async Task ExecuteAsync(object? parameter)
         {
             var selectionViewModel = parameter as SelectionViewModel;
 
-            var response = await StudentService.SubjectElimination(selectionViewModel!.SelectedScheduleSubject.SubjectDetailId);
-
-            selectionViewModel.SelectedSubjects.Remove(selectionViewModel.SelectedScheduleSubject);
+            var response = await StudentService.SubjectSelection(selectionViewModel!.SelectedSelectionSubject.SubjectDetailId);
 
             MessageBox.Show(response);
+
+            if (response.ToLower().Contains("cannot"))
+                return;
+            
+            if (response.ToLower().Contains("full"))
+                return;
+            
+            selectionViewModel.SelectedSubjects.Add(selectionViewModel.SelectedSelectionSubject);
         }
 
         public override bool CanExecute(object? parameter)
@@ -22,7 +32,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
             if (parameter is not SelectionViewModel selectionViewModel)
                 return false;
 
-            if (selectionViewModel.SelectedScheduleSubject is null)
+            if (selectionViewModel.SelectedSelectionSubject is null)
                 return false;
 
             return true;

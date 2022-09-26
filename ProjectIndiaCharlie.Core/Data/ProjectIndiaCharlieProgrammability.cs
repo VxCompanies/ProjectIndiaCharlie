@@ -127,7 +127,8 @@ public partial class ProjectIndiaCharlieContext
     public async Task<string> SubjectScheduleValidation(int studentId, int subjectDetailId)
     {
         var subjectSchedule = await VSubjectSchedules
-            .FirstOrDefaultAsync(s => s.SubjectDetailId == subjectDetailId);
+            .Where(s => s.SubjectDetailId == subjectDetailId)
+            .ToListAsync();
 
         var scheduleValidation = new SqlParameter
         {
@@ -137,10 +138,13 @@ public partial class ProjectIndiaCharlieContext
             Direction = ParameterDirection.Output,
             IsNullable = true
         };
-        await Database.ExecuteSqlInterpolatedAsync($"SELECT {scheduleValidation} = Academic.F_SubjectScheduleValidation({studentId}, {subjectSchedule!.WeekdayId}, {subjectSchedule.StartTime}, {subjectSchedule.EndTime})");
-
-        return scheduleValidation.Value.ToString() ??
-            string.Empty;
+        foreach (var subject in subjectSchedule)
+        {
+            await Database.ExecuteSqlInterpolatedAsync($"SELECT {scheduleValidation} = Academic.F_SubjectScheduleValidation({studentId}, {subject.WeekdayId}, {subject.StartTime}, {subject.EndTime})");
+            if (!string.IsNullOrWhiteSpace(scheduleValidation.Value.ToString()))
+                return scheduleValidation.Value.ToString()!;
+        }
+        return string.Empty;
     }
 
     public async Task<VStudentDetail?> StudentLogin(int studentId, string passwordHash) => await VStudentDetails

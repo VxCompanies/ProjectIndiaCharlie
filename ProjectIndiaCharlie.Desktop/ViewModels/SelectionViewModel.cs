@@ -2,19 +2,31 @@
 using ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
 {
     public class SelectionViewModel : ViewModelBase
     {
-        private VSubjectSectionDetail _selectedSubject;
-        public VSubjectSectionDetail SelectedSubject
+        private VSubjectSectionDetail _selectedScheduleSubject;
+        public VSubjectSectionDetail SelectedScheduleSubject
         {
-            get => _selectedSubject;
+            get => _selectedScheduleSubject;
             set
             {
-                _selectedSubject = value;
-                OnPropertyChanged(nameof(SelectedSubject));
+                _selectedScheduleSubject = value;
+                OnPropertyChanged(nameof(SelectedScheduleSubject));
+            }
+        }
+        
+        private VSubjectSectionDetail _selectedSelectionSubject;
+        public VSubjectSectionDetail SelectedSelectionSubject
+        {
+            get => _selectedSelectionSubject;
+            set
+            {
+                _selectedSelectionSubject = value;
+                OnPropertyChanged(nameof(SelectedSelectionSubject));
             }
         }
 
@@ -22,6 +34,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
         public ObservableCollection<VSubjectSectionDetail> SubjectSections { get; set; }
 
         public QuitSubjectAsyncCommand QuitSubjectAsyncCommand { get; set; }
+        public SelectSubjectAsyncCommand SelectSubjectAsyncCommand { get; set; }
 
         public SelectionViewModel()
         {
@@ -29,12 +42,13 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
             SubjectSections = new();
 
             QuitSubjectAsyncCommand = new();
+            SelectSubjectAsyncCommand = new();
 
-            GetSelectedSubjects();
-            GetSelectionSubjects();
+            _ = GetSelectedSubjects();
+            _ = GetSelectionSubjects();
         }
 
-        public async void GetSelectedSubjects()
+        private async Task GetSelectedSubjects()
         {
             SelectedSubjects.Clear();
 
@@ -42,7 +56,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
                 SelectedSubjects.Add(subject);
         }
 
-        public async void GetSelectionSubjects()
+        private async Task GetSelectionSubjects()
         {
             SubjectSections.Clear();
 
