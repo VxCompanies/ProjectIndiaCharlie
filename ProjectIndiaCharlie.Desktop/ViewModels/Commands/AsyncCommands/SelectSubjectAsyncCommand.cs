@@ -16,12 +16,12 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
 
             var response = await StudentService.SubjectSelection(selectionViewModel!.SelectedSelectionSubject.SubjectDetailId);
 
-            MessageBox.Show(response);
+            _ = Task.Run(() => MessageBox.Show(response));
 
             if (response.ToLower().Contains("cannot"))
                 return;
             
-            if (response.ToLower().Contains("full"))
+            if (response.ToLower().Contains("section"))
                 return;
             
             selectionViewModel.SelectedSubjects.Add(selectionViewModel.SelectedSelectionSubject);
