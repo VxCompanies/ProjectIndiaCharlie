@@ -13,7 +13,7 @@ public static class StudentService
 {
     private const string mediaType = "application/json";
     private const string baseUrl = "https://localhost:7073/api/Student/";
-    //private const string baseUrl = "https://ee05-179-52-76-51.ngrok.io/api/Student/";
+    //private const string baseUrl = "https://a9a6-190-122-96-78.ngrok.io/api/Student/";
     private const string loginUrl = $"{baseUrl}Login?studentId={{0}}&password={{1}}";
     private const string getSchedule = $"{baseUrl}Schedule?studentId={{0}}";
     private const string subjectSelection = $"{baseUrl}SubjectSelection?studentId={{0}}&subjectDetailId={{1}}";
