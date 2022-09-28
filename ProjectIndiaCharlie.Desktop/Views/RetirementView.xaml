@@ -18,6 +18,7 @@
                                 Background="#203F59"
                                 Height="50">
                             <TextBlock Text="{TemplateBinding Content}"
+                                       MinWidth="30"
                                        Width="auto"
                                        VerticalAlignment="Center"
                                        TextAlignment="Center"
@@ -36,12 +37,11 @@
                     Value="12"/>
         </Style>
     </UserControl.Resources>
-    <Grid DataContext="{StaticResource vm}">
+    <StackPanel DataContext="{StaticResource vm}">
         <Button Background="Transparent"
                 BorderThickness="0"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Right"
-                Panel.ZIndex="1"
                 Command="{Binding RetireSubjectAsyncCommand}"
                 CommandParameter="{Binding}">
             <StackPanel Orientation="Horizontal">
@@ -65,7 +65,7 @@
                     <GridViewColumn Header="Subject">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Subject}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -90,50 +90,8 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <!--<GridViewColumn Header="Mon">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Monday}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Tue">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Tuesday}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Wed">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Wednesday}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Thu">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Thursday}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Fri">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Friday}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Sat">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Saturday}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>-->
                 </GridView>
             </ListView.View>
         </ListView>
-    </Grid>
+    </StackPanel>
 </UserControl>

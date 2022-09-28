@@ -10,6 +10,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
         public NavigateHomeCommand NavigateHomeCommand { get; }
         public NavigateReportsCommand NavigateReportsCommand { get; }
         public NavigateSelectionCommand NavigateSelectionCommand { get; }
+        public NavigateRetirementCommand NavigateRetirementCommand { get; }
 
         public IndexViewModel()
         {
@@ -18,6 +19,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
             NavigateHomeCommand = new();
             NavigateReportsCommand = new();
             NavigateSelectionCommand = new();
+            NavigateRetirementCommand = new();
         }
 
         private void OnCurrentIndexViewModelChanged() => OnPropertyChanged(nameof(CurrentIndexViewModel));

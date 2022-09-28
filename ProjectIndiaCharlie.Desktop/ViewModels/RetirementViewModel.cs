@@ -2,6 +2,7 @@
 using ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectIndiaCharlie.Desktop.ViewModels
@@ -35,7 +36,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
         {
             SelectedSubjects.Clear();
 
-            foreach (var subject in await StudentService.GetSchedule())
+            foreach (var subject in (await StudentService.GetSchedule()).Where(s => s.Grade is null))
                 SelectedSubjects.Add(subject);
         }
     }

@@ -43,6 +43,15 @@
                                    Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </RadioButton>
+                <RadioButton Command="{Binding NavigateRetirementCommand}"
+                             Style="{StaticResource menuButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:IconImage Icon="XmarkSquare"
+                                      Style="{StaticResource menuButtonIcon}"/>
+                        <TextBlock Text="Retirement"
+                                   Style="{StaticResource menuButtonText}"/>
+                    </StackPanel>
+                </RadioButton>
                 <RadioButton Command="{Binding NavigateHomeCommand}"
                              Style="{StaticResource menuButton}">
                     <StackPanel Orientation="Horizontal">
@@ -74,6 +83,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
                     <local:ReportsView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:RetirementViewModel}">
+                    <local:RetirementView/>
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>
