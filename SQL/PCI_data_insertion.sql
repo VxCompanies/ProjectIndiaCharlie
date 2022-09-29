@@ -4,7 +4,9 @@ DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
 
-SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+
 --SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
@@ -224,37 +226,39 @@ EXEC Academic.SP_SubjectSelection
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 2,
 @StudentID = 1110408,
-@GradeId = 2;
+@GradeValue = 92;
+
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 1,
 @StudentID = 1110408,
-@GradeId = 8;
+@GradeValue = 82;
+
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 2,
 @StudentID = 1110409,
-@GradeId = 8;
+@GradeValue = 71;
 
 
 --Student 1111666 Publicacion
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 326,
 @StudentID = 1111666,
-@GradeId = 8;
+@GradeValue = 98;
 
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 919,
 @StudentID = 1111666,
-@GradeId = 2;
+@GradeValue = 86;
 
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 850,
 @StudentID = 1111666,
-@GradeId = 1;
+@GradeValue = 89;
 
 EXEC Academic.SP_PublishGrade
 @SubjectDetailID = 529,
 @StudentID = 1111666,
-@GradeId = 6;
+@GradeValue = 73;
 GO
 
 
@@ -329,6 +333,7 @@ EXEC Academic.SP_CalculateIndexByTrimester
 @Year = 2022,
 @Trimester = 3;
 
+Use ProjectIndiaCharlie;
 
 SELECT * FROM Academic.IndexHistory
 ORDER BY PersonID;

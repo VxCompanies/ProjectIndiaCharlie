@@ -131,6 +131,7 @@ CREATE TABLE Academic.StudentSubject(
 	SubjectDetailID int,
 	StudentID int,
 	GradeID int NULL,
+	GradeValue int DEFAULT 0,
 	CreatedDate datetime NOT NULL DEFAULT GETDATE(), 
 	ModifiedDate datetime NOT NULL DEFAULT GETDATE(),
 
@@ -204,7 +205,9 @@ CREATE TABLE Academic.GradeRevision(
     SubjectDetailID int NOT NULL,
     DateRequested datetime NOT NULL DEFAULT GETDATE(), 
     GradeID int NOT NULL,
+	GradeValue int not null,
     ModifiedGradeID int,
+	ModifiedGradeValue int DEFAULT 0,
     AdminID int,
     ProfessorID int,
     DateModified datetime,
@@ -482,7 +485,7 @@ CREATE OR ALTER PROCEDURE Academic.SP_SubjectRetirement
 AS
 BEGIN
 	Update Academic.StudentSubject
-	SET  GradeID = 8
+	SET  GradeID = 8, GradeValue = 0
 	WHERE StudentID = @StudentID AND
 		SubjectDetailID = @SubjectDetailID
 END
@@ -497,10 +500,32 @@ AS
 	RETURN 1
 GO
 
+
+CREATE OR ALTER FUNCTION Academic.F_ConvertNumberGradeToID(
+@Grade int)
+RETURNS INT
+AS
+BEGIN
+IF (@Grade > 89)
+	RETURN 1
+IF (@Grade > 84)
+	RETURN 2
+IF (@Grade > 79)
+	RETURN 3
+IF (@Grade > 74)
+	RETURN 4
+IF (@Grade > 69)
+	RETURN 5
+IF (@Grade > 59)
+	RETURN 6
+RETURN 7
+END
+GO
+
 CREATE OR ALTER PROCEDURE Academic.SP_ProcessGradeRevision
 	@StudentID int,
 	@SubjectDetailID int,
-	@ModifiedGradeID int,
+	@ModifiedGrade int,
 	@AdminID int
 AS
 BEGIN
@@ -515,13 +540,12 @@ BEGIN
 		SET @ProfessorID = (SELECT TOP(1) ProfessorID FROM Academic.SubjectDetail WHERE SubjectDetailID = @SubjectDetailID)
 		
 		BEGIN TRAN
-		
 		UPDATE Academic.GradeRevision
-		SET ModifiedGradeID = @ModifiedGradeID, AdminID = @AdminID, ProfessorID = @ProfessorID, DateModified = GETDATE()
+		SET ModifiedGradeID = Academic.F_ConvertNumberGradeToID(@ModifiedGrade),ModifiedGradeValue = @ModifiedGrade, AdminID = @AdminID, ProfessorID = @ProfessorID, DateModified = GETDATE()
 		WHERE SubjectDetailID = @SubjectDetailID and PersonId = @StudentID
 
 		UPDATE Academic.StudentSubject
-		SET GradeID = @ModifiedGradeID
+		SET GradeID = Academic.F_ConvertNumberGradeToID(@ModifiedGrade), GradeValue = @ModifiedGrade
 		WHERE SubjectDetailID = @SubjectDetailID and StudentID = @StudentID;
 
 		COMMIT
@@ -607,11 +631,11 @@ GO
 CREATE OR ALTER PROCEDURE Academic.SP_PublishGrade
 	@StudentID int,
 	@SubjectDetailID int,
-	@GradeID int
+	@GradeValue int
 AS
 BEGIN
 	UPDATE Academic.StudentSubject
-	SET GradeID = @GradeID
+	SET GradeID = Academic.F_ConvertNumberGradeToID(@GradeValue), GradeValue = @GradeValue
 	WHERE SubjectDetailID = @SubjectDetailID AND
 		@StudentID = StudentID
 END
