@@ -245,7 +245,7 @@ AS
 SELECT Agr.PersonID,
 	CONCAT(Pper.FirstName, IIF(Pper.MiddleName IS NULL, '', ' '), Pper.MiddleName, ' ', Pper.FirstSurname, IIF(Pper.SecondSurname IS NULL, '', ' '), Pper.SecondSurname) Student,
 	Agr.SubjectDetailID,
-	CONCAT(Asub.Name,'-', AsubDet.Section) Section,
+	CONCAT(Asub.SubjectCode,'-', AsubDet.Section) Section,
 	Agr.DateRequested,
 	Agr.GradeID,
 	Ag.Grade,
@@ -337,6 +337,7 @@ FROM Academic.Subject Asub
 	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asdet.SubjectDetailID
 	INNER JOIN Academic.Classroom Acl ON Acl.ClassroomID = Ascl.ClassroomID
 	LEFT JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
+	WHERE Asdet.SubjectDetailID = 3
 	GROUP BY Asdet.SubjectDetailID,
 	Asub.SubjectCode,
 	Asub.Name,
@@ -349,6 +350,8 @@ FROM Academic.Subject Asub
 	Acl.Capacity,
 	Acl.Code
 GO
+
+SELECT * FROM Academic.StudentSubject
 
 CREATE OR ALTER VIEW Academic.vAdministratorDetails
 AS
@@ -870,7 +873,7 @@ AS
 	RETURN
 		SELECT *
 		FROM Academic.vStudentSubjects vSSD
-		WHERE vSSD.StudentID = @StudentID		
+		WHERE vSSD.StudentID = @StudentID
 				AND vSSD.Year = @Year AND
 				vSSD.Trimester = @Trimester
 GO
@@ -903,7 +906,7 @@ AS
 			JOIN Academic.Student S ON S.PersonID = SS.StudentID
 			JOIN Academic.Career C ON C.CareerID = S.CareerID
 			LEFT JOIN Academic.Grade G ON G.GradeID = SS.GradeID
-		WHERE SS.SubjectDetailID =  @SubjectDetailID
+		WHERE SS.SubjectDetailID = @SubjectDetailID
 GO
 
 -- Login

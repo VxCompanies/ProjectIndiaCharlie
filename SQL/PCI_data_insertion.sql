@@ -4,8 +4,8 @@ DECLARE @Path NVARCHAR(MAX);
 DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
 
-SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
---SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -158,17 +158,9 @@ GO
 
 --Datos de prueba de secciones
 
-
-SELECT * FROM Academic.vSubjectSectionDetails
-WHERE SubjectDetailID = 2;
-
 --UPDATE Academic.SubjectDetail
 --SET Year = 2022
 --WHERE SubjectDetailID = 2;
-
-SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
-
-SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
@@ -180,15 +172,6 @@ EXEC Academic.SP_SubjectElimination
 	@StudentId	= 1110422;
 
 --Grades publications
-
-SELECT * FROM Academic.Student
-WHERE PersonID = 1111666;
-
-SELECT * FROM Academic.Subject
-WHERE Name like '%s%';
-
-SELECT * FROM Academic.SubjectDetail
-WHERE SubjectID = 1195;
 --326 vectorial | 919 Fisica  2 | 850 Dise;o de software | 529 big data
 
 --Student 1111666 Seleccion
@@ -207,8 +190,6 @@ EXEC Academic.SP_SubjectSelection
 EXEC Academic.SP_SubjectSelection
 @SubjectDetailID = 529,
 @StudentID = 1111666;
-
-SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3);
 
 
 EXEC Academic.SP_SubjectSelection
@@ -257,7 +238,32 @@ EXEC Academic.SP_PublishGrade
 @GradeId = 6;
 GO
 
+EXEC Academic.SP_PublishGrade
+@StudentID = 1110409,
+@SubjectDetailID = 2,
+@GradeID = 1;
 
+EXEC Academic.SP_CalculateIndexByTrimester
+@Year = 2022,
+@Trimester = 3;
+
+SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3);
+
+SELECT * FROM Academic.vSubjectSectionDetails
+WHERE SubjectDetailID = 2;
+
+SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
+
+SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
+
+SELECT * FROM Academic.Student
+WHERE PersonID = 1111666;
+
+SELECT * FROM Academic.Subject
+WHERE Name like '%s%';
+
+SELECT * FROM Academic.SubjectDetail
+WHERE SubjectID = 1195;
 
 SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
 
@@ -265,11 +271,6 @@ SELECT *
 FROM Academic.SubjectDetail SD
 JOIN Academic.Subject S ON SD.SubjectID = S.SubjectID
 WHERE SubjectCode = 'MED348';
-
-EXEC Academic.SP_PublishGrade
-@StudentID = 1110409,
-@SubjectDetailID = 2,
-@GradeID = 1;
 
 SELECT * FROM Academic.StudentSubject;
 SELECT * FROM Academic.F_GetSubjectsOfProfessor(1110201);
@@ -322,12 +323,8 @@ WHERE S.Name LIKE '%%' OR
 	S.SubjectCode LIKE '%INS%'
 ORDER BY SS.SubjectScheduleID;
 SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS;
+SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3) GSS;
 SELECT * FROM Academic.F_GetStudentsSchedule (1110408, 2022, 3) GSS;
-SELECT * FROM Academic.F_GetStudentsSchedule (1110409, 2022, 3) GSS;
-
-EXEC Academic.SP_CalculateIndexByTrimester
-@Year = 2022,
-@Trimester = 3;
 
 
 SELECT * FROM Academic.IndexHistory
@@ -337,4 +334,4 @@ SELECT * FROM Academic.StudentSubject
 SELECT * FROM Academic.Student
 WHERE GeneralIndex != 0
 
-
+SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3) GSS;
