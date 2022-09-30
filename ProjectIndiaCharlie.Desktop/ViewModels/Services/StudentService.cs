@@ -22,6 +22,7 @@ public static class StudentService
     private const string requestGradeRevision = $"{baseUrl}RequestGradeRevision?studentId={{0}}&subjectDetailId={{1}}";
     private const string getSelectionSchedule = $"{baseUrl}GetSelectionSchedule?studentId={{0}}";
     private const string getSelectionSubjects = $"{baseUrl}GetSelectionSubjects";
+    private const string getPendingRevisions = $"{baseUrl}GetPendingRevisions?studentId={{0}}";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -165,6 +166,26 @@ public static class StudentService
         catch (Exception e)
         {
             return Enumerable.Empty<VSubjectSectionDetail>();
+        }
+    }
+
+    public static async Task<IEnumerable<VGradeRevision>> GetPendingGradeRequests()
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(string.Format(getPendingRevisions, LogedStudent.Student!.PersonId));
+
+            if (!response.IsSuccessStatusCode)
+                return Enumerable.Empty<VGradeRevision>();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<IEnumerable<VGradeRevision>>(content, _options)!;
+        }
+        catch (Exception)
+        {
+            return Enumerable.Empty<VGradeRevision>();
         }
     }
 }

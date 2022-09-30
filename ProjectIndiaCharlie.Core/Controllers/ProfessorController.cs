@@ -94,14 +94,14 @@ namespace ProjectIndiaCharlie.Core.Controllers
         }
 
         [HttpPost("PublishGrade")]
-        public async Task<ActionResult<string>> PublishGrade(int studentId, int subjectDetailId, int gradeId)
+        public async Task<ActionResult<string>> PublishGrade(int studentId, int subjectDetailId, int grade)
         {
             try
             {
                 if (!await _context.StudentSubjectValidation(studentId, subjectDetailId))
                     return NotFound("The student is not taking the subject.");
 
-                await _context.PublishGrade(studentId, subjectDetailId, gradeId);
+                await _context.PublishGrade(studentId, subjectDetailId, grade);
                 return CreatedAtAction("PublishGrade", "Grade published successfully.");
             }
             catch (Exception e)

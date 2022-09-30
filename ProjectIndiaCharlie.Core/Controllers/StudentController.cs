@@ -59,7 +59,7 @@ public class StudentController : ControllerBase
     }
 
     [HttpGet("GetPendingRevisions")]
-    public async Task<ActionResult<IEnumerable<VSubjectSectionDetail>>> GetPendingRevisions(int studentId)
+    public async Task<ActionResult<IEnumerable<VGradeRevision>>> GetPendingRevisions(int studentId)
     {
         try
         {

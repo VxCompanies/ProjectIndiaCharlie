@@ -340,7 +340,6 @@ FROM Academic.Subject Asub
 	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asdet.SubjectDetailID
 	INNER JOIN Academic.Classroom Acl ON Acl.ClassroomID = Ascl.ClassroomID
 	LEFT JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
-	WHERE Asdet.SubjectDetailID = 3
 	GROUP BY Asdet.SubjectDetailID,
 	Asub.SubjectCode,
 	Asub.Name,
@@ -353,8 +352,6 @@ FROM Academic.Subject Asub
 	Acl.Capacity,
 	Acl.Code
 GO
-
-SELECT * FROM Academic.StudentSubject
 
 CREATE OR ALTER VIEW Academic.vAdministratorDetails
 AS
@@ -503,28 +500,6 @@ AS
 	RETURN 1
 GO
 
-
-CREATE OR ALTER FUNCTION Academic.F_ConvertNumberGradeToID(
-@Grade int)
-RETURNS INT
-AS
-BEGIN
-IF (@Grade > 89)
-	RETURN 1
-IF (@Grade > 84)
-	RETURN 2
-IF (@Grade > 79)
-	RETURN 3
-IF (@Grade > 74)
-	RETURN 4
-IF (@Grade > 69)
-	RETURN 5
-IF (@Grade > 59)
-	RETURN 6
-RETURN 7
-END
-GO
-
 CREATE OR ALTER PROCEDURE Academic.SP_ProcessGradeRevision
 	@StudentID int,
 	@SubjectDetailID int,
@@ -613,8 +588,7 @@ CREATE OR ALTER PROCEDURE Academic.SP_RequestGradeRevision
 	@SubjectDetailID int
 AS
 BEGIN
-	DECLARE @GradeID int
-	SET @GradeID = (
+	DECLARE @GradeID int = (
 			SELECT Top(1) GradeID
 			FROM Academic.StudentSubject
 			WHERE StudentID = @StudentID AND
@@ -624,8 +598,15 @@ BEGIN
 	IF (@GradeID is null)
 		RETURN 0
 
-	INSERT INTO Academic.GradeRevision(PersonID, SubjectDetailID, DateRequested, GradeID)
-	VALUES (@StudentID, @SubjectDetailID, GETDATE(), @GradeID)
+	DECLARE @gradeValue int = (
+			SELECT Top(1) GradeValue
+			FROM Academic.StudentSubject
+			WHERE StudentID = @StudentID AND
+				SubjectDetailID = @SubjectDetailID AND GradeID != 8
+		)
+
+	INSERT INTO Academic.GradeRevision(PersonID, SubjectDetailID, DateRequested, GradeID, GradeValue)
+	VALUES (@StudentID, @SubjectDetailID, GETDATE(), @GradeID, @gradeValue)
 
 	RETURN 1
 END
@@ -643,7 +624,6 @@ BEGIN
 		@StudentID = StudentID
 END
 GO
-
 
 CREATE OR ALTER PROCEDURE Academic.SP_UpdateStudentIndex
 @StudentID int,
@@ -885,6 +865,27 @@ AS
 		SELECT *
 		FROM Academic.vSubjectSchedule AvsubSche
 		WHERE AvsubSche.SubjectDetailID = @SubjectID
+GO
+
+CREATE OR ALTER FUNCTION Academic.F_ConvertNumberGradeToID(
+@Grade int)
+RETURNS INT
+AS
+BEGIN
+IF (@Grade > 89)
+	RETURN 1
+IF (@Grade > 84)
+	RETURN 2
+IF (@Grade > 79)
+	RETURN 3
+IF (@Grade > 74)
+	RETURN 4
+IF (@Grade > 69)
+	RETURN 5
+IF (@Grade > 59)
+	RETURN 6
+RETURN 7
+END
 GO
 
 CREATE OR ALTER FUNCTION Academic.F_GetStudentsSchedule(

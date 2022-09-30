@@ -1,15 +1,15 @@
-﻿<UserControl x:Class="ProjectIndiaCharlie.Desktop.Views.RetirementView"
+﻿<UserControl x:Class="ProjectIndiaCharlie.Desktop.Views.RequestRevisionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ProjectIndiaCharlie.Desktop.Views"
              xmlns:vm="clr-namespace:ProjectIndiaCharlie.Desktop.ViewModels"
              xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-             mc:Ignorable="d"
+             mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1476">
     <UserControl.Resources>
-        <vm:RetirementViewModel x:Key="vm"/>
+        <vm:RequestRevisionViewModel x:Key="vm"/>
         <Style TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -38,18 +38,36 @@
         </Style>
     </UserControl.Resources>
     <StackPanel DataContext="{StaticResource vm}">
-        <Button Background="Transparent"
-                BorderThickness="0"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Right"
-                Command="{Binding RetireSubjectAsyncCommand}"
-                CommandParameter="{Binding}">
-            <StackPanel Orientation="Horizontal">
-                <fa:IconImage Icon="Trash"
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Background="Transparent"
+                    BorderThickness="0"
+                    Command="{Binding NavigatePendingRevisionsCommand}"
+                    CommandParameter="{Binding}">
+                <StackPanel Orientation="Horizontal">
+                    <fa:IconImage Icon="ClipboardList"
+                                  Width="20"
+                                  Height="20"/>
+                    <TextBlock Text="Pending revisions"
+                               Margin="5 0 0 0"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+            <Button Background="Transparent"
+                    BorderThickness="0"
+                    Command="{Binding RequestRevisionAsyncCommand}"
+                    CommandParameter="{Binding}"
+                    Margin="20 0 0 0">
+                <StackPanel Orientation="Horizontal">
+                    <fa:IconImage Icon="Search"
                               Width="20"
                               Height="20"/>
-            </StackPanel>
-        </Button>
+                    <TextBlock Text="Request revision"
+                               Margin="5 0 0 0"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
         <ListView ItemsSource="{Binding SelectedSubjects}"
                   SelectedItem="{Binding SelectedSubject}"
                   BorderThickness="0">
@@ -58,7 +76,7 @@
                     <GridViewColumn Header="Code">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding SubjectSCode}"/>
+                                <TextBlock Text="{Binding SubjectCode}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -87,6 +105,13 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Professor}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Grade">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Grade}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

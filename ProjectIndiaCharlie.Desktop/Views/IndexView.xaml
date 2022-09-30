@@ -61,7 +61,7 @@
                                    Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </RadioButton>
-                <RadioButton Command="{Binding NavigateHomeCommand}"
+                <RadioButton Command="{Binding NavigateRequestRevisionCommand}"
                              Style="{StaticResource menuButton}">
                     <StackPanel Orientation="Horizontal">
                         <fa:IconImage Icon="Search"
@@ -73,7 +73,8 @@
             </StackPanel>
         </Border>
         <ContentControl Content="{Binding CurrentIndexViewModel}"
-                        Grid.Column="1">
+                        Grid.Column="1"
+                        Margin="30">
             <ContentControl.Resources>
                 <DataTemplate DataType="{x:Type vm:HomeViewModel}">
                     <local:HomeView/>
@@ -86,6 +87,12 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:RetirementViewModel}">
                     <local:RetirementView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:RequestRevisionViewModel}">
+                    <local:RequestRevisionView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:PendingRevisionViewModel}">
+                    <local:PendingRevisionView/>
                 </DataTemplate>
             </ContentControl.Resources>
         </ContentControl>

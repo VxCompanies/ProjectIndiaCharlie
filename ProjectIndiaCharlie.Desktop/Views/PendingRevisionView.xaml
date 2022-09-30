@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ProjectIndiaCharlie.Desktop.Views.RetirementView"
+﻿<UserControl x:Class="ProjectIndiaCharlie.Desktop.Views.PendingRevisionView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,7 +9,7 @@
              mc:Ignorable="d"
              d:DesignHeight="1080" d:DesignWidth="1476">
     <UserControl.Resources>
-        <vm:RetirementViewModel x:Key="vm"/>
+        <vm:PendingRevisionViewModel x:Key="vm"/>
         <Style TargetType="{x:Type GridViewColumnHeader}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -42,51 +42,31 @@
                 BorderThickness="0"
                 VerticalAlignment="Top"
                 HorizontalAlignment="Right"
-                Command="{Binding RetireSubjectAsyncCommand}"
-                CommandParameter="{Binding}">
-            <StackPanel Orientation="Horizontal">
-                <fa:IconImage Icon="Trash"
-                              Width="20"
-                              Height="20"/>
-            </StackPanel>
-        </Button>
-        <ListView ItemsSource="{Binding SelectedSubjects}"
-                  SelectedItem="{Binding SelectedSubject}"
+                Command="{Binding NavigateRequestRevisionCommand}"
+                CommandParameter="{Binding}"
+                Content="Go Back"/>
+        <ListView ItemsSource="{Binding PendingRevisions}"
                   BorderThickness="0">
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
-                    <GridViewColumn Header="Code">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding SubjectSCode}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
                     <GridViewColumn Header="Subject">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Subject}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Credits">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Credits}"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="Section">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Section}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Professor">
+                    <GridViewColumn Header="Grade">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Professor}"/>
+                                <TextBlock Text="{Binding Grade}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Date Requested">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DateRequested}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

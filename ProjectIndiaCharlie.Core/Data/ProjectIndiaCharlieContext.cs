@@ -115,7 +115,7 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.Professor).HasMaxLength(203);
 
-                entity.Property(e => e.Section).HasMaxLength(113);
+                entity.Property(e => e.Section).HasMaxLength(20);
 
                 entity.Property(e => e.Student).HasMaxLength(203);
 

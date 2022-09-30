@@ -27,8 +27,7 @@
                     Value="300"/>
         </Style>
     </UserControl.Resources>
-    <Border Margin="30"
-            Background="#FFFFFF"
+    <Border Background="#FFFFFF"
             CornerRadius="10">
         <Grid DataContext="{StaticResource vm}">
             <Grid.RowDefinitions>

@@ -191,65 +191,64 @@ EXEC Academic.SP_SubjectSelection
 @SubjectDetailID = 529,
 @StudentID = 1111666;
 
-
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
 	@StudentId	= 1110408;
+
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 1,
 	@StudentId	= 1110408;
+
 EXEC Academic.SP_SubjectSelection
 	@SubjectDetailId = 2,
 	@StudentId	= 1110409;
 
 EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 2,
-@StudentID = 1110408,
-@GradeId = 2;
-EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 1,
-@StudentID = 1110408,
-@GradeId = 8;
-EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 2,
-@StudentID = 1110409,
-@GradeId = 8;
+	@SubjectDetailID = 2,
+	@StudentID = 1110408,
+	@GradeValue = 72;
 
+EXEC Academic.SP_PublishGrade
+	@SubjectDetailID = 1,
+	@StudentID = 1110408,
+	@GradeValue = 80;
+
+EXEC Academic.SP_PublishGrade
+	@SubjectDetailID = 2,
+	@StudentID = 1110409,
+	@GradeValue = 90;
 
 --Student 1111666 Publicacion
 EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 326,
-@StudentID = 1111666,
-@GradeId = 8;
+	@SubjectDetailID = 326,
+	@StudentID = 1111666,
+	@GradeValue = 89;
 
 EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 919,
-@StudentID = 1111666,
-@GradeId = 2;
+	@SubjectDetailID = 919,
+	@StudentID = 1111666,
+	@GradeValue = 77;
 
 EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 850,
-@StudentID = 1111666,
-@GradeId = 1;
+	@SubjectDetailID = 850,
+	@StudentID = 1111666,
+	@GradeValue = 65;
 
 EXEC Academic.SP_PublishGrade
-@SubjectDetailID = 529,
-@StudentID = 1111666,
-@GradeId = 6;
+	@SubjectDetailID = 529,
+	@StudentID = 1111666,
+	@GradeValue = 84;
 GO
 
-EXEC Academic.SP_PublishGrade
-@StudentID = 1110409,
-@SubjectDetailID = 2,
-@GradeID = 1;
+EXEC Academic.SP_PublishGrade 1110409, 2, 99;
+EXEC Academic.SP_RequestGradeRevision 1110408, 1
 
 EXEC Academic.SP_CalculateIndexByTrimester
-@Year = 2022,
-@Trimester = 3;
+	@Year = 2022,
+	@Trimester = 3;
 
 SELECT * FROM Academic.F_GetStudentsSchedule (1111666, 2022, 3);
-
-SELECT * FROM Academic.vSubjectSectionDetails
+SELECT * FROM Academic.vGradeRevision
 WHERE SubjectDetailID = 2;
 
 SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);

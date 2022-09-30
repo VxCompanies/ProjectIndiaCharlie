@@ -15,7 +15,7 @@ public partial class ProjectIndiaCharlieContext
 
     public async Task CareerRegistration(NewCareer newCareer) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_CareerRegistration {newCareer.Name}, {newCareer.Code}, {newCareer.Subjects}, {newCareer.Credits}, {newCareer.Year}, {newCareer.IsActive}");
 
-    public async Task PublishGrade(int studentId, int subjectDetailId, int gradeId) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_PublishGrade {studentId}, {subjectDetailId}, {gradeId}");
+    public async Task PublishGrade(int studentId, int subjectDetailId, int grade) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_PublishGrade {studentId}, {subjectDetailId}, {grade}");
 
     public async Task ProfessorRegistration(NewPerson newProfessor) => await Database.ExecuteSqlInterpolatedAsync($"Academic.SP_ProfessorRegistration {newProfessor.PersonId}");
     
