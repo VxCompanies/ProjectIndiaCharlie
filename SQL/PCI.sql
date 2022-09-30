@@ -324,7 +324,7 @@ SELECT Asdet.SubjectDetailID,
 	Asdet.Trimester,
 	Avprof.PersonID ProfessorID,
 	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname) Professor,
-	CONCAT(COUNT(AstuSub.StudentID), '/', Acl.Capacity) Capacity,
+	CONCAT(COUNT(DISTINCT(AstuSub.StudentID)), '/', Acl.Capacity) Capacity,
 	Acl.Code ClassroomCode,
 	MAX(CASE WHEN AW.WeekdayID = 1 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Monday,
 	MAX(CASE WHEN AW.WeekdayID = 2 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Tuesday,
@@ -351,6 +351,7 @@ FROM Academic.Subject Asub
 	Avprof.PersonID,
 	Acl.Capacity,
 	Acl.Code
+
 GO
 
 CREATE OR ALTER VIEW Academic.vAdministratorDetails
