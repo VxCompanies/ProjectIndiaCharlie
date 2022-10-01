@@ -21,6 +21,7 @@ public static class StudentService
 
     private static string registerStudentUrl = $"{baseUrl}/Student/Registration";
     private static string getUnresolvedRevisions = $"{baseUrl}/Admin/GetUnsolvedRevisions";
+    private static string getGrades = $"{baseUrl}/Academic/GradesList";
     private static string processRevisionURL = $"{baseUrl}/Admin/ProcessGradeRevisions?studentID={{0}}&subjectDetailID={{1}}&modifiedgradeId={{2}}&adminId={{3}}";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
@@ -136,6 +137,28 @@ public static class StudentService
         catch (Exception e)
         {
             return e.Message;
+        }
+    }
+
+    public static async Task<IEnumerable<VGrade>> GetGrades()
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+
+            var response = await httpClient.GetAsync(getGrades);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var content = await response.Content.ReadAsStringAsync();
+            var revisions = JsonSerializer.Deserialize<IEnumerable<VGrade>>(content, _options);
+
+            return revisions!;
+        }
+        catch (Exception)
+        {
+            return null;
         }
     }
 }

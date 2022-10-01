@@ -1,10 +1,21 @@
+using ProjectIndiaCharlie.WebAdministrator.Models;
+using ProjectIndiaCharlie.WebAdministrator.Service;
+
 internal class Program
 {
-    public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration { get; set; } = null!;
+
+    public static IEnumerable<VGrade> Grades { get; set; } = null!;
+
+    public Program() => _ = LoadGradesAsync();
+
+    private static async Task LoadGradesAsync() => Grades = await StudentService.GetGrades();
 
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+
 
         Configuration = builder.Configuration;
         // Add services to the container.

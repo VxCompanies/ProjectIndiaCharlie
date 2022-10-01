@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjectIndiaCharlie.WebAdministrator.Models;
 using ProjectIndiaCharlie.WebAdministrator.Service;
+using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Text.Json;
@@ -17,17 +18,40 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.Revision
         [BindProperty]
         public VGradeRevisionVM RevisionVM { get; set; }
 
-        //public ProcessModel()
-        //{
-        //    UnresolverRevision = new VGradeRevision();
-        //}
+
+        public SelectList Grades { get; set; }
+        public List<SelectListItem> Grades2 { get; set; }
 
 
         [BindProperty]
         public int ModifiedGradeIDVM { get; set; }
 
+        public List<SelectListItem> BaremeList;
+
         public async Task<IActionResult> OnGetAsync(int? personID, int? subjectDetailId)
         {
+            //Grades = (List<VGrade>)Program.Grades.ToList();
+            //Grades = (IEnumerable<SelectListItem>)Program.Grades;
+            var grades = await StudentService.GetGrades();
+            //= await StudentService.GetGrades();
+            ViewData["Numbers"] = grades
+                .Select(n => new SelectListItem
+                {
+                    Value = n.GradeId.ToString(),
+                    Text = n.Grade.ToString()
+                }).ToList();
+
+            this.Grades2 = grades
+                .Select(n => new SelectListItem
+                {
+                    Value = n.GradeId.ToString(),
+                    Text = n.Grade.ToString()
+                }).ToList();
+
+            this.Grades =  new SelectList(grades, "GradeId", "Grade"); //, nameof(Program.Grades), nameof(grades.GradeID));
+
+
+
             var a = await StudentService.GetUnresolvedRevisions();
 
             //VGradeRevision revision =
@@ -48,17 +72,19 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.Revision
             var perosnId = Request.Query["PersonId"];
             var subjectDetailId = Request.Query["SubjectDetailId"];
 
-            VGradeRevision revision = new VGradeRevision()
+            var grade = RevisionVM.ModifiedGrade;
+
+            var revision = new VGradeRevision()
             {
                 PersonId = int.Parse(perosnId),
                 SubjectDetailId = int.Parse(subjectDetailId),
-                ModifiedGradeId = RevisionVM.ModifiedGradeId,
+                ModifiedGradeId = grade,
                 Admin = RevisionVM.AdminID,
                 Professor = 1,
                 GradeId = 1,
                 DateRequested = DateTime.Now,
                 Grade ="a",
-                ModifiedGrade = "a",
+                ModifiedGrade = grade,
                 Section = "1",
                 Student = "sd"
             };
@@ -88,7 +114,7 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.Revision
         {
             public int PersonId { get; set; }
             public int SubjectDetailId { get; set; }
-            public int ModifiedGradeId { get; set; }
+            public int ModifiedGrade { get; set; }
             public int AdminID { get; set; }
         }
     }
