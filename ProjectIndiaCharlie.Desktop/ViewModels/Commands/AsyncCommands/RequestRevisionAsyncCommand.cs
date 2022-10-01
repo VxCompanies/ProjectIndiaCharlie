@@ -12,7 +12,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands
 
             await StudentService.RequestGradeRevision(revisionViewModel!.SelectedSubject.SubjectDetailId);
 
-            _ = Task.Run(() => MessageBox.Show($"Successfully requested grade revision for {revisionViewModel.SelectedSubject.SubjectCode}."));
+            _ = Task.Run(() => MessageBox.Show($"Successfully requested grade revision for {revisionViewModel.SelectedSubject.Section}."));
 
             revisionViewModel.SelectedSubjects.Remove(revisionViewModel.SelectedSubject);
         }

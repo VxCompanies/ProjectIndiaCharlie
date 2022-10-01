@@ -10,8 +10,8 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels;
 
 public class RequestRevisionViewModel : ViewModelBase
 {
-    private VStudentSubject _selectedSubject;
-    public VStudentSubject SelectedSubject
+    private VGradeRevision _selectedSubject;
+    public VGradeRevision SelectedSubject
     {
         get => _selectedSubject;
         set
@@ -21,7 +21,7 @@ public class RequestRevisionViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<VStudentSubject> SelectedSubjects { get; set; }
+    public ObservableCollection<VGradeRevision> SelectedSubjects { get; set; }
 
     public RequestRevisionAsyncCommand RequestRevisionAsyncCommand { get; set; }
 
@@ -40,7 +40,7 @@ public class RequestRevisionViewModel : ViewModelBase
     {
         SelectedSubjects.Clear();
 
-        foreach (var subject in (await StudentService.GetSchedule()).Where(s => !string.IsNullOrWhiteSpace(s.Grade) && s.Grade != "R"))
+        foreach (var subject in await StudentService.GetPublishedSubjects())
             SelectedSubjects.Add(subject);
     }
 }

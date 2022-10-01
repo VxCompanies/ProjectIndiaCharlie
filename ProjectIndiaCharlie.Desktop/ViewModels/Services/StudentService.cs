@@ -11,7 +11,6 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels.Services;
 
 public static class StudentService
 {
-    private const string mediaType = "application/json";
     private const string baseUrl = "https://localhost:7073/api/Student/";
     //private const string baseUrl = "https://a9a6-190-122-96-78.ngrok.io/api/Student/";
     private const string loginUrl = $"{baseUrl}Login?studentId={{0}}&password={{1}}";
@@ -65,6 +64,27 @@ public static class StudentService
         catch (Exception)
         {
             return Enumerable.Empty<VStudentSubject>();
+        }
+    }
+    
+    public static async Task<IEnumerable<VGradeRevision>> GetPublishedSubjects()
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetAsync(string.Format(getSchedule, LogedStudent.Student!.PersonId));
+
+            if (!response.IsSuccessStatusCode)
+                return Enumerable.Empty<VGradeRevision>();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<IEnumerable<VGradeRevision>>(content, _options)!
+                .Where(s => !string.IsNullOrWhiteSpace(s.Grade) && s.Grade != "R");
+        }
+        catch (Exception)
+        {
+            return Enumerable.Empty<VGradeRevision>();
         }
     }
 
