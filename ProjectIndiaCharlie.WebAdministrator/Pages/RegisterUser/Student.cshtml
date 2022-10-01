@@ -90,7 +90,7 @@
 			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.birthDate"></span>
 		</div>
 		
-		<div class="form-group row" style="margin-bottom:20px">
+		@*<div class="form-group row" style="margin-bottom:20px">
 			<div class="col-2">
 				<label asp-for="RegisterUserVM.careerId"></label>
 			</div>
@@ -98,7 +98,20 @@
 				<input type="text" style="color:black !important" asp-for="RegisterUserVM.careerId" class="form-control" />
 			</div>
 			<span class="text-danger col-5" asp-validation-for="RegisterUserVM.careerId"></span>
-		</div>
+		</div>*@
+
+		<select id="ddlCustomers" name="CustomerId" asp-items="@Model.Careers">
+            <option value="0">--Seleccionar Carrera--</option>
+        </select>
+
+		<input input asp-for="RegisterUserVM.careerId" type="hidden" name="SelectedCareerID" />
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script type="text/javascript">
+			$("body").on("change", "#ddlCustomers", function () {
+				$("input[name=SelectedCareerID]").val($(this).find("option:selected").text());
+			});
+		</script>
 
 		<div class = "form-group row" style="margin-bottom:20px">			
 			<div class = "col-2">
