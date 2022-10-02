@@ -58,10 +58,10 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUser
 
             this.Careers = new SelectList(carreras, "CareerId", "Name"); //CompleteName
 
-            //if (CreatedUserVM == null)
-            //{
-            //    return NotFound();
-            //}
+            if (Careers == null)
+            {
+                return NotFound();
+            }
 
             return Page();
         }
