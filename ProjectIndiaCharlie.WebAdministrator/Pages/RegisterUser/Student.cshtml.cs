@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProjectIndiaCharlie.WebAdministrator.Models;
 using ProjectIndiaCharlie.WebAdministrator.Service;
 using System.ComponentModel.DataAnnotations;
@@ -13,9 +14,12 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUser
         [BindProperty]
         public RegisterUserViewModel RegisterUserVM { get; set; }
 
+        public SelectList Careers { get; set; }
+
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var careerId = int.Parse(Request.Form["CustomerId"]);
 
             var student = new NewPerson()
             {
@@ -27,8 +31,9 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUser
                 Gender = RegisterUserVM.gender,
                 BirthDate = RegisterUserVM.birthDate,
                 Email = RegisterUserVM.email,
-                CareerId = RegisterUserVM.careerId
+                CareerId = careerId
             };
+
 
             if (!ModelState.IsValid)
             {
@@ -47,9 +52,20 @@ namespace ProjectIndiaCharlie.WebAdministrator.Pages.RegisterUser
 
             return RedirectToPage("/RegisterUser/Created");
         }
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
+            var carreras = await CareerService.GetCareers();
+
+            this.Careers = new SelectList(carreras, "CareerId", "Name"); //CompleteName
+
+            if (Careers == null)
+            {
+                return NotFound();
+            }
+
+            return Page();
         }
+
 
         public class RegisterUserViewModel
         {

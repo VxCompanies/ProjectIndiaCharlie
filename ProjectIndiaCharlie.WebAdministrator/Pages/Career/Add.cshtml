@@ -1,0 +1,68 @@
+﻿@page
+@model ProjectIndiaCharlie.WebAdministrator.Pages.Career.AddModel
+@{
+}
+
+<h3>Agregar Carrera</h3>
+
+<div>
+	<h4>Career:</h4>
+
+	<form method="post">
+		<div class="form-group row" style="margin-bottom:20px">
+            <div class="col-2">
+				<label asp-for="NewCareerVM.Name"></label>
+            </div>
+            <div class="col-5">
+				<input type="text" style="color:black !important" asp-for="NewCareerVM.Name" class="form-control" />
+            </div>
+			<span class="text-danger col-5" asp-validation-for="NewCareerVM.Name"></span>
+        </div>
+
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="NewCareerVM.Code"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="NewCareerVM.Code" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="NewCareerVM.Code"></span>
+		</div>
+
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="NewCareerVM.Subjects"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="NewCareerVM.Subjects" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="NewCareerVM.Subjects"></span>
+		</div>
+
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="NewCareerVM.Credits"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="NewCareerVM.Credits" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="NewCareerVM.Credits"></span>
+		</div>
+
+		<div class="form-group row" style="margin-bottom:20px">
+			<div class="col-2">
+				<label asp-for="NewCareerVM.Year"></label>
+			</div>
+			<div class="col-5">
+				<input type="text" style="color:black !important" asp-for="NewCareerVM.Year" class="form-control" />
+			</div>
+			<span class="text-danger col-5" asp-validation-for="NewCareerVM.Year"></span>
+		</div>
+
+		<div class = "form-group row" style="margin-bottom:20px">			
+			<div class = "col-2">
+				<input type ="submit" class="btn-primary btn" value = "Crear carrera"/>
+			</div>
+		</div>
+	</form>
+</div>
