@@ -8,20 +8,18 @@ public static class PersonService
 {
     private const string mediaType = "application/json";
     //private const string baseUrl = "https://05d2-190-80-246-215.ngrok.io/api";
-    private const string baseUrl = " https://d31d-179-52-76-51.ngrok.io/api";
-    //private const string baseUrl = "https://localhost:7073/api";
-    private const string getPeopleUrl = $"{baseUrl}/Academic/SubjectSections";
+    private const string baseUrl = "https://localhost:7073/api/Professor";
+    private const string getSubjectsUrl = $"{baseUrl}/SubjectSections?professorId={{0}}";
     private const string loginUrl = $"{baseUrl}/Login";
-    private const string registerStudentUrl = $"{baseUrl}/Student/Registration";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
-    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSubjectSectionDetailsAsync()
+    public static async Task<IEnumerable<VSubjectSectionDetail>> GetSubjectSections()
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(getPeopleUrl);
+            var response = await httpClient.GetAsync(string.Format(getSubjectsUrl, getSubjectsUrl));
 
             if (!response.IsSuccessStatusCode)
                 return Enumerable.Empty<VSubjectSectionDetail>();
@@ -36,7 +34,7 @@ public static class PersonService
         }
     }
 
-    public static async Task<Person?> Login(string personId, string password)
+    public static async Task<VProfessorDetail?> Login(string personId, string password)
     {
         try
         {
@@ -54,50 +52,6 @@ public static class PersonService
         catch (Exception)
         {
             return null;
-        }
-    }
-     
-    public static async Task<bool> RegisterPerson(Student student)
-    {
-        try
-        {
-            using var httpClient = new HttpClient();
-
-            var json = JsonSerializer.Serialize(student);
-            var content = new StringContent(json, Encoding.UTF8, mediaType);
-
-            var response = await httpClient.PostAsync(registerStudentUrl, content);
-
-            if (!response.IsSuccessStatusCode)
-                return false;
-
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    public static async Task<bool> RegisterPerson(Coordinator coordinator)
-    {
-        try
-        {
-            using var httpClient = new HttpClient();
-
-            var json = JsonSerializer.Serialize(coordinator);
-            var content = new StringContent(json, Encoding.UTF8, mediaType);
-
-            var response = await httpClient.PostAsync(registerStudentUrl, content);
-
-            if (!response.IsSuccessStatusCode)
-                return false;
-
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
         }
     }
 }

@@ -3,11 +3,11 @@ using ProjectIndiaCharlie.Web.Service;
 
 namespace ProjectIndiaCharlie.Web.Controllers
 {
-    public class PersonController : Controller
+    public class ProfessorController : Controller
     {
         public async Task<IActionResult> Index()
         {
-            var subjectSectionDetailsList = PersonService.GetSubjectSectionDetailsAsync();
+            var subjectSectionDetailsList = PersonService.GetSubjectSections();
             return await subjectSectionDetailsList is null ?
                 NotFound() :
                 View(await subjectSectionDetailsList);
