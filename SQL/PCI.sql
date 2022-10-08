@@ -224,21 +224,21 @@ CREATE TABLE Academic.GradeRevision(
 GO
 
 CREATE TABLE Academic.IndexHistory(
-IndexHistoryID int PRIMARY KEY IDENTITY,
-PersonID int,
-CareerID int,
-Year int,
-Trimester int,
-CreditsTrimester int,
-CreditsSumm int,
-PointsTrimester float,
-PontsSumm float,
-TrimesteralIndex decimal(3,2),
-GeneralIndex decimal(3,2),
-ModifiedDate datetime DEFAULT GETDATE(),
+	IndexHistoryID int PRIMARY KEY IDENTITY,
+	PersonID int,
+	CareerID int,
+	Year int,
+	Trimester int,
+	CreditsTrimester int,
+	CreditsSumm int,
+	PointsTrimester float,
+	PontsSumm float,
+	TrimesteralIndex decimal(3,2),
+	GeneralIndex decimal(3,2),
+	ModifiedDate datetime DEFAULT GETDATE(),
 
-FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
-FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
+	FOREIGN KEY(PersonID) REFERENCES Person.Person(PersonID),
+	FOREIGN KEY(CareerID) REFERENCES Academic.Career(CareerID)
 );
 GO
 
@@ -315,44 +315,53 @@ GO
 
 CREATE OR ALTER VIEW Academic.vSubjectSectionDetails
 AS
-SELECT Asdet.SubjectDetailID,
-	Asub.SubjectCode,
-	Asub.Name,
-	Asub.Credits,
-	Asdet.Section,
-	Asdet.Year,
-	Asdet.Trimester,
-	Avprof.PersonID ProfessorID,
-	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname) Professor,
-	CONCAT(COUNT(DISTINCT(AstuSub.StudentID)), '/', Acl.Capacity) Capacity,
-	Acl.Code ClassroomCode,
-	MAX(CASE WHEN AW.WeekdayID = 1 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Monday,
-	MAX(CASE WHEN AW.WeekdayID = 2 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Tuesday,
-	MAX(CASE WHEN AW.WeekdayID = 3 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Wednesday,
-	MAX(CASE WHEN AW.WeekdayID = 4 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Thursday,
-	MAX(CASE WHEN AW.WeekdayID = 5 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Friday,
-	MAX(CASE WHEN AW.WeekdayID = 6 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Saturday
-FROM Academic.Subject Asub
-	INNER JOIN Academic.SubjectDetail Asdet ON Asdet.SubjectID = Asub.SubjectID
-	INNER JOIN Academic.vProfessorDetails Avprof ON Avprof.PersonID = Asdet.ProfessorID
-	INNER JOIN Academic.SubjectSchedule AsubSch ON AsubSch.SubjectDetailID = Asdet.SubjectDetailID
-	INNER JOIN Academic.Weekday Aw ON Aw.WeekdayID = AsubSch.WeekdayID
-	INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asdet.SubjectDetailID
-	INNER JOIN Academic.Classroom Acl ON Acl.ClassroomID = Ascl.ClassroomID
-	LEFT JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
-	GROUP BY Asdet.SubjectDetailID,
-	Asub.SubjectCode,
-	Asub.Name,
-	CONCAT(Avprof.FirstName, IIF(Avprof.MiddleName IS NULL, '', ' '), Avprof.MiddleName, ' ', Avprof.FirstSurname, IIF(Avprof.SecondSurname IS NULL, '', ' '), Avprof.SecondSurname),
-	Asub.Credits,
-	Asdet.Section,
-	Asdet.Year,
-	Asdet.Trimester,
-	Avprof.PersonID,
-	Acl.Capacity,
-	Acl.Code
-
+	WITH CTE_Inscritos AS (
+		SELECT ss.SubjectDetailID,
+			COUNT(DISTINCT(StudentID)) Students
+		FROM Academic.StudentSubject ss
+		GROUP BY SubjectDetailID
+	),
+	CTE_Calendario AS (
+		SELECT AsubSch.SubjectDetailID,
+			MAX(CASE WHEN AW.WeekdayID = 1 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Monday,
+			MAX(CASE WHEN AW.WeekdayID = 2 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Tuesday,
+			MAX(CASE WHEN AW.WeekdayID = 3 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Wednesday,
+			MAX(CASE WHEN AW.WeekdayID = 4 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Thursday,
+			MAX(CASE WHEN AW.WeekdayID = 5 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Friday,
+			MAX(CASE WHEN AW.WeekdayID = 6 AND AsubSch.StartTime IS NOT NULL THEN CONCAT(AsubSch.StartTime, '/', AsubSch.EndTime) END) Saturday
+		FROM Academic.Weekday Aw
+			INNER JOIN Academic.SubjectSchedule AsubSch ON AsubSch.WeekdayID = aw.WeekdayID
+		GROUP BY AsubSch.SubjectDetailID
+	)
+	SELECT DISTINCT(cal.SubjectDetailID),
+		Asub.SubjectCode,
+		Asub.Name SubjectName,
+		Asub.Credits,
+		Asdet.Section,
+		Asdet.Year,
+		Asdet.Trimester,
+		Avprof.PersonID ProfessorID,
+		CONCAT_WS(' ', Avprof.FirstName, Avprof.MiddleName, Avprof.FirstSurname, Avprof.SecondSurname) Professor,
+		CONCAT(COALESCE(ins.Students, 0), '/', Acl.Capacity) Capacity,
+		Acl.Code ClassroomCode,
+		cal.Monday,
+		cal.Tuesday,
+		cal.Wednesday,
+		cal.Thursday,
+		cal.Friday,
+		cal.Saturday
+	FROM Academic.Subject Asub
+		INNER JOIN Academic.SubjectDetail Asdet ON Asdet.SubjectID = Asub.SubjectID
+		INNER JOIN Academic.vProfessorDetails Avprof ON Avprof.PersonID = Asdet.ProfessorID
+		INNER JOIN Academic.SubjectSchedule AsubSch ON AsubSch.SubjectDetailID = Asdet.SubjectDetailID
+		INNER JOIN Academic.SubjectClassroom Ascl ON Ascl.SubjectDetailID = Asdet.SubjectDetailID
+		INNER JOIN Academic.Classroom Acl ON Acl.ClassroomID = Ascl.ClassroomID
+		LEFT JOIN CTE_Inscritos ins ON ins.SubjectDetailID = AsubSch.SubjectDetailID
+		LEFT JOIN CTE_Calendario cal ON cal.SubjectDetailID = AsubSch.SubjectDetailID
+		LEFT JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
 GO
+
+SELECT * FROM Academic.vSubjectSectionDetails
 
 CREATE OR ALTER VIEW Academic.vAdministratorDetails
 AS
@@ -448,6 +457,23 @@ AS
 	VALUES(@PersonID, @PasswordHash, @PasswordSalt)
 	RETURN 1
 GO  
+
+CREATE OR ALTER VIEW Academic.vSubjectStudents
+AS
+	SELECT Pper.PersonID StudentID,
+		CONCAT(Pper.FirstSurname, IIF(Pper.SecondSurname IS NULL, '', ' '), Pper.SecondSurname, ', ', Pper.FirstName, IIF(Pper.MiddleName IS NULL, '', ' '), Pper.MiddleName) StudentName,
+		AvstuSub.SubjectDetailID,
+		AvstuSub.SubjectCode,
+		AvsubSecDet.SubjectName,
+		AvsubSecDet.Section,
+		AvstuSub.Grade,
+		AvstuSub.Points,
+		AvsubSecDet.ProfessorID
+	FROM Person.Person Pper
+		INNER JOIN Academic.Student Astu ON Astu.PersonID = Pper.PersonID
+		INNER JOIN Academic.vStudentSubjects AvstuSub ON AvstuSub.StudentID = Astu.PersonID
+		INNER JOIN Academic.vSubjectSectionDetails AvsubSecDet ON AvsubSecDet.SubjectDetailID = AvstuSub.SubjectDetailID
+GO
 
 CREATE OR ALTER PROCEDURE Academic.SP_CareerRegistration
 	@Name nvarchar(50),
@@ -872,20 +898,20 @@ CREATE OR ALTER FUNCTION Academic.F_ConvertNumberGradeToID(
 @Grade int)
 RETURNS INT
 AS
-BEGIN
-IF (@Grade > 89)
-	RETURN 1
-IF (@Grade > 84)
-	RETURN 2
-IF (@Grade > 79)
-	RETURN 3
-IF (@Grade > 74)
-	RETURN 4
-IF (@Grade > 69)
-	RETURN 5
-IF (@Grade > 59)
-	RETURN 6
-RETURN 7
+	BEGIN
+	IF (@Grade > 89)
+		RETURN 1
+	IF (@Grade > 84)
+		RETURN 2
+	IF (@Grade > 79)
+		RETURN 3
+	IF (@Grade > 74)
+		RETURN 4
+	IF (@Grade > 69)
+		RETURN 5
+	IF (@Grade > 59)
+		RETURN 6
+	RETURN 7
 END
 GO
 
@@ -1091,6 +1117,7 @@ CREATE USER projectIndiaCharlie
 FOR LOGIN projectIndiaCharlieAPI
 WITH DEFAULT_SCHEMA = Academic
 GO
+
 -- API Role
 CREATE ROLE API
 GO
@@ -1119,6 +1146,9 @@ GRANT VIEW DEFINITION ON Academic.vProfessorDetails
 	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vSubjectSectionDetails
+	TO API
+GO
+GRANT VIEW DEFINITION ON Academic.vSubjectStudents
 	TO API
 GO
 GRANT VIEW DEFINITION ON Academic.vAdministratorDetails
@@ -1150,6 +1180,9 @@ GRANT SELECT ON Academic.vProfessorDetails
 	TO API
 GO
 GRANT SELECT ON Academic.vSubjectSectionDetails
+	TO API
+GO
+GRANT SELECT ON Academic.vSubjectStudents
 	TO API
 GO
 GRANT SELECT ON Academic.vAdministratorDetails
