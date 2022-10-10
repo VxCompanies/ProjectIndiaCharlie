@@ -5,7 +5,9 @@ DECLARE @FileLoc NVARCHAR(MAX);
 DECLARE @SQL_BULK VARCHAR(MAX);
 
 --SET @Path = 'E:\Desarrollo\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
-SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+--SET @Path = 'C:\Users\omars\source\repos\VxGameX\IDS325-01\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+SET @Path = 'C:\Users\Nikita\Desktop\Projects\ProjectIndiaCharlie\SQL\';--Path to folder of your pc for bulk insert script
+
 
 SET @FileLoc = @Path + 'Asignaturas.csv';
 
@@ -106,6 +108,19 @@ EXEC(@SQL_BULK);
 SET @FileLoc = @Path + 'PersonPassword.csv';
 
 SET @SQL_BULK = 'BULK INSERT  Person.PersonPassword
+FROM  ''' + @FileLoc + '''
+WITH (
+  FIELDTERMINATOR = '';'',
+  ROWTERMINATOR = ''\n'',
+  FIRSTROW = 2,
+  CODEPAGE = ''ACP''
+);' --  
+EXEC(@SQL_BULK);
+
+
+SET @FileLoc = @Path + 'StudentSubject.csv';
+
+SET @SQL_BULK = 'BULK INSERT  Academic.StudentSubject
 FROM  ''' + @FileLoc + '''
 WITH (
   FIELDTERMINATOR = '';'',
@@ -225,9 +240,12 @@ EXEC Academic.SP_PublishGrade
 	@GradeValue = 89;
 
 EXEC Academic.SP_PublishGrade
-	@SubjectDetailID = 919,
-	@StudentID = 1111666,
-	@GradeValue = 77;
+	@SubjectDetailID = 79, --72 79
+	@StudentID = 1112202,
+	@GradeValue = 99;
+
+SELECT * FROM Academic.F_GetStudentsSchedule (1112202, 2022, 3);
+
 
 EXEC Academic.SP_PublishGrade
 	@SubjectDetailID = 850,
@@ -241,7 +259,7 @@ EXEC Academic.SP_PublishGrade
 GO
 
 EXEC Academic.SP_PublishGrade 1110409, 2, 99;
-EXEC Academic.SP_RequestGradeRevision 1110408, 1
+EXEC Academic.SP_RequestGradeRevision 1112202, 72
 
 EXEC Academic.SP_CalculateIndexByTrimester
 	@Year = 2022,
@@ -256,7 +274,7 @@ SELECT * FROM Academic.F_GetStudentCurrentSchedule(1110408);
 SELECT * FROM Academic.F_GetStudentsSchedule(1110408, 2022, 3);
 
 SELECT * FROM Academic.Student
-WHERE PersonID = 1111666;
+WHERE PersonID = 1112202;
 
 SELECT * FROM Academic.Subject
 WHERE Name like '%s%';
@@ -275,6 +293,10 @@ SELECT * FROM Academic.StudentSubject;
 SELECT * FROM Academic.F_GetSubjectsOfProfessor(1110201);
 SELECT * FROM Academic.F_GetStudentsOfSubject(2);
 GO
+
+SELECT * FROM Academic.Student;
+SELECT * FROM Academic.StudentSubject;
+SELECT * FROM Academic.SubjectDetail;
 
 SELECT *-- SS.SubjectScheduleID, S.SubjectID, W.Name, SS.StartTime, SS.EndTime, SD.ProfessorID, SD.Section, SD.Trimester,
 	--S.SubjectCode, S.Name, S.Credits, P.FirstName, P.MiddleName, P.FirstSurname, P.SecondSurname
