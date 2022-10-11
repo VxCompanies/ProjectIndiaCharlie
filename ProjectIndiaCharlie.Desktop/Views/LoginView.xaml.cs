@@ -1,6 +1,5 @@
 ﻿using ProjectIndiaCharlie.Desktop.ViewModels;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,14 +17,6 @@ namespace ProjectIndiaCharlie.Desktop.Views
             //pbPassword.Password = "qwerty123";
             //Login(new(), new());
         }
-
-        //private void PasswordChanged(object sender, RoutedEventArgs e)
-        //{
-        //    if (DataContext == null)
-        //        return;
-
-        //    ((LoginViewModel)DataContext).Password = ((PasswordBox)sender).Password;
-        //}
 
         private void UserIdChanged(object sender, RoutedEventArgs e) => btLogin.IsEnabled =
             !string.IsNullOrWhiteSpace(pbPassword.Password) &&
