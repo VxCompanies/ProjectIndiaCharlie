@@ -361,8 +361,6 @@ AS
 		LEFT JOIN Academic.StudentSubject AstuSub ON AstuSub.SubjectDetailID = Asdet.SubjectDetailID
 GO
 
-SELECT * FROM Academic.vSubjectSectionDetails
-
 CREATE OR ALTER VIEW Academic.vAdministratorDetails
 AS
 SELECT Pvpd.*
