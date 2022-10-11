@@ -1,7 +1,6 @@
 ﻿using ProjectIndiaCharlie.Desktop.Models;
 using ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ public class SelectionViewModel : ViewModelBase
         set
         {
             _subjectSearch = value;
-            _ = UpdateSubjectSections(_subjectSearch);
+            UpdateSubjectSections(_subjectSearch);
             OnPropertyChanged(nameof(SubjectSearch));
         }
     }
@@ -58,11 +57,11 @@ public class SelectionViewModel : ViewModelBase
         QuitSubjectAsyncCommand = new();
         SelectSubjectAsyncCommand = new();
 
-        _ = GetSelectedSubjects();
-        _ = GetSelectionSubjects();
+        GetSelectedSubjects();
+        GetSelectionSubjects();
     }
 
-    private async Task GetSelectedSubjects()
+    private async void GetSelectedSubjects()
     {
         SelectedSubjects.Clear();
 
@@ -70,7 +69,7 @@ public class SelectionViewModel : ViewModelBase
             SelectedSubjects.Add(subject);
     }
 
-    private async Task GetSelectionSubjects()
+    private async void GetSelectionSubjects()
     {
         SubjectSections.Clear();
 
@@ -78,18 +77,18 @@ public class SelectionViewModel : ViewModelBase
             SubjectSections.Add(subject);
     }
     
-    private async Task UpdateSubjectSections(string subjectSearch)
+    private async void UpdateSubjectSections(string subjectSearch)
     {
         if (string.IsNullOrWhiteSpace(subjectSearch))
         {
-            await GetSelectionSubjects();
+            GetSelectionSubjects();
             return;
         }
 
         SubjectSections.Clear();
 
         foreach (var subject in (await StudentService.GetSelectionSubjects())
-            .Where(s => s.SubjectCode.ToLower().Contains(SubjectSearch.ToLower())))
+            .Where(s => s.SubjectCode.ToLower().Contains(SubjectSearch.ToLower()) || s.SubjectName.ToLower().Contains(SubjectSearch.ToLower())))
             SubjectSections.Add(subject);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using ProjectIndiaCharlie.Desktop.Models;
-using ProjectIndiaCharlie.Desktop.ViewModels.Commands.AsyncCommands;
 using ProjectIndiaCharlie.Desktop.ViewModels.Commands.Navigation;
 using ProjectIndiaCharlie.Desktop.ViewModels.Services;
 using System.Collections.ObjectModel;

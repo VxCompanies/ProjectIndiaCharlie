@@ -8,7 +8,6 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
         public ViewModelBase? CurrentIndexViewModel => NavigationStore.CurrentIndexViewModel;
 
         public NavigateHomeCommand NavigateHomeCommand { get; }
-        public NavigateReportsCommand NavigateReportsCommand { get; }
         public NavigateSelectionCommand NavigateSelectionCommand { get; }
         public NavigateRetirementCommand NavigateRetirementCommand { get; }
         public NavigateRequestRevisionCommand NavigateRequestRevisionCommand { get; }
@@ -18,7 +17,6 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
             NavigationStore.CurrentIndexViewModelChanged += OnCurrentIndexViewModelChanged;
 
             NavigateHomeCommand = new();
-            NavigateReportsCommand = new();
             NavigateSelectionCommand = new();
             NavigateRetirementCommand = new();
             NavigateRequestRevisionCommand = new();

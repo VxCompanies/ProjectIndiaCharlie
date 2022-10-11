@@ -10,8 +10,8 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels;
 
 public class RequestRevisionViewModel : ViewModelBase
 {
-    private VGradeRevision _selectedSubject;
-    public VGradeRevision SelectedSubject
+    private VSubjectStudent _selectedSubject;
+    public VSubjectStudent SelectedSubject
     {
         get => _selectedSubject;
         set
@@ -21,7 +21,7 @@ public class RequestRevisionViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<VGradeRevision> SelectedSubjects { get; set; }
+    public ObservableCollection<VSubjectStudent> SelectedSubjects { get; set; }
 
     public RequestRevisionAsyncCommand RequestRevisionAsyncCommand { get; set; }
 
@@ -33,14 +33,14 @@ public class RequestRevisionViewModel : ViewModelBase
         RequestRevisionAsyncCommand = new();
         NavigatePendingRevisionsCommand = new();
 
-        _ = GetSchedule();
+        GetSchedule();
     }
 
-    private async Task GetSchedule()
+    private async void GetSchedule()
     {
         SelectedSubjects.Clear();
 
-        foreach (var subject in await StudentService.GetPublishedSubjects())
+        foreach (var subject in await StudentService.GetRetirableSubjects())
             SelectedSubjects.Add(subject);
     }
 }

@@ -22,6 +22,7 @@ public static class StudentService
     private const string getSelectionSchedule = $"{baseUrl}GetSelectionSchedule?studentId={{0}}";
     private const string getSelectionSubjects = $"{baseUrl}GetSelectionSubjects";
     private const string getPendingRevisions = $"{baseUrl}GetPendingRevisions?studentId={{0}}";
+    private const string getRequestableSubjects = $"{baseUrl}GetRequestableSubjects?studentId={{0}}";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
@@ -67,24 +68,23 @@ public static class StudentService
         }
     }
     
-    public static async Task<IEnumerable<VGradeRevision>> GetPublishedSubjects()
+    public static async Task<IEnumerable<VSubjectStudent>> GetRetirableSubjects()
     {
         try
         {
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(string.Format(getSchedule, LogedStudent.Student!.PersonId));
+            var response = await httpClient.GetAsync(string.Format(getRequestableSubjects, LogedStudent.Student!.PersonId));
 
             if (!response.IsSuccessStatusCode)
-                return Enumerable.Empty<VGradeRevision>();
+                return Enumerable.Empty<VSubjectStudent>();
 
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<IEnumerable<VGradeRevision>>(content, _options)!
-                .Where(s => !string.IsNullOrWhiteSpace(s.Grade) && s.Grade != "R");
+            return JsonSerializer.Deserialize<IEnumerable<VSubjectStudent>>(content, _options)!;
         }
         catch (Exception)
         {
-            return Enumerable.Empty<VGradeRevision>();
+            return Enumerable.Empty<VSubjectStudent>();
         }
     }
 

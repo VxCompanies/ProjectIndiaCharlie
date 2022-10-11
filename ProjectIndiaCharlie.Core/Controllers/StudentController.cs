@@ -58,14 +58,31 @@ public class StudentController : ControllerBase
         }
     }
 
+    [HttpGet("GetRequestableSubjects")]
+    public async Task<ActionResult<IEnumerable<VSubjectStudent>>> GetRequestableSubjects(int studentId)
+    {
+        try
+        {
+            var requestableSubjects = await _context.VSubjectStudents
+                .Where(r => r.StudentId == studentId && !string.IsNullOrWhiteSpace(r.Grade) && r.Grade != "R")
+                .ToListAsync();
+
+            return (!requestableSubjects.Any()) ?
+                NotFound("No subjects to request revisions are available.") :
+                Ok(requestableSubjects);
+        }
+        catch (Exception e)
+        {
+            return Problem(detail: e.Message);
+        }
+    }
+    
     [HttpGet("GetPendingRevisions")]
     public async Task<ActionResult<IEnumerable<VGradeRevision>>> GetPendingRevisions(int studentId)
     {
         try
         {
-            var pendingRevisions = await _context.VGradeRevisions
-                .Where(g => g.PersonId == studentId && string.IsNullOrWhiteSpace(g.ModifiedGrade))
-                .ToListAsync();
+            var pendingRevisions = (await _context.GetUnsolvedRevisions()).Where(r => r.PersonId == studentId);
 
             return (!pendingRevisions.Any()) ?
                 NotFound("No pending revisions.") :

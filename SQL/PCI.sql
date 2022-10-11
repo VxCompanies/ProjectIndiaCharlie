@@ -372,7 +372,7 @@ CREATE OR ALTER VIEW Academic.vAvailableCareers
 AS
 	SELECT Ac.CareerID,
 		Ac.Code,
-		CONCAT(Ac.Code, Ac.Year, ' ', Ac.Name) [Name],
+		CONCAT_WS(' ', Ac.Code, Ac.Year, Ac.Name) [Name],
 		Ac.Credits,
 		Ac.Year
 	FROM Academic.Career Ac
