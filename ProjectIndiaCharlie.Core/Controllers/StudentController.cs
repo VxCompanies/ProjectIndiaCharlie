@@ -39,14 +39,14 @@ public class StudentController : ControllerBase
         }
     }
 
-    // TODO: GetGrades
     [HttpGet("GetGrades")]
-    public async Task<ActionResult<IEnumerable<object>>> GetGrades(int studentId, int year, int trimester)
+    public async Task<ActionResult<IEnumerable<VStudentSubject>>> GetGrades(int studentId, int year, int trimester)
     {
         try
         {
-            var student = await _context.VStudentDetails
-                .FirstOrDefaultAsync(s => s.PersonId == studentId);
+            var student = await _context.VStudentSubjects
+                .Where(s => s.StudentId == studentId && s.Year == year && s.Trimester == trimester)
+                .ToListAsync();
 
             return (student is null) ?
                 NotFound() :

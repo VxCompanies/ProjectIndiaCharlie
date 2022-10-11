@@ -12,6 +12,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
         public NavigateSelectionCommand NavigateSelectionCommand { get; }
         public NavigateRetirementCommand NavigateRetirementCommand { get; }
         public NavigateRequestRevisionCommand NavigateRequestRevisionCommand { get; }
+        public NavigateScheduleCommand NavigateScheduleCommand { get; }
         public LogoutCommand LogoutCommand { get; }
 
         public IndexViewModel()
@@ -22,6 +23,7 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
             NavigateSelectionCommand = new();
             NavigateRetirementCommand = new();
             NavigateRequestRevisionCommand = new();
+            NavigateScheduleCommand = new();
             LogoutCommand = new();
         }
 

@@ -29,10 +29,10 @@ namespace ProjectIndiaCharlie.Desktop.ViewModels
 			SelectedSubjects = new();
             RetireSubjectAsyncCommand = new();
 
-            _ = GetRetirableSubjects();
+            GetRetirableSubjects();
         }
 
-        private async Task GetRetirableSubjects()
+        private async void GetRetirableSubjects()
         {
             SelectedSubjects.Clear();
 

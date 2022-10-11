@@ -35,6 +35,15 @@
                                    Style="{StaticResource menuButtonText}"/>
                         </StackPanel>
                     </RadioButton>
+                    <RadioButton Command="{Binding NavigateScheduleCommand}"
+                             Style="{StaticResource menuButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Calendar"
+                                      Style="{StaticResource menuButtonIcon}"/>
+                            <TextBlock Text="Schedule"
+                                   Style="{StaticResource menuButtonText}"/>
+                        </StackPanel>
+                    </RadioButton>
                     <RadioButton Command="{Binding NavigateSelectionCommand}"
                              Style="{StaticResource menuButton}">
                         <StackPanel Orientation="Horizontal">
@@ -78,6 +87,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:SelectionViewModel}">
                     <local:SelectionView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:ScheduleViewModel}">
+                    <local:ScheduleView/>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:RetirementViewModel}">
                     <local:RetirementView/>
