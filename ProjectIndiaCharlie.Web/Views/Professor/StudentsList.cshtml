@@ -1,0 +1,35 @@
+﻿@model IEnumerable<VSubjectStudent>
+@{
+    ViewData["Title"] = $"{Html.DisplayFor(s => s.First().SubjectCode)}-{Html.DisplayFor(s => s.First().Section)} - Student List";
+}
+
+<h1>@Html.DisplayFor(s => s.First().SubjectCode)-@Html.DisplayFor(s => s.First().Section) - Student List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Student Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.StudentId</td>
+                <td>@student.StudentName</td>
+                @if (string.IsNullOrWhiteSpace(student.Grade))
+                {
+                    <td>
+                        <a asp-controller="Professor" asp-action="PublishGrade" asp-route-studentId="@student.StudentId" asp-route-subjectDetailId="@student.SubjectDetailId">Publish Grade</a>
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

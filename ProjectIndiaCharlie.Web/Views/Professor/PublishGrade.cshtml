@@ -1,0 +1,29 @@
+﻿@model GradeDetail
+@{
+    ViewData["Title"] = $"{Model.StudentId} - Publish Grade";
+}
+
+<h1>@Html.DisplayFor(g => g.StudentId) - Publish Grade</h1>
+
+<form method="post">
+    <div>
+        <label asp-for="StudentId"></label>
+        <input asp-for="StudentId" class="form-control" readonly/>
+    </div>
+    <div>
+        <label asp-for="StudentName"></label>
+        <input asp-for="StudentName" class="form-control" readonly/>
+    </div>
+    <div>
+        <label asp-for="Grade"></label>
+        <input asp-for="Grade" class="form-control"/>
+        <span asp-validation-for="Grade" class="text-danger"></span>
+    </div>
+    <input asp-for="SubjectDetailId" class="form-control" hidden/>
+    <button type="submit" class="btn btn-primary">Add</button>
+    <a asp-controller="Professor" asp-action="Index" class="btn btn-secondary">Back</a>
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial"></partial>
+}

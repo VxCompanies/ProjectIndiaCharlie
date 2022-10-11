@@ -7,7 +7,7 @@ namespace ProjectIndiaCharlie.Desktop.Models
     {
         public int SubjectDetailId { get; set; }
         public string SubjectCode { get; set; } = null!;
-        public string Name { get; set; } = null!;
+        public string SubjectName { get; set; } = null!;
         public byte Credits { get; set; }
         public int Section { get; set; }
         public int Year { get; set; }

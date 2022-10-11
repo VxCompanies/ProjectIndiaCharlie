@@ -27,6 +27,7 @@ namespace ProjectIndiaCharlie.Core.Data
         public virtual DbSet<VStudentSubject> VStudentSubjects { get; set; } = null!;
         public virtual DbSet<VSubjectSchedule> VSubjectSchedules { get; set; } = null!;
         public virtual DbSet<VSubjectSectionDetail> VSubjectSectionDetails { get; set; } = null!;
+        public virtual DbSet<VSubjectStudent> VSubjectStudents { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -77,7 +78,7 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.Code).HasMaxLength(3);
 
-                entity.Property(e => e.Name).HasMaxLength(50);
+                entity.Property(e => e.Name).HasMaxLength(66);
             });
 
             modelBuilder.Entity<VGrade>(entity =>
@@ -287,8 +288,6 @@ namespace ProjectIndiaCharlie.Core.Data
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Name).HasMaxLength(100);
-
                 entity.Property(e => e.Professor).HasMaxLength(203);
 
                 entity.Property(e => e.ProfessorId).HasColumnName("ProfessorID");
@@ -301,6 +300,8 @@ namespace ProjectIndiaCharlie.Core.Data
 
                 entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
 
+                entity.Property(e => e.SubjectName).HasMaxLength(100);
+
                 entity.Property(e => e.Thursday)
                     .HasMaxLength(25)
                     .IsUnicode(false);
@@ -312,6 +313,29 @@ namespace ProjectIndiaCharlie.Core.Data
                 entity.Property(e => e.Wednesday)
                     .HasMaxLength(25)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<VSubjectStudent>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("vSubjectStudents");
+
+                entity.Property(e => e.Grade).HasMaxLength(2);
+
+                entity.Property(e => e.Points).HasColumnType("decimal(12, 4)");
+
+                entity.Property(e => e.ProfessorId).HasColumnName("ProfessorID");
+
+                entity.Property(e => e.StudentId).HasColumnName("StudentID");
+
+                entity.Property(e => e.StudentName).HasMaxLength(204);
+
+                entity.Property(e => e.SubjectCode).HasMaxLength(7);
+
+                entity.Property(e => e.SubjectDetailId).HasColumnName("SubjectDetailID");
+
+                entity.Property(e => e.SubjectName).HasMaxLength(100);
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -3,23 +3,15 @@
     ViewData["Title"] = "My Classrooms";
 }
 
-<h1>Person Index</h1>
+<h1>My Classrooms</h1>
+
 <table class="table">
     <thead>
         <tr>
             <th>SubjectCode</th>
             <th>Name</th>
-            <th>Credits</th>
             <th>Section</th>
-            <th>Professor</th>
-            <th>Capacity</th>
-            <th>ClassroomCode</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -27,18 +19,11 @@
         {
             <tr>
                 <td>@subject.SubjectCode</td>
-                <td>@subject.Name</td>
-                <td>@subject.Credits</td>
+                <td>@subject.SubjectName</td>
                 <td>@subject.Section</td>
-                <td>@subject.Professor</td>
-                <td>@subject.Capacity</td>
-                <td>@subject.ClassroomCode</td>
-                <td>@subject.Monday</td>
-                <td>@subject.Tuesday</td>
-                <td>@subject.Wednesday</td>
-                <td>@subject.Thursday</td>
-                <td>@subject.Friday</td>
-                <td>@subject.Saturday</td>
+                <td>
+                    <a asp-controller="Professor" asp-action="StudentsList" asp-route-subjectDetailId="@subject.SubjectDetailId">View Students</a>
+                </td>
             </tr>
         }
     </tbody>

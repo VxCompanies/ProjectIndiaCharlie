@@ -73,7 +73,7 @@
                                 <GridViewColumn Header="Subject">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Name}"/>
+                                            <TextBlock Text="{Binding SubjectName}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -166,12 +166,14 @@
                                           Height="20"/>
                         </StackPanel>
                     </Button>
+                    <TextBox Text="{Binding SubjectSearch, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Width="200"
+                             HorizontalAlignment="Right"/>
                     <ListView ItemsSource="{Binding SubjectSections}"
                               SelectedItem="{Binding SelectedSelectionSubject}"
                               Grid.Row="1"
                               BorderThickness="0"
-                              Height="600"
-                              Margin="0 0 0 50">
+                              Height="550">
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
                                 <GridViewColumn Header="Code">
@@ -184,7 +186,7 @@
                                 <GridViewColumn Header="Subject">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Name}"/>
+                                            <TextBlock Text="{Binding SubjectName}"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
