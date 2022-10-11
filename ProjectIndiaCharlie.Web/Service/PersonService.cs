@@ -7,12 +7,12 @@ namespace ProjectIndiaCharlie.Web.Service;
 public static class PersonService
 {
     private const string mediaType = "application/json";
-    //private const string baseUrl = "https://05d2-190-80-246-215.ngrok.io/api";
-    private const string baseUrl = "https://localhost:7073/api/Professor";
+    private const string baseUrl = "https://94e6-190-122-96-78.ngrok.io/api/Professor";
+    //private const string baseUrl = "https://localhost:7073/api/Professor";
     private const string getSubjectsUrl = $"{baseUrl}/SubjectSections?professorId={{0}}";
     private const string loginUrl = $"{baseUrl}/Login";
     private const string getStudentsOfSubjectsUrl = $"{baseUrl}/GetStudentsOfSubjects?subjectDetailId={{0}}";
-    private const string publishGradeUrl = $"{baseUrl}/PublishGrade?studentId={{0}}&subjectDetailId={{1}}&grade{{2}}";
+    private const string publishGradeUrl = $"{baseUrl}/PublishGrade?studentId={{0}}&subjectDetailId={{1}}&grade={{2}}";
 
     private static readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 

@@ -34,9 +34,9 @@ public class ProfessorController : Controller
     public async Task<IActionResult> PublishGrade(int subjectDetailId, int studentId)
     {
         var student = (await PersonService.GetStudentsOfSubjects(subjectDetailId))
-            .First(s => s.StudentId == studentId);
+            .FirstOrDefault(s => s.StudentId == studentId);
 
-        return View(new GradeDetail(student));
+        return View(new GradeDetail(student!));
     }
 
     [HttpPost]

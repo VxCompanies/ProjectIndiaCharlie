@@ -22,46 +22,52 @@
         <Border Grid.Column="0"
                 Background="#203F59"
                 CornerRadius="0 20 20 0">
-            <StackPanel Margin="0 101 0 0">
-                <RadioButton IsChecked="True"
+            <Grid>
+                <StackPanel Margin="0 101 0 0">
+                    <RadioButton IsChecked="True"
                              Command="{Binding NavigateHomeCommand}"
                              Style="{StaticResource menuButton}"
                              Padding="0 90 0 90">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconImage Icon="Home"
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Home"
                                       Style="{StaticResource menuButtonIcon}"/>
-                        <TextBlock Text="Home"
+                            <TextBlock Text="Home"
                                    Style="{StaticResource menuButtonText}"/>
-                    </StackPanel>
-                </RadioButton>
-                <RadioButton Command="{Binding NavigateSelectionCommand}"
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Command="{Binding NavigateSelectionCommand}"
                              Style="{StaticResource menuButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconImage Icon="SquareCheck"
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="SquareCheck"
                                       Style="{StaticResource menuButtonIcon}"/>
-                        <TextBlock Text="Selection"
+                            <TextBlock Text="Selection"
                                    Style="{StaticResource menuButtonText}"/>
-                    </StackPanel>
-                </RadioButton>
-                <RadioButton Command="{Binding NavigateRetirementCommand}"
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Command="{Binding NavigateRetirementCommand}"
                              Style="{StaticResource menuButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconImage Icon="XmarkSquare"
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="XmarkSquare"
                                       Style="{StaticResource menuButtonIcon}"/>
-                        <TextBlock Text="Retirement"
+                            <TextBlock Text="Retirement"
                                    Style="{StaticResource menuButtonText}"/>
-                    </StackPanel>
-                </RadioButton>
-                <RadioButton Command="{Binding NavigateRequestRevisionCommand}"
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Command="{Binding NavigateRequestRevisionCommand}"
                              Style="{StaticResource menuButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconImage Icon="Search"
+                        <StackPanel Orientation="Horizontal">
+                            <fa:IconImage Icon="Search"
                                       Style="{StaticResource menuButtonIcon}"/>
-                        <TextBlock Text="Revisions"
+                            <TextBlock Text="Revisions"
                                    Style="{StaticResource menuButtonText}"/>
-                    </StackPanel>
-                </RadioButton>
-            </StackPanel>
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+                <Button VerticalAlignment="Bottom"
+                        Content="Logout"
+                        Command="{Binding LogoutCommand}"
+                        Margin="0 0 0 20"/>
+            </Grid>
         </Border>
         <ContentControl Content="{Binding CurrentIndexViewModel}"
                         Grid.Column="1"
