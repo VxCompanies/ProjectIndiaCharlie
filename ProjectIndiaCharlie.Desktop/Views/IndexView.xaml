@@ -52,15 +52,6 @@
                                    Style="{StaticResource menuButtonText}"/>
                     </StackPanel>
                 </RadioButton>
-                <RadioButton Command="{Binding NavigateHomeCommand}"
-                             Style="{StaticResource menuButton}">
-                    <StackPanel Orientation="Horizontal">
-                        <fa:IconImage Icon="ClipboardList"
-                                      Style="{StaticResource menuButtonIcon}"/>
-                        <TextBlock Text="Reports"
-                                   Style="{StaticResource menuButtonText}"/>
-                    </StackPanel>
-                </RadioButton>
                 <RadioButton Command="{Binding NavigateRequestRevisionCommand}"
                              Style="{StaticResource menuButton}">
                     <StackPanel Orientation="Horizontal">
@@ -81,9 +72,6 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:SelectionViewModel}">
                     <local:SelectionView/>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
-                    <local:ReportsView/>
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:RetirementViewModel}">
                     <local:RetirementView/>
