@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIndiaCharlie.WebAdmi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{22644AE8-5C24-43C1-BB0B-7BD436E6D77B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05. Mobile", "05. Mobile", "{7A39F0BF-8CB5-4A4F-993A-8A6CDA1F0A95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIndiaCharlie.Mobile", "ProjectIndiaCharlie.Mobile\ProjectIndiaCharlie.Mobile.csproj", "{1A883E3D-0FB3-4393-81DC-0C91D06CA964}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,12 @@ Global
 		{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +63,7 @@ Global
 		{DFEEBF54-1A0B-4008-BAFD-DB0CF3F4D591} = {C6450A8B-0FC3-4F72-87CF-E2AAD652968F}
 		{D09C48B0-D013-4CDB-A3A9-ECD6E248BDF9} = {DB4F8A96-72B3-4DAB-9B71-F7BD5254DF8D}
 		{22644AE8-5C24-43C1-BB0B-7BD436E6D77B} = {DB4F8A96-72B3-4DAB-9B71-F7BD5254DF8D}
+		{1A883E3D-0FB3-4393-81DC-0C91D06CA964} = {7A39F0BF-8CB5-4A4F-993A-8A6CDA1F0A95}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6DE168EE-3680-4C5C-B803-B02F95EA9696}
