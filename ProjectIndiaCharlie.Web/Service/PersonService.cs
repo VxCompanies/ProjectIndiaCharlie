@@ -7,7 +7,7 @@ namespace ProjectIndiaCharlie.Web.Service;
 public static class PersonService
 {
     private const string mediaType = "application/json";
-    private const string baseUrl = "https://94e6-190-122-96-78.ngrok.io/api/Professor";
+    private const string baseUrl = "https://c8f5-190-122-96-78.ngrok.io/api/Professor";
     //private const string baseUrl = "https://localhost:7073/api/Professor";
     private const string getSubjectsUrl = $"{baseUrl}/SubjectSections?professorId={{0}}";
     private const string loginUrl = $"{baseUrl}/Login";

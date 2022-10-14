@@ -3,4 +3,8 @@
 	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true"></application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<PropertyGroup>
+        <ApplicationId>com.vxcompanies.academics</ApplicationId>
+        <ApplicationVersion>1</ApplicationVersion>
+    </PropertyGroup>
 </manifest>

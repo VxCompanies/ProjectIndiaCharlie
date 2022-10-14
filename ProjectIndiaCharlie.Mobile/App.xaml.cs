@@ -1,4 +1,6 @@
-﻿namespace ProjectIndiaCharlie.Mobile
+﻿using ProjectIndiaCharlie.Mobile.Views;
+
+namespace ProjectIndiaCharlie.Mobile
 {
     public partial class App : Application
     {

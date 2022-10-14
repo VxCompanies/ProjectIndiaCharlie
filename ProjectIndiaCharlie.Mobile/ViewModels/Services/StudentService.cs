@@ -6,8 +6,8 @@ namespace ProjectIndiaCharlie.Mobile.ViewModels.Services;
 
 public static class StudentService
 {
-    private const string baseUrl = "https://localhost:7073/api/Student/";
-    //private const string baseUrl = "https://94e6-190-122-96-78.ngrok.io/api/Student/";
+    //private const string baseUrl = "https://localhost:7073/api/Student/";
+    private const string baseUrl = "https://c8f5-190-122-96-78.ngrok.io/api/Student/";
     private const string loginUrl = $"{baseUrl}Login?studentId={{0}}&password={{1}}";
     private const string getSchedule = $"{baseUrl}Schedule?studentId={{0}}";
 

@@ -2,16 +2,67 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ProjectIndiaCharlie.Mobile.Views.HomePage"
-             Title="HomePage">
+             xmlns:vm="clr-namespace:ProjectIndiaCharlie.Mobile.ViewModels"
+             Title="Home">
+    <ContentPage.BindingContext>
+        <vm:HomeViewModel/>
+    </ContentPage.BindingContext>
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-
-        <Label x:Name="txtStudentId"/>
-        <Label x:Name="txtStudentName"/>
-        <Label x:Name="txtStudentSurname"/>
-        <Label x:Name="txtStudentCareer"/>
+        <Label Text="{Binding Student, StringFormat=Student ID: {0}}"/>
+        <Label Text="{Binding Name}"/>
+        <Label Text="{Binding Surname}"/>
+        <Label Text="{Binding Career}"/>
+        <ListView ItemsSource="{Binding Schedule}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Text="{Binding SubjectCode}"
+                                   Grid.Column="0"/>
+                            <Label Text="{Binding Section}"
+                                   Grid.Column="1"/>
+                            <Label Text="{Binding Subject}"
+                                   Grid.Column="2"/>
+                            <Label Text="{Binding Professor}"
+                                   Grid.Column="3"/>
+                            <Label Text="{Binding Credits}"
+                                   Grid.Column="4"/>
+                            <Label Text="{Binding ClassroomCode}"
+                                   Grid.Column="5"/>
+                            <Label Text="{Binding Monday}"
+                                   Grid.Column="6"/>
+                            <Label Text="{Binding Tuesday}"
+                                   Grid.Column="7"/>
+                            <Label Text="{Binding Wednesday}"
+                                   Grid.Column="8"/>
+                            <Label Text="{Binding Thursday}"
+                                   Grid.Column="9"/>
+                            <Label Text="{Binding Friday}"
+                                   Grid.Column="10"/>
+                            <Label Text="{Binding Saturday}"
+                                   Grid.Column="11"/>
+                            <Label Text="{Binding Grade}"
+                                   Grid.Column="12"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </VerticalStackLayout>
 </ContentPage>
