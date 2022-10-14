@@ -1,5 +1,5 @@
 using ProjectIndiaCharlie.Desktop.ViewModels;
-
+using ProjectIndiaCharlie.Desktop.Models;
 namespace UnitTestProject
 {
     public class Tests
@@ -21,6 +21,37 @@ namespace UnitTestProject
             Assert.Pass();
         }
 
+        [Test]
+        public void ValoresEmpty()
+        {
+            var DocNoTest = new List<object>() { "1", "2", "3", "4", null};
+            var FistName = new List<object>() { "Steven", "Nikita", "Oliver", "Omar", null};
+            var FirstSurnameList = new List<object>() { "A", "B", "C", null };
+            var GenderTest = new List<object> { "Masculino", "Femenino", null };
+            var EmailTest = new List<object>() { "nikita@gmail.com", null };
+            var Career = new List<object>() { "Software", "Mercadeo", null };
+        
+
+            var vStudentTest = new VStudentDetail()
+            {
+                DocNo = (string)DocNoTest[new Random().Next(0,6)],
+                FirstName = (string)FistName[new Random().Next(0, 6)],
+                FirstSurname = (string)FirstSurnameList[new Random().Next(0, 5)],
+                Gender = (string)GenderTest[new Random().Next(0, 4)],
+                Email = (string)EmailTest[new Random().Next(0,2)],
+                Career = (string)Career[new Random().Next(0, 4)],
+            };
+
+            
+            Assert.IsNotNull(vStudentTest.DocNo);
+            Assert.IsNotNull(vStudentTest.FirstName);
+            Assert.IsNotNull(vStudentTest.FirstSurname);
+            Assert.IsNotNull(vStudentTest.Gender);
+            Assert.IsNotNull(vStudentTest.Email);
+            Assert.IsNotNull(vStudentTest.Career);
+
+
+        }
 
     }
 }
