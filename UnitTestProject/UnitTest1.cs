@@ -34,12 +34,12 @@ namespace UnitTestProject
 
             var vStudentTest = new VStudentDetail()
             {
-                DocNo = (string)DocNoTest[new Random().Next(0,6)],
-                FirstName = (string)FistName[new Random().Next(0, 6)],
-                FirstSurname = (string)FirstSurnameList[new Random().Next(0, 5)],
-                Gender = (string)GenderTest[new Random().Next(0, 4)],
+                DocNo = (string)DocNoTest[new Random().Next(0,5)],
+                FirstName = (string)FistName[new Random().Next(0, 5)],
+                FirstSurname = (string)FirstSurnameList[new Random().Next(0, 4)],
+                Gender = (string)GenderTest[new Random().Next(0, 3)],
                 Email = (string)EmailTest[new Random().Next(0,2)],
-                Career = (string)Career[new Random().Next(0, 4)],
+                Career = (string)Career[new Random().Next(0, 3)],
             };
 
             
