@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05. Mobile", "05. Mobile", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIndiaCharlie.Mobile", "ProjectIndiaCharlie.Mobile\ProjectIndiaCharlie.Mobile.csproj", "{1A883E3D-0FB3-4393-81DC-0C91D06CA964}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{27E0F8E8-2AA6-40A7-ACE3-387B1113F7FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,7 @@ Global
 		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A883E3D-0FB3-4393-81DC-0C91D06CA964}.Release|Any CPU.Deploy.0 = Release|Any CPU
+
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
