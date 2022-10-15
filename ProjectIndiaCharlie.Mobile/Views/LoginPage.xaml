@@ -8,11 +8,6 @@
         <vm:LoginViewModel/>
     </ContentPage.BindingContext>
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-
         <Label Text="Id"/>
         <Entry x:Name="txtId"/>
         <Label Text="Password"/>

@@ -9,7 +9,6 @@ public class HomeViewModel : ViewModelBase
 {
     public VStudentDetail Student { get; set; }
     public string Name { get; set; }
-    public string Surname { get; set; }
     public string Career { get; set; }
 
     public ObservableCollection<VStudentSubject> Schedule { get; set; }
@@ -31,8 +30,7 @@ public class HomeViewModel : ViewModelBase
 
     private void LoadStudentInfo()
     {
-        Name = $"{Student.FirstName} {Student.MiddleName}";
-        Surname = $"{Student.FirstSurname} {Student.SecondSurname}";
+        Name = $"{Student.FirstName} {Student.MiddleName} {Student.FirstSurname} {Student.SecondSurname}";
         Career = $"{Student.CareerCode} - {Student.Career} ({Student.Pensum})";
     }
 }

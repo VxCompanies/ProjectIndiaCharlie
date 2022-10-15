@@ -30,11 +30,14 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		<Nullable>enable</Nullable>
 
-		<AndroidKeyStore>True</AndroidKeyStore>
+		<!--<AndroidKeyStore>True</AndroidKeyStore>
 		<AndroidSigningKeyStore>myapp.keystore</AndroidSigningKeyStore>
 		<AndroidSigningKeyAlias>key</AndroidSigningKeyAlias>
-		<AndroidSigningKeyPass></AndroidSigningKeyPass>
-		<AndroidSigningStorePass></AndroidSigningStorePass>
+		<AndroidSigningKeyPass>qwerty123</AndroidSigningKeyPass>
+		<AndroidSigningStorePass>qwerty123</AndroidSigningStorePass>
+
+		<ApplicationId>com.vxcompanies.academics</ApplicationId>
+		<ApplicationVersion>1</ApplicationVersion>-->
 	</PropertyGroup>
 
 	<ItemGroup>
