@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectIndiaCharlie.Mobile.Views.LoginPage"
+             xmlns:vm="clr-namespace:ProjectIndiaCharlie.Mobile.ViewModels"
+             Title="Login">
+    <ContentPage.BindingContext>
+        <vm:LoginViewModel/>
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Label Text="Id"/>
+        <Entry x:Name="txtId"/>
+        <Label Text="Password"/>
+        <Entry x:Name="txtPassword"
+               IsPassword="True"/>
+        <Button x:Name="btnLogin"
+                Text="Login"
+                Clicked="Login_Clicked"/>
+        
+        <!--<Label Text="Id"/>
+        <Entry Text="{Binding Id}"/>
+        <Label Text="Password"/>
+        <Entry Text="{Binding Password}"
+               IsPassword="True"/>
+        <Button Text="Login"
+                Command="{Binding LoginCommand}"
+                CommandParameter="{Binding}"/>-->
+    </VerticalStackLayout>
+</ContentPage>

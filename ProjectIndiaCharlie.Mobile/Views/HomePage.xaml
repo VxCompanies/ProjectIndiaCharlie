@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProjectIndiaCharlie.Mobile.Views.HomePage"
+             xmlns:vm="clr-namespace:ProjectIndiaCharlie.Mobile.ViewModels"
+             Title="Home">
+    <ContentPage.BindingContext>
+        <vm:HomeViewModel/>
+    </ContentPage.BindingContext>
+    <VerticalStackLayout>
+        <Label Text="Student Info"
+               FontSize="Header"
+               FontAttributes="Bold"/>
+        <Label Text="{Binding Student.PersonId, StringFormat=ID: {0}}"/>
+        <Label Text="{Binding Name, StringFormat=Name: {0}}"/>
+        <Label Text="{Binding Career, StringFormat=Career: {0}}"/>
+        <Label Text="{Binding Student.GeneralIndex, StringFormat=General Index: {0}}"/>
+        <Label Text="{Binding Student.TrimestralIndex, StringFormat=Trimestral Index: {0}}"/>
+        <Label Text="Schedule"
+               FontSize="Header"
+               FontAttributes="Bold"/>
+        <ListView ItemsSource="{Binding Schedule}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="{Binding SubjectCode}"/>
+                            <Label Text="{Binding Section}"/>
+                            <Label Text="{Binding Subject}"/>
+                            <Label Text="{Binding Professor}"/>
+                            <Label Text="{Binding Credits}"/>
+                            <Label Text="{Binding ClassroomCode}"/>
+                            <Label Text="{Binding Monday}"/>
+                            <Label Text="{Binding Tuesday}"/>
+                            <Label Text="{Binding Wednesday}"/>
+                            <Label Text="{Binding Thursday}"/>
+                            <Label Text="{Binding Friday}"/>
+                            <Label Text="{Binding Saturday}"/>
+                            <Label Text="{Binding Grade}"/>
+                        </HorizontalStackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
+</ContentPage>
